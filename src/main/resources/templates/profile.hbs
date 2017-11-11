@@ -1,6 +1,27 @@
 {{#partial "content"}}
 
-    <p> YOU'VE LOGGED IN</p>
+    <p>  PROFILE PAGE </p>
+    {{#if username }}
+        <h1> WELCOME {{username}} !! </h1>
+    {{else}}
+        <<h1> PLEASE SIGN IN DUDE </h1>
+    {{/if}}
+    <h2> ADD A WORKOUT </h2>
+    <form action="/profile" method="post">
+        <input type="text" placeholder="Exercise" name="exercise">
+        <input type="number" placeholder="Sets" name="sets">
+        <input type="number" placeholder="Reps" name="reps">
+        <input type="number" placeholder="Weight" name="weight">
+        <button>Submit</button>
+    </form>
+    <h2> ALL CURRENT WORKOUTS</h2>
+    <ul>
+        <li>exercise <tab1></tab1> sets <tab1></tab1> reps <tab1></tab1> weight</li>
+        {{#each workout}}
+            <li>{{exercise}} <tab1></tab1>  {{sets}} <tab1></tab1> {{reps}} <tab1></tab1> {{weight}} </li>
+        {{/each}}
+    </ul>
+
 {{/partial}}
 
 {{> base.hbs}}

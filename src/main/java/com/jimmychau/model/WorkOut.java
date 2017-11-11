@@ -1,14 +1,25 @@
 package com.jimmychau.model;
 
-public class WorkOut {
-    private String exercise;
-    private int sets;
-    private int reps;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
-    public WorkOut(String exercise, int sets, int reps) {
+@Entity
+public class WorkOut {
+    @Column
+    private String exercise;
+    @Column
+    private int sets;
+    @Column
+    private int reps;
+    @Column
+    private int weight;
+
+    public WorkOut(String exercise, int sets, int reps, int weight) {
+
         this.exercise = exercise;
         this.sets = sets;
         this.reps = reps;
+        this.weight = weight;
     }
 
     public String getExercise() {
@@ -21,6 +32,10 @@ public class WorkOut {
 
     public int getReps() {
         return reps;
+    }
+
+    public int getWeight() {
+        return weight;
     }
 
     @Override
