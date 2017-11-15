@@ -1,4 +1,4 @@
-package com.jimmychau.model;
+package app.model;
 
 import java.util.ArrayList;
 import java.util.List;
