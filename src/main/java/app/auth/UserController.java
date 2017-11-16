@@ -4,6 +4,7 @@ import app.db.DataBaseHelper;
 import com.mongodb.DuplicateKeyException;
 import org.mongodb.morphia.Datastore;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 public class UserController {
@@ -24,5 +25,19 @@ public class UserController {
             return -2;
         }
         return 1;
+    }
+
+    public static User getUserByEmail(String email) {
+        datastore = dbHelper.getDataStore();
+        List<User> userList = datastore.createQuery(User.class)
+                .field("email").equal(email)
+                .limit(1)
+                .asList();
+
+        if(userList != null && userList.size() > 0)
+            return userList.get(0);
+        else
+            return null;
+
     }
 }

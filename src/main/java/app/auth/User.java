@@ -5,6 +5,8 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexed;
 
+import java.math.BigInteger;
+
 public class User {
 
     @Id
@@ -12,11 +14,11 @@ public class User {
     private String username = "";
     @Indexed(options = @IndexOptions(unique = true))
     private String email = "";
-    private String salt = "";
-    private String verifier = "";
+    private BigInteger salt;
+    private BigInteger verifier;
     private String token = "";
 
-    public User(String username, String email, String salt, String verifier) {
+    public User(String username, String email, BigInteger salt, BigInteger verifier) {
         this.username = username;
         this.email = email;
         this.salt = salt;
@@ -39,19 +41,19 @@ public class User {
         this.email = email;
     }
 
-    public String getSalt() {
+    public BigInteger getSalt() {
         return salt;
     }
 
-    public void setSalt(String salt) {
+    public void setSalt(BigInteger salt) {
         this.salt = salt;
     }
 
-    public String getVerifier() {
+    public BigInteger getVerifier() {
         return verifier;
     }
 
-    public void setVerifier(String verifier) {
+    public void setVerifier(BigInteger verifier) {
         this.verifier = verifier;
     }
 

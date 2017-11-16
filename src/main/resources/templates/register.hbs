@@ -34,8 +34,6 @@
                     var srpClient = new SRP6JavascriptClientSessionSHA256();
                     var salt = srpClient.generateRandomSalt();
                     var verifier = srpClient.generateVerifier(salt, email, p1);
-                    var data = {"salt": salt, "username": username
-                        , "email":email, "verifier":verifier};
 
                     $.ajax({
                         type: "POST",
