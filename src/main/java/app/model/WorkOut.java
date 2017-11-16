@@ -1,17 +1,16 @@
 package app.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
 
-@Entity
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.Id;
+
 public class WorkOut {
-    @Column
+
+    @Id
+    private ObjectId id;
     private String exercise;
-    @Column
     private int sets;
-    @Column
     private int reps;
-    @Column
     private int weight;
 
     public WorkOut(String exercise, int sets, int reps, int weight) {

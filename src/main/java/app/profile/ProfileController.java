@@ -22,7 +22,7 @@ public class ProfileController {
         int weight = Integer.parseInt(req.queryParams("weight"));
         WorkOut workout = new WorkOut(exercise,sets,reps,weight);
         workoutDao.add(workout);
-        res.redirect(Path.Web.PROFILE);
+        res.redirect(Path.Web.GET_PROFILE_PAGE);
         return null;
     }
 
