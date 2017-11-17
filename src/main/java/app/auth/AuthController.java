@@ -37,6 +37,14 @@ public class AuthController {
         return doAuth(req,res);
     }
 
+    public static Object handleLogout(Request req, Response res) {
+        Session session = req.session(false);
+        if(session != null)
+            session.invalidate();
+        res.redirect(Path.Web.GET_INDEX_PAGE);
+        return res;
+    }
+
 
     private static String doSignUp(Request req, Response res) {
 

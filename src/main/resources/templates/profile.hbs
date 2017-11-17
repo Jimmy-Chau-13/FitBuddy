@@ -1,5 +1,9 @@
 {{#partial "content"}}
-
+    <div id="topMenu">
+        <form action ="/logout" method = "post">
+            <button>logout</button>
+        </form>
+    </div>
     <p>  PROFILE PAGE </p>
     {{#if username }}
         <h1> WELCOME {{username}} !! </h1>

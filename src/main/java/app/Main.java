@@ -43,6 +43,8 @@ public class Main {
 
         post(Path.Web.DO_SIGNUP, (req,res) -> AuthController.handleSignUp(req,res));
 
+        post(Path.Web.DO_LOGOUT, (req,res) -> AuthController.handleLogout(req,res));
+
         // CRUD operations for work outs
         post(Path.Web.ADD_WORKOUT, (req,res) -> WorkOutController.handleNewWorkout(req,res));
 
