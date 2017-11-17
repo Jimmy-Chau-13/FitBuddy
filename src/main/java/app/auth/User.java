@@ -9,20 +9,29 @@ import java.math.BigInteger;
 
 public class User {
 
+
     @Id
     private ObjectId id;
     private String username = "";
     @Indexed(options = @IndexOptions(unique = true))
     private String email = "";
-    private BigInteger salt;
-    private BigInteger verifier;
+    private String salt;
+    private String verifier;
     private String token = "";
 
-    public User(String username, String email, BigInteger salt, BigInteger verifier) {
+    public User() {
+
+    }
+
+    public User(String username, String email, String salt, String verifier) {
         this.username = username;
         this.email = email;
         this.salt = salt;
         this.verifier = verifier;
+    }
+
+    public ObjectId getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -41,19 +50,19 @@ public class User {
         this.email = email;
     }
 
-    public BigInteger getSalt() {
+    public String getSalt() {
         return salt;
     }
 
-    public void setSalt(BigInteger salt) {
+    public void setSalt(String salt) {
         this.salt = salt;
     }
 
-    public BigInteger getVerifier() {
+    public String getVerifier() {
         return verifier;
     }
 
-    public void setVerifier(BigInteger verifier) {
+    public void setVerifier(String verifier) {
         this.verifier = verifier;
     }
 

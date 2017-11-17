@@ -21,6 +21,8 @@ public class DataBaseHelper {
             morphia.map(WorkOut.class);
             morphia.map(User.class);
             initDatastore();
+        } else {
+            logger.info("Database Class Mapped Already!");
         }
     }
 

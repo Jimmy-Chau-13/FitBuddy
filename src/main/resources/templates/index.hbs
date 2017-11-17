@@ -1,13 +1,60 @@
 {{#partial "content"}}
     <div>
-        <form action="/" method="post">
-            <input type="text" placeholder="Email" name="email">
-            <input type="password" placeholder="password" name="password">
-            <button>Log in</button>
+        <form action="/" id="loginForm">
+            <input type="text" placeholder="Email" name="email" id="email" required>
+            <input type="password" placeholder="password" name="password" id="password" required>
+            <input type="submit" name="loginBt" id="loginBt" value="Sign In" />
+            <p id="log" style="color:red;"></p>
         </form>
 
         <a href="/register"> Sign Up </a>
     </div>
+
+    <script type="text/javascript">
+        $("document").ready(function() {
+
+            $("#loginForm").on("submit", function (event) {
+
+                event.preventDefault();
+                var email = $("#email").val();
+                var password = $("#password").val();
+
+                $.ajax ({
+                    type: "post",
+                    url: "/",
+                    data: {"email":email},
+                    success: function(response) {
+                        var srpClient = new SRP6JavascriptClientSessionSHA256();
+                        srpClient.step1(email, password);
+                        var credentials = srpClient.step2(response.salt, response.B);
+                        var M1 = credentials.M1;
+                        var A = credentials.A;
+                        console.log("LEGGO WARRIORS");
+                        $.ajax({
+                            type:"POST",
+                            url: "/auth",
+                            data: {"email":email, "M1":M1, "A":A},
+                            success:function(res2) {
+                                console.log("WE HEEREEREE");
+                                console.log("resp2 location = " + res2.target);
+                                if(res2.target) {
+                                    console.log("YOUR IN IT TO WIN IT");
+                                    window.location.href = res2.target;
+                                }
+                            },
+                            error: function(error2) {
+                                $("#log").html("<strong>Invalid Login Credentials </strong>");
+                            }
+                        });
+                    },
+                    error: function (error) {
+                        $("#log").html("<strong>Invalid Login Credentials </strong>");
+
+                    }
+                });
+            });
+        });
+    </script>
 
 
 {{/partial}}

@@ -30,7 +30,6 @@
                 var p2 = $("#password2").val();
 
                 if(p1 === p2) {
-
                     var srpClient = new SRP6JavascriptClientSessionSHA256();
                     var salt = srpClient.generateRandomSalt();
                     var verifier = srpClient.generateVerifier(salt, email, p1);

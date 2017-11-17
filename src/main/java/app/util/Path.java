@@ -10,6 +10,7 @@ public class Path {
         public static final String DO_SIGNUP = "/register";
         public static final String DO_SIGNIN = "/";
         public static final String DO_WORKOUT = "/profile";
+        public static final String DO_AUTH = "/auth";
     }
 
     public static class Template {

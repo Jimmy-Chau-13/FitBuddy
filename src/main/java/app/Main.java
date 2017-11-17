@@ -24,13 +24,12 @@ public class Main {
         staticFileLocation("/public");
         workoutDao = new SimpleWorkOutDAO();
 
-        logger.info("hey there dude");
-
         get(Path.Web.GET_INDEX_PAGE, (req,res) -> IndexController.serveIndexPage(req,res)
                 ,new HandlebarsTemplateEngine());
 
-        post(Path.Web.DO_SIGNIN, (req,res) -> IndexController.handleLogIn(req,res)
-                ,new HandlebarsTemplateEngine());
+        post(Path.Web.DO_SIGNIN, (req,res) -> AuthController.handleSignIn(req,res));
+
+        post(Path.Web.DO_AUTH, (req,res) -> AuthController.handleAuth(req,res));
 
         get(Path.Web.GET_REGISTER_PAGE, (req,res) -> AuthController.serveRegisterPage(req,res)
                 , new HandlebarsTemplateEngine());
