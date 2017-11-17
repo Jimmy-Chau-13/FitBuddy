@@ -12,6 +12,11 @@ public class WorkOut {
     private int sets;
     private int reps;
     private int weight;
+    private String userId;
+
+    public WorkOut() {
+
+    }
 
     public WorkOut(String exercise, int sets, int reps, int weight) {
 
@@ -19,6 +24,16 @@ public class WorkOut {
         this.sets = sets;
         this.reps = reps;
         this.weight = weight;
+    }
+
+    public void setId(String id) {
+        if(id != null && !id.isEmpty()) {
+            this.id = new ObjectId(id);
+        }
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getExercise() {
@@ -37,23 +52,10 @@ public class WorkOut {
         return weight;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        WorkOut workOut = (WorkOut) o;
-
-        if (sets != workOut.sets) return false;
-        if (reps != workOut.reps) return false;
-        return exercise != null ? exercise.equals(workOut.exercise) : workOut.exercise == null;
+    public String getUserId() {
+        return userId;
     }
 
-    @Override
-    public int hashCode() {
-        int result = exercise != null ? exercise.hashCode() : 0;
-        result = 31 * result + sets;
-        result = 31 * result + reps;
-        return result;
-    }
+
+
 }

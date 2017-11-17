@@ -12,6 +12,8 @@ public class ProfileController {
     public static ModelAndView serveProfilePage(Request req, Response res) {
         Map<String,Object> model = new HashMap<>();
         model.put("workout", workoutDao.findAll());
+        String username = req.session().attribute("username");
+        model.put("username", username);
         return new ModelAndView(model, Path.Template.PROFILE);
     }
 

@@ -7,11 +7,12 @@
         <h1> PLEASE SIGN IN DUDE </h1>
     {{/if}}
     <h2> ADD A WORKOUT </h2>
-    <form action="/profile" method="post">
-        <input type="text" placeholder="Exercise" name="exercise">
-        <input type="number" placeholder="Sets" name="sets">
-        <input type="number" placeholder="Reps" name="reps">
-        <input type="number" placeholder="Weight" name="weight">
+    <form action="/add" method="post">
+        <input type="text" placeholder="Exercise" name="exercise" required>
+        <input type="number" placeholder="Sets" name="sets" required>
+        <input type="number" placeholder="Reps" name="reps" required>
+        <input type="number" placeholder="Weight" name="weight" required>
+        <input type="date" placeholder="Date" name="date">
         <button>Submit</button>
     </form>
     <h2> ALL CURRENT WORKOUTS</h2>

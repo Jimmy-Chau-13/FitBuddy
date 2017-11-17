@@ -9,8 +9,16 @@ public class Path {
 
         public static final String DO_SIGNUP = "/register";
         public static final String DO_SIGNIN = "/";
-        public static final String DO_WORKOUT = "/profile";
         public static final String DO_AUTH = "/auth";
+
+        public static final String ADD_WORKOUT = "/add";
+    }
+
+    public static class Attribute {
+        public static final String USERNAME = "username";
+        public static final String USERID = "userId";
+        public static final String EMAIL = "email";
+        public static final String AUTH_STATUS = "AUTH_STATUS";
     }
 
     public static class Template {

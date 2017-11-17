@@ -29,16 +29,13 @@
                         var credentials = srpClient.step2(response.salt, response.B);
                         var M1 = credentials.M1;
                         var A = credentials.A;
-                        console.log("LEGGO WARRIORS");
                         $.ajax({
                             type:"POST",
                             url: "/auth",
                             data: {"email":email, "M1":M1, "A":A},
                             success:function(res2) {
-                                console.log("WE HEEREEREE");
                                 console.log("resp2 location = " + res2.target);
                                 if(res2.target) {
-                                    console.log("YOUR IN IT TO WIN IT");
                                     window.location.href = res2.target;
                                 }
                             },

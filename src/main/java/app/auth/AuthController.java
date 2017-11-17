@@ -131,10 +131,11 @@ public class AuthController {
             logger.info("M2 Generated in Authenticate = " + m2);
             Session session = req.session(true);
             User user = UserController.getUserByEmail(email);
-            session.attribute("username", user.getUsername());
-            session.attribute("userId", user.getId().toString()); //saves the id as String
-            session.attribute("AUTH_STATUS", true);
-            session.attribute("email", user.getEmail());
+
+            session.attribute(Path.Attribute.USERNAME, user.getUsername());
+            session.attribute(Path.Attribute.USERID, user.getId().toString()); //saves the id as String
+            session.attribute(Path.Attribute.AUTH_STATUS, true);
+            session.attribute(Path.Attribute.EMAIL, user.getEmail());
 
             model.put("M2", M2);
             model.put("code", "200");
