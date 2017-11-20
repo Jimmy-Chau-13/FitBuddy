@@ -50,11 +50,16 @@ public class AuthController {
 
         res.type("application/json");
         HashMap<String, Object> model = new HashMap<>();
-        String username = Jsoup.parse(req.queryParams("username")).text();
+
+  /*    String username = Jsoup.parse(req.queryParams("username")).text();
         String email = Jsoup.parse(req.queryParams("email")).text();
         String salt = Jsoup.parse(req.queryParams("salt")).text();
         String verifier = Jsoup.parse(req.queryParams("verifier")).text();
-
+*/
+        String username = req.queryParams("username");
+        String email = req.queryParams("email");
+        String salt = req.queryParams("salt");
+        String verifier = req.queryParams("verifier");
 
         User user = new User(username, email, salt, verifier);
 

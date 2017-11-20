@@ -1,13 +1,12 @@
 package app.db;
 
 import app.auth.User;
-import app.model.WorkOut;
+import app.workout.WorkOut;
 import app.util.Path;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
-import javax.xml.crypto.Data;
 import java.util.logging.Logger;
 
 public class DataBaseHelper {

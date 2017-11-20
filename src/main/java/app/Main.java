@@ -2,11 +2,8 @@ package app;
 
 import app.auth.AuthController;
 import app.index.IndexController;
-import app.model.SimpleWorkOutDAO;
 
-import app.model.WorkOutController;
-import app.model.WorkOutDAO;
-import app.profile.ProfileController;
+import app.workout.WorkOutController;
 import app.util.Path;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
@@ -18,12 +15,12 @@ import static spark.Spark.*;
 
 public class Main {
 
-    public static WorkOutDAO workoutDao;
+    //public static WorkOutDAO workoutDao;
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws ClassNotFoundException {
         staticFileLocation("/public");
-        workoutDao = new SimpleWorkOutDAO();
+        //workoutDao = new SimpleWorkOutDAO();
 
         // Serving Pages
         get(Path.Web.GET_INDEX_PAGE, (req,res) -> IndexController.serveIndexPage(req,res)
@@ -47,6 +44,7 @@ public class Main {
 
         // CRUD operations for work outs
         post(Path.Web.ADD_WORKOUT, (req,res) -> WorkOutController.handleNewWorkout(req,res));
+        post(Path.Web.DELETE_WORKOUT, (req,res) -> WorkOutController.handleDeleteWorkout(req,res));
 
 
     } //EOF MAIN

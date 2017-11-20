@@ -1,4 +1,4 @@
-package app.model;
+package app.workout;
 
 
 import org.bson.types.ObjectId;
@@ -13,6 +13,7 @@ public class WorkOut {
     private int reps;
     private int weight;
     private String userId;
+    private String rowId;
 
     public WorkOut() {
 
@@ -56,6 +57,15 @@ public class WorkOut {
         return userId;
     }
 
+    public ObjectId getId() { return id; }
+
+    public void setRowId() {
+        rowId = id.toString();
+    }
+
+    public String getRowId() {
+        return rowId;
+    }
 
 
 }

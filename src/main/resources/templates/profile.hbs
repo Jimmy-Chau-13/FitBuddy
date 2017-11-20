@@ -11,22 +11,73 @@
         <h1> PLEASE SIGN IN DUDE </h1>
     {{/if}}
     <h2> ADD A WORKOUT </h2>
-    <form action="/add" method="post">
-        <input type="text" placeholder="Exercise" name="exercise" required>
-        <input type="number" placeholder="Sets" name="sets" required>
-        <input type="number" placeholder="Reps" name="reps" required>
-        <input type="number" placeholder="Weight" name="weight" required>
-        <input type="date" placeholder="Date" name="date">
-        <button>Submit</button>
+    <form>
+        <input type="text" placeholder="Exercise" name="exercise" id="exercise" required>
+        <input type="number" placeholder="Sets" name="sets" id="sets" required>
+        <input type="number" placeholder="Reps" name="reps" id="reps" required>
+        <input type="number" placeholder="Weight" name="weight" id="weight" required>
+        <input type="button" id="saveBtn" name="saveBtn" value="SAVE">
     </form>
+    <p id="logModal" style="color:red;"></p>
     <h2> ALL CURRENT WORKOUTS</h2>
-    <ul>
-        <li>exercise <tab1></tab1> sets <tab1></tab1> reps <tab1></tab1> weight</li>
+
+    <table>
+        <tr>
+            <th>EXERCISE</th>
+            <th>SETS</th>
+            <th>REPS</th>
+            <th>WEIGHT</th>
+        </tr>
         {{#each workout}}
-            <li>{{exercise}} <tab1></tab1>  {{sets}} <tab1></tab1> {{reps}} <tab1></tab1> {{weight}} </li>
+            <tr data-id={{rowId}}>
+                <td>{{exercise}}</td>
+                <td>{{sets}}</td>
+                <td>{{reps}}</td>
+                <td>{{weight}}</td>
+                <td><button class="deleteBtn">Delete</button> </td>
+            </tr>
         {{/each}}
-    </ul>
+    </table>
+
 
 {{/partial}}
 
 {{> base.hbs}}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#saveBtn").on("click", function(){
+           console.log("save button clicked");
+           var data = {};
+           data.exercise = $("#exercise").val();
+           data.sets = $("#sets").val();
+           data.reps = $("#reps").val();
+           data.weight = $("#weight").val();
+           saveNew(data);
+        });
+    });
+
+    $(".deleteBtn").on("click", function () {
+
+        var id = $(this).closest("tr").attr("data-id");
+        console.log("Workout id is " + id);
+        $.ajax({
+            type: "post",
+            url: "/delete",
+            data: {"id":id},
+            success: function(response) {
+                $("#logModal").html("<strong>DELETED</strong>");
+                console.log("response location = " + response.target);
+                if(response.target) {
+                    window.location.href = response.target;
+                }
+            },
+            error: function() {
+                $("#logModal").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");
+            }
+        });
+
+    });
+
+</script>
