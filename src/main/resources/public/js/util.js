@@ -18,3 +18,32 @@ function saveNew(data) {
         }
     });
 }
+
+function openModal(button){
+    var mode = button.attr("name");
+    var modal = $('#workoutModal');
+
+    if(mode == "add" ) {
+        console.log("ADD BUTTON CLICKED");
+        $(".modal-title").html("Add a New Workout");
+    }
+
+    else {
+        console.log("EDIT BUTTON CLICKED");
+        $(".modal-title").html("Edit a Workout");
+        var exercise = button.data('exercise');
+        var sets = button.data('sets');
+        var reps = button.data('reps');
+        var weight = button.data('weight');
+        var id = button.data('id');
+
+        modal.find('#editExercise').val(exercise);
+        modal.find('#editSets').val(sets);
+        modal.find('#editReps').val(reps);
+        modal.find('#editWeight').val(weight);
+        modal.find('#editId').val(id);
+    }
+
+    modal.find('#mode').val(mode);
+
+}

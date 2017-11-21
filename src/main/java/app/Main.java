@@ -40,14 +40,12 @@ public class Main {
         post(Path.Web.DO_LOGOUT, (req,res) -> AuthController.handleLogout(req,res));
 
         // CRUD operations for work outs
-        post(Path.Web.ADD_WORKOUT, (req,res) -> WorkOutController.handleNewWorkout(req,res));
+        post(Path.Web.ADD_WORKOUT, (req,res) -> WorkOutController.handleUpdateWorkout(req,res));
 
         get(Path.Web.GET_PROFILE_PAGE, (req,res) -> WorkOutController.serveProfile(req,res)
                 ,new HandlebarsTemplateEngine());
 
         post(Path.Web.DELETE_WORKOUT, (req,res) -> WorkOutController.handleDeleteWorkout(req,res));
-
-        post(Path.Web.EDIT_WORKOUT, (req,res) -> WorkOutController.handleEditWorkout(req,res));
 
 
     } //EOF MAIN
