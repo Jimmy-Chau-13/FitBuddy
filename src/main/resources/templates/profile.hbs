@@ -29,15 +29,46 @@
             <th>WEIGHT</th>
         </tr>
         {{#each workout}}
-            <tr data-id={{rowId}}>
+            <tr data-id={{rowId}} data-exercise={{exercise}}>
                 <td>{{exercise}}</td>
                 <td>{{sets}}</td>
                 <td>{{reps}}</td>
                 <td>{{weight}}</td>
+                <td><button type="button" data-toggle="modal" data-target="#editModal" data-exercise="{{exercise}}"
+                            data-sets="{{sets}}" data-reps="{{reps}}" data-weight="{{weight}}" data-id="{{rowId}}"
+                            class="editBtn">Edit</button> </td>
                 <td><button class="deleteBtn">Delete</button> </td>
             </tr>
         {{/each}}
     </table>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="editModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Workout</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="text" placeholder="Exercise" name="exercise" id="editExercise" value="" required >
+                    <input type="number" placeholder="Sets" name="sets" id="editSets" value="" required>
+                    <input type="number" placeholder="Reps" name="reps" id="editReps" value="" required>
+                    <input type="number" placeholder="Weight" name="weight" id="editWeight" value="" required>
+                    <input type="hidden" id="editId" name="viewId"  value="" />
+                    <input type="button" id="confirmBtn" name="confirmBtn" value="CONFIRM">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 
 
 {{/partial}}
@@ -48,36 +79,102 @@
     $(document).ready(function () {
 
         $("#saveBtn").on("click", function(){
-           console.log("save button clicked");
+           console.log("SAVE BUTTON");
            var data = {};
            data.exercise = $("#exercise").val();
            data.sets = $("#sets").val();
            data.reps = $("#reps").val();
            data.weight = $("#weight").val();
-           saveNew(data);
-        });
-    });
-
-    $(".deleteBtn").on("click", function () {
-
-        var id = $(this).closest("tr").attr("data-id");
-        console.log("Workout id is " + id);
-        $.ajax({
-            type: "post",
-            url: "/delete",
-            data: {"id":id},
-            success: function(response) {
-                $("#logModal").html("<strong>DELETED</strong>");
-                console.log("response location = " + response.target);
-                if(response.target) {
-                    window.location.href = response.target;
+           console.log("Saving = \n" + JSON.stringify(data));
+           $.ajax({
+               type: "post",
+               url: "/add",
+               data: data,
+               success: function(response) {
+                   $("#logModal").html("<strong>WORKOUT SAVED SUCCESSFULLY!</strong>");
+                   console.log("response location = " + response.target);
+                   if(response.target) {
+                       window.location.href = response.target;
+                   }
+                },
+                error: function() {
+                    $("#logModal").html("<strong>OOPS! UNABLE TO SAVE CONTACT! PLEASE TRY AGAIN</strong>");
                 }
-            },
-            error: function() {
-                $("#logModal").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");
-            }
+            });
         });
 
+        $(".deleteBtn").on("click", function () {
+            console.log("DELETE BUTTON");
+            var data = {};
+            data.workoutId = $(this).closest("tr").attr("data-id");
+            console.log("DELETING = " + data.workoutId );
+            $.ajax({
+                type: "post",
+                url: "/delete",
+                data: data,
+                success: function(response) {
+                    $("#logModal").html("<strong>DELETED</strong>");
+                    console.log("response location = " + response.target);
+                    if(response.target) {
+                        window.location.href = response.target;
+                    }
+                },
+                error: function() {
+                    $("#logModal").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");
+                }
+            });
+
+        });
+
+
+        $('#editModal').on('show.bs.modal', function (event) {
+            console.log("EDIT BUTTON");
+            var button = $(event.relatedTarget);
+            var exercise = button.data('exercise');
+            var sets = button.data('sets');
+            var reps = button.data('reps');
+            var weight = button.data('weight');
+            var id = button.data('id');
+            var modal = $(this);
+
+            modal.find('#editExercise').val(exercise);
+            modal.find('#editSets').val(sets);
+            modal.find('#editReps').val(reps);
+            modal.find('#editWeight').val(weight);
+            modal.find('#editId').val(id);
+        });
+
+        $("#confirmBtn").on("click", function(){
+            console.log("CONFIRMING EDIT");
+            var data = {};
+            data.exercise = $("#editExercise").val();
+            data.sets = $("#editSets").val();
+            data.reps = $("#editReps").val();
+            data.weight = $("#editWeight").val();
+            data.editId = $("#editId").val();
+
+            console.log("Editing = \n" + JSON.stringify(data));
+
+            $.ajax({
+                type: "post",
+                url: "/edit",
+                data: data,
+                success: function(response) {
+                    $("#logModal").html("<strong>EDITING</strong>");
+                    console.log("response location = " + response.target);
+                    if(response.target) {
+                        window.location.href = response.target;
+                    }
+                },
+                error: function() {
+                    $("#logModal").html("<strong>OOPS! UNABLE TO EDIT WORKOUT! PLEASE TRY AGAIN</strong>");
+                }
+            });
+        });
+
+
     });
+
+
 
 </script>

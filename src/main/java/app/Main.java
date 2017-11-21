@@ -29,9 +29,6 @@ public class Main {
         get(Path.Web.GET_REGISTER_PAGE, (req,res) -> AuthController.serveRegisterPage(req,res)
                 , new HandlebarsTemplateEngine());
 
-        get(Path.Web.GET_PROFILE_PAGE, (req,res) -> WorkOutController.serveProfile(req,res)
-                ,new HandlebarsTemplateEngine());
-
 
         // Handle Authentication
         post(Path.Web.DO_SIGNIN, (req,res) -> AuthController.handleSignIn(req,res));
@@ -44,7 +41,13 @@ public class Main {
 
         // CRUD operations for work outs
         post(Path.Web.ADD_WORKOUT, (req,res) -> WorkOutController.handleNewWorkout(req,res));
+
+        get(Path.Web.GET_PROFILE_PAGE, (req,res) -> WorkOutController.serveProfile(req,res)
+                ,new HandlebarsTemplateEngine());
+
         post(Path.Web.DELETE_WORKOUT, (req,res) -> WorkOutController.handleDeleteWorkout(req,res));
+
+        post(Path.Web.EDIT_WORKOUT, (req,res) -> WorkOutController.handleEditWorkout(req,res));
 
 
     } //EOF MAIN

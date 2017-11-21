@@ -37,7 +37,6 @@ public class WorkOutController {
         }
 
         if(userId != null && !userId.isEmpty()) {
-            System.out.println("USER: " + userId);
             String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
             String email = req.session(false).attribute(Path.Attribute.EMAIL).toString();
             HashMap<String,Object> model = fetchWorkOuts(userId);
@@ -50,26 +49,39 @@ public class WorkOutController {
     }
 
     public static String handleNewWorkout (Request req, Response res) {
-
         res.type("application/json");
         HashMap<String, Object> model = new HashMap<>();
+
         String userId = req.session(false).attribute(Path.Attribute.USERID);
+
         String exercise = Jsoup.parse(req.queryParams("exercise")).text();
         int sets = Integer.parseInt(Jsoup.parse(req.queryParams("sets")).text());
         int reps = Integer.parseInt(Jsoup.parse(req.queryParams("reps")).text());
         int weight = Integer.parseInt(Jsoup.parse(req.queryParams("weight")).text());
         WorkOut workout = new WorkOut(exercise,sets,reps,weight);
+
         logger.info("Adding workout: " + workout.getExercise() +
                         "\nSets " + workout.getSets() +
                         "\nReps " +workout.getReps() +
                         "\nWeight " + workout.getWeight());
-        workout.setUserId(userId);
-        datastore = dbHelper.getDataStore();
-        datastore.save(workout);
-        res.status(200);
-        model.put("target", Path.Web.GET_PROFILE_PAGE );
-        model.put("code", 200);
-        model.put("status", "Added workout Successfully");
+
+        if(userId != null && !userId.isEmpty()) {
+            workout.setUserId(userId);
+            logger.info("Where user id is " + userId);
+            datastore = dbHelper.getDataStore();
+            datastore.save(workout);
+            res.status(200);
+            model.put("target", Path.Web.GET_PROFILE_PAGE);
+            model.put("code", 200);
+            model.put("status", "Added workout Successfully");
+        }
+
+        else {
+            logger.warning("Can not add workout, user id is invalid");
+            res.status(500);
+            model.put("code", 500);
+        }
+
         String json = gson.toJson(model);
         logger.info("json to be returned = " + json);
         return json;
@@ -77,13 +89,15 @@ public class WorkOutController {
 
     public static String handleDeleteWorkout(Request req, Response res) {
         res.type("application/json");
-        String id = req.queryParams("id");
+        String workoutId = Jsoup.parse(req.queryParams("workoutId")).text();
         String userId = req.session(false).attribute(Path.Attribute.USERID);
-        if(id != null && !id.isEmpty() && userId != null && !userId.isEmpty()) {
+        logger.info("Workout id to be deleted: " + workoutId +
+                "\nUser of workout " + userId);
 
+        if(workoutId != null && !workoutId.isEmpty() && userId != null && !userId.isEmpty()) {
             Datastore datastore = dbHelper.getDataStore();
             WorkOut workout = datastore.createQuery(WorkOut.class)
-                    .field("id").equal(new ObjectId(id))
+                    .field("id").equal(new ObjectId(workoutId))
                     .field("userId").equal(userId)
                     .get();
 
@@ -94,13 +108,13 @@ public class WorkOutController {
             }
 
             else {
-                logger.info("UNABLE TO DELETE WORKOUT ");
+                logger.info("UNABLE TO DELETE WORKOUT b/c can not find workout in db ");
                 res.status(500);
             }
         }
 
         else {
-            logger.info("UNABLE TO DELETE WORKOUT ");
+            logger.info("UNABLE TO DELETE WORKOUT b/c user or workout id is invalid ");
             res.status(500);
         }
 
@@ -109,6 +123,44 @@ public class WorkOutController {
         String json = gson.toJson(model);
         return json;
 
+    }
+
+    public static String handleEditWorkout(Request req, Response res) {
+        HashMap<String, Object> model = new HashMap<>();
+
+        String userId = req.session(false).attribute(Path.Attribute.USERID);
+        String exercise = Jsoup.parse(req.queryParams("exercise")).text();
+        int sets = Integer.parseInt(Jsoup.parse(req.queryParams("sets")).text());
+        int reps = Integer.parseInt(Jsoup.parse(req.queryParams("reps")).text());
+        int weight = Integer.parseInt(Jsoup.parse(req.queryParams("weight")).text());
+        String workoutId = Jsoup.parse(req.queryParams("editId")).text();
+        WorkOut workout = new WorkOut(exercise, sets, reps, weight);
+
+        logger.info("Editing workout: " + workout.getExercise() +
+                "\nSets " + workout.getSets() +
+                "\nReps " +workout.getReps() +
+                "\nWeight " + workout.getWeight());
+
+        logger.info("Workout id to be edited: " + workoutId +
+                "\nUser of workout " + userId);
+
+        if (userId != null && !userId.isEmpty() && workoutId != null && !workoutId.isEmpty()) {
+            workout.setId(workoutId);
+            workout.setUserId(userId);
+            datastore = dbHelper.getDataStore();
+            datastore.save(workout);
+            res.status(200);
+        }
+
+        else {
+            res.status(500);
+        }
+
+        res.type("application/json");
+        model.put("target", Path.Web.GET_PROFILE_PAGE );
+
+        String json = gson.toJson(model);
+        return json;
     }
 
     private static HashMap<String,Object> fetchWorkOuts(String userId) {
