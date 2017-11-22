@@ -14,7 +14,16 @@
     <input type="button" data-toggle="modal" data-target="#workoutModal" id="addBtn"
            name="add" value="ADD WORKOUT">
     <p id="logModal" style="color:red;"></p>
-    <h2> ALL CURRENT WORKOUTS</h2>
+
+    <div id="weekPickerDiv">
+        <h1> Pick a Day You want to see</h1>
+        <form>
+            <input type="text" placeholder="Date" id="weekPicker" value={{date}}>
+            <button id="showBtn">SHOW</button>
+        </form>
+    </div>
+
+    <h2> A WEEKS WORKOUTS</h2>
 
     <table>
         <tr>
@@ -74,10 +83,12 @@
 {{> base.hbs}}
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function (response) {
 
         $("#date").datepicker();
         $("#date").datepicker('setDate', new Date());
+
+        $("#weekPicker").datepicker();
 
         $('#workoutModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
@@ -137,7 +148,24 @@
                 }
             });
         });
+
+        $('#showBtn').on('click', function () {
+            var dateToShow = $("#weekPicker").val();
+            console.log("DATE TO SHOW IS  " + dateToShow);
+            var data = {"dateToShow":dateToShow};
+            $.ajax({
+                type: "get",
+                url: "/profile",
+                data: data,
+                success: function(response) {
+                },
+                error: function() {
+                }
+            });
+        });
+
     });
+
 
 
 

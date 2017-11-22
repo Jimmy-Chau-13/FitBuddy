@@ -3,6 +3,8 @@ package app.auth;
 
 import app.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSessionSHA256;
 import app.util.Path;
+import app.util.dateHelper;
+import app.workout.WorkOutController;
 import com.google.gson.Gson;
 import com.nimbusds.srp6.SRP6CryptoParams;
 import org.jsoup.Jsoup;
@@ -126,7 +128,7 @@ public class AuthController {
 
     private static String doAuth(Request req, Response res) {
         res.type("application/json");
-        HashMap<String, String> model = new HashMap<>();
+        HashMap<String, Object> model = new HashMap<>();
         String A = Jsoup.parse(req.queryParams("A")).text();
         String M1 = Jsoup.parse(req.queryParams("M1")).text();
         logger.info("Client Credentials Sent to Authenticate = \n: M1 = " + M1 + " \nA = " + A);
@@ -154,6 +156,7 @@ public class AuthController {
             model.put("code", "200");
             model.put("status", "success");
             model.put("target", Path.Web.GET_PROFILE_PAGE);
+
 
             String respjson = gson.toJson(model);
             logger.info("Final response sent By doAuth to client = " + respjson);

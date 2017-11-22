@@ -2,6 +2,7 @@ package app.workout;
 
 import app.db.DataBaseHelper;
 import app.util.Path;
+import app.util.dateHelper;
 import com.google.gson.Gson;
 import org.bson.types.ObjectId;
 import org.jsoup.Jsoup;
@@ -22,6 +23,7 @@ public class WorkOutController {
     static Datastore datastore;
     static Logger logger = Logger.getLogger("WorkOutController.class");
     static Gson gson = new Gson();
+    static String datePicker = dateHelper.getCurrentDate();
 
     public WorkOutController() {
 
@@ -43,8 +45,13 @@ public class WorkOutController {
         if(userId != null && !userId.isEmpty()) {
             String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
             String email = req.session(false).attribute(Path.Attribute.EMAIL).toString();
-            HashMap<String,Object> model = fetchWorkOuts(userId);
+            Date newDatePicker = dateHelper.convertStringToDate(req.queryParams("dateToShow"));
+            if(newDatePicker != null)
+                datePicker = dateHelper.convertDateToString(newDatePicker);
+            HashMap<String,Object> model = fetchWorkOuts(userId, datePicker);
             model.put("username", username);
+            model.put("date",datePicker);
+            System.out.println("SHOWING: " + datePicker);
             return new ModelAndView(model, Path.Template.PROFILE);
         }
 
@@ -156,13 +163,18 @@ public class WorkOutController {
 
     }
 
-    private static HashMap<String,Object> fetchWorkOuts(String userId) {
+    private static HashMap<String,Object> fetchWorkOuts(String userId, String datePicker) {
+
+        Date startDate = dateHelper.getStartDate(dateHelper.convertStringToDate(datePicker));
+        Date endDate = dateHelper.getEndDate(startDate);
 
         // Grab all workouts owned by current user
         datastore = dbHelper.getDataStore();
+
         List<WorkOut> list = datastore.createQuery(WorkOut.class)
-                .field("userId")
-                .equal(userId)
+                .field("userId").equal(userId)
+                .field("date").greaterThanOrEq(startDate)
+                .field("date").lessThanOrEq(endDate)
                 .asList();
 
         for(int i = 0; i < list.size();i++) {
