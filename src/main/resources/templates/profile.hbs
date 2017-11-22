@@ -17,10 +17,11 @@
 
     <div id="weekPickerDiv">
         <h1> Pick a Day You want to see</h1>
-        <form>
-            <input type="text" placeholder="Date" id="weekPicker" value={{date}}>
+        <form action="/profile" method="get">
+            <input type="text" placeholder="Date" id="weekPicker" name="dateToShow" value={{date}}>
             <button id="showBtn">SHOW</button>
         </form>
+
     </div>
 
     <h2> A WEEKS WORKOUTS</h2>
@@ -145,21 +146,6 @@
                 },
                 error: function() {
                     $("#logModal").html("<strong>OOPS! UNABLE TO SUBMIT WORKOUT! PLEASE TRY AGAIN</strong>");
-                }
-            });
-        });
-
-        $('#showBtn').on('click', function () {
-            var dateToShow = $("#weekPicker").val();
-            console.log("DATE TO SHOW IS  " + dateToShow);
-            var data = {"dateToShow":dateToShow};
-            $.ajax({
-                type: "get",
-                url: "/profile",
-                data: data,
-                success: function(response) {
-                },
-                error: function() {
                 }
             });
         });
