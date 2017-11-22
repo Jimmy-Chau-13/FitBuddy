@@ -4,6 +4,10 @@ package app.workout;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Id;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class WorkOut {
 
     @Id
@@ -14,17 +18,16 @@ public class WorkOut {
     private int weight;
     private String userId;
     private String rowId;
+    private Date date;
 
-    public WorkOut() {
+    public WorkOut() { }
 
-    }
-
-    public WorkOut(String exercise, int sets, int reps, int weight) {
-
+    public WorkOut(String exercise, int sets, int reps, int weight, Date date) {
         this.exercise = exercise;
         this.sets = sets;
         this.reps = reps;
         this.weight = weight;
+        this.date = date;
     }
 
     public void setId(String id) {
@@ -33,8 +36,14 @@ public class WorkOut {
         }
     }
 
+    public ObjectId getId() { return id; }
+
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     public String getExercise() {
@@ -53,12 +62,6 @@ public class WorkOut {
         return weight;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public ObjectId getId() { return id; }
-
     public void setRowId() {
         rowId = id.toString();
     }
@@ -67,5 +70,14 @@ public class WorkOut {
         return rowId;
     }
 
+    public String getDate() {
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+        String workoutDate = df.format(date);
+        return workoutDate;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
 }

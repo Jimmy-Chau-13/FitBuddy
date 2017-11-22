@@ -29,9 +29,10 @@
                 <td>{{sets}}</td>
                 <td>{{reps}}</td>
                 <td>{{weight}}</td>
+                <td>{{date}}</td>
                 <td><button type="button" data-toggle="modal" data-target="#workoutModal" data-exercise="{{exercise}}"
                             data-sets="{{sets}}" data-reps="{{reps}}" data-weight="{{weight}}" data-id="{{rowId}}"
-                            class="editBtn" name="edit">Edit</button> </td>
+                            data-date="{{date}}" class="editBtn" name="edit">Edit</button> </td>
                 <td><button class="deleteBtn">Delete</button> </td>
             </tr>
         {{/each}}
@@ -53,6 +54,7 @@
                     <input type="number" placeholder="Sets" name="sets" id="editSets" value="" required>
                     <input type="number" placeholder="Reps" name="reps" id="editReps" value="" required>
                     <input type="number" placeholder="Weight" name="weight" id="editWeight" value="" required>
+                    <input type="text" placeholder="Date" id="date" value="" required>
                     <input type="hidden" id="editId" value="" />
                     <input type="hidden" id="mode" value="" />
                     <input type="button" id="confirmBtn" name="confirmBtn" value="CONFIRM">
@@ -73,6 +75,9 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+
+        $("#date").datepicker();
+        $("#date").datepicker('setDate', new Date());
 
         $('#workoutModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
@@ -111,6 +116,7 @@
             data.reps = $("#editReps").val();
             data.weight = $("#editWeight").val();
             data.editId = $("#editId").val();
+            data.date = $("#date").val();
             data.mode = $('#mode').val();
 
             console.log("Submitting = \n" + JSON.stringify(data));
@@ -131,8 +137,6 @@
                 }
             });
         });
-
-
     });
 
 

@@ -36,14 +36,17 @@ function openModal(button){
         var reps = button.data('reps');
         var weight = button.data('weight');
         var id = button.data('id');
+        var date = button.data('date');
 
         modal.find('#editExercise').val(exercise);
         modal.find('#editSets').val(sets);
         modal.find('#editReps').val(reps);
         modal.find('#editWeight').val(weight);
         modal.find('#editId').val(id);
+        modal.find('#date').datepicker('setDate', date);
     }
 
     modal.find('#mode').val(mode);
 
 }
+

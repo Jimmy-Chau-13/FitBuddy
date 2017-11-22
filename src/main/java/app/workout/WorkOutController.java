@@ -8,6 +8,10 @@ import org.jsoup.Jsoup;
 import org.mongodb.morphia.Datastore;
 import spark.*;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -58,13 +62,23 @@ public class WorkOutController {
         int sets = Integer.parseInt(Jsoup.parse(req.queryParams("sets")).text());
         int reps = Integer.parseInt(Jsoup.parse(req.queryParams("reps")).text());
         int weight = Integer.parseInt(Jsoup.parse(req.queryParams("weight")).text());
+
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+        Date date = new Date();
+        try {
+            date = df.parse(req.queryParams("date"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         String mode = Jsoup.parse(req.queryParams("mode")).text();
-        WorkOut workout = new WorkOut(exercise,sets,reps,weight);
+        WorkOut workout = new WorkOut(exercise,sets,reps,weight,date);
 
         logger.info(mode + " workout: " + workout.getExercise() +
                         "\nSets " + workout.getSets() +
                         "\nReps " +workout.getReps() +
-                        "\nWeight " + workout.getWeight());
+                        "\nWeight " + workout.getWeight() +
+                        "\nDate " + df.format(date));
 
         if(userId != null && !userId.isEmpty()) {
             workout.setUserId(userId);
