@@ -1,3 +1,5 @@
+{{#partial "title"}} YOUR PROFILE{{/partial}}
+
 {{#partial "content"}}
     <div id="topMenu">
         <form action ="/logout" method = "post">
@@ -21,33 +23,7 @@
             <input type="text" placeholder="Date" id="weekPicker" name="dateToShow" value={{date}}>
             <button id="showBtn">SHOW</button>
         </form>
-
     </div>
-
-    <h2> A WEEKS WORKOUTS</h2>
-
-    <table>
-        <tr>
-            <th>EXERCISE</th>
-            <th>SETS</th>
-            <th>REPS</th>
-            <th>WEIGHT</th>
-        </tr>
-        {{#each workout}}
-            <tr data-id={{rowId}} data-exercise={{exercise}}>
-                <td>{{exercise}}</td>
-                <td>{{sets}}</td>
-                <td>{{reps}}</td>
-                <td>{{weight}}</td>
-                <td>{{date}}</td>
-                <td><button type="button" data-toggle="modal" data-target="#workoutModal" data-exercise="{{exercise}}"
-                            data-sets="{{sets}}" data-reps="{{reps}}" data-weight="{{weight}}" data-id="{{rowId}}"
-                            data-date="{{date}}" class="editBtn" name="edit">Edit</button> </td>
-                <td><button class="deleteBtn">Delete</button> </td>
-            </tr>
-        {{/each}}
-    </table>
-
 
     <!-- Modal -->
     <div class="modal fade" id="workoutModal" role="dialog">
@@ -77,10 +53,8 @@
         </div>
     </div>
 
-
-
+    {{> table.hbs}}
 {{/partial}}
-
 {{> base.hbs}}
 
 <script type="text/javascript">

@@ -66,4 +66,10 @@ public class dateHelper {
         return df.format(date);
     }
 
+    public static int getDayOfTheWeek(String date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(convertStringToDate(date));
+        return c.get(Calendar.DAY_OF_WEEK);
+    }
+
 }

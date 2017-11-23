@@ -12,9 +12,7 @@ import spark.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class WorkOutController {
@@ -177,15 +175,58 @@ public class WorkOutController {
                 .field("date").lessThanOrEq(endDate)
                 .asList();
 
+        HashMap<String,Object> model = organizeByDay(list);
+        String json = gson.toJson(model);
+        logger.info("json to be returned = " + json);
+        return model;
+    }
+
+    private static HashMap<String,Object> organizeByDay(List<WorkOut> list) {
+        List<WorkOut> monday = new ArrayList<>();
+        List<WorkOut> tuesday = new ArrayList<>();
+        List<WorkOut> wednesday = new ArrayList<>();
+        List<WorkOut> thursday = new ArrayList<>();
+        List<WorkOut> friday = new ArrayList<>();
+        List<WorkOut> saturday = new ArrayList<>();
+        List<WorkOut> sunday = new ArrayList<>();
+
         for(int i = 0; i < list.size();i++) {
             WorkOut workout = list.get(i);
             workout.setRowId();
+            int dayOfWeek = dateHelper.getDayOfTheWeek(workout.getDate());
+            switch (dayOfWeek) {
+                case Calendar.MONDAY:
+                    monday.add(workout);
+                    break;
+                case Calendar.TUESDAY:
+                    tuesday.add(workout);
+                    break;
+                case Calendar.WEDNESDAY:
+                    wednesday.add(workout);
+                    break;
+                case Calendar.THURSDAY:
+                    thursday.add(workout);
+                    break;
+                case Calendar.FRIDAY:
+                    friday.add(workout);
+                    break;
+                case Calendar.SATURDAY:
+                    saturday.add(workout);
+                    break;
+                case Calendar.SUNDAY:
+                    sunday.add(workout);
+                    break;
+            }
         }
 
         HashMap<String,Object> model = new HashMap<>();
-        model.put("workout", list);
-        String json = gson.toJson(model);
-        logger.info("json to be returned = " + json);
+        model.put("monday", monday);
+        model.put("tuesday", tuesday);
+        model.put("wednesday", wednesday);
+        model.put("thursday", thursday);
+        model.put("friday", friday);
+        model.put("saturday", saturday);
+        model.put("sunday", sunday);
         return model;
     }
 
