@@ -3,8 +3,6 @@ package app.auth;
 
 import app.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSessionSHA256;
 import app.util.Path;
-import app.util.dateHelper;
-import app.workout.WorkOutController;
 import com.google.gson.Gson;
 import com.nimbusds.srp6.SRP6CryptoParams;
 import org.jsoup.Jsoup;
@@ -157,7 +155,6 @@ public class AuthController {
             model.put("status", "success");
             model.put("target", Path.Web.GET_PROFILE_PAGE);
 
-
             String respjson = gson.toJson(model);
             logger.info("Final response sent By doAuth to client = " + respjson);
             res.status(200);
@@ -169,9 +166,18 @@ public class AuthController {
         model.put("code", "401");
         model.put("status", "Error! Invalid Login Credentials");
         return gson.toJson(model);
+    }
 
-
-
+    // Check if current session is already logged in else return to login page
+    public static String checkSessionHasUser(Request req) {
+        String userId;
+        try {
+            userId = req.session(false).attribute(Path.Attribute.USERID);
+            return userId;
+        }
+        catch(Exception e) {
+            return null;
+        }
     }
 
 }

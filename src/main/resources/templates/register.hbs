@@ -3,15 +3,31 @@
 {{#partial "content"}}
     <div id="signupDiv">
         <form action="/register" method="post" id="signupForm">
-            <input type="text" placeholder="Email" name="email" id="email" required>
-            <input type="text" placeholder="username" name="username" id="username" required>
-            <input type="password" placeholder="password" name="password1" id="password1" required>
-            <input type="password" placeholder="password" name="password2" id="password2" required>
-            <input type="submit" name="signupBt" id="signupBt" value="Sign Up" />
+            <div class="row">
+                <p class="loginP">Email:</p>
+                <input type="text" placeholder="Email" name="email" id="email" required>
+            </div>
+            <div class="row">
+                <p class="loginP">Username:</p>
+                <input type="text" placeholder="username" name="username" id="username" required>
+            </div>
+            <div class="row">
+                <p class="loginP">Password</p>
+                <input type="password" placeholder="password" name="password1" id="password1" required>
+            </div>
+            <div class="row">
+                <p class="loginP">Confirm Password</p>
+                <input type="password" placeholder="password" name="password2" id="password2" required>
+            </div>
+            <div class="row">
+                <p class="loginP"></p>
+                <input type="submit" name="signupBt" id="signupBt" value="Sign Up" class="indexButton" />
+            </div>
         </form>
         <p id="log" style="color:red;"></p>
         <a id="loginLnk" href="/">Already have an account? Log in Here</a>
     </div>
+
     <div id="loginDiv">
         <p> Nooice! Account Created!</p>
         <a id="loginLnk" href="/">Log in Here</a>

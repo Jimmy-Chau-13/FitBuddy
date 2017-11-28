@@ -6,54 +6,21 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class dateHelper {
+public class DateHelper {
 
-
-    public static Date getStartDate(Date datePicker) {
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(datePicker);
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-        String startDate = df.format(cal.getTime());
-        System.out.println("first day of the week: " + startDate);
-
-        try {
-            return df.parse(startDate);
-        } catch(ParseException e) {
-            return null;
-        }
-
-    }
-
-    public static Date getEndDate(Date startDate) {
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(startDate);
-        cal.add(Calendar.DATE,6);
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-        String endDate = df . format(cal.getTime());
-        System.out.println("last day of the week: " + endDate);
-
-        try {
-            return df.parse(endDate);
-        } catch(ParseException e) {
-            return null;
-        }
-    }
-
-    public static String getCurrentDate() {
-        Calendar cal = Calendar.getInstance();
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-        String currentDate = df.format(cal.getTime());
-        System.out.println("Current Date: " + currentDate);
-        return currentDate;
-    }
-
-    public static Date convertStringToDate(String date) {
+    /*
+     * @format == 0 then MM/dd/yyyy
+     * @format == 1 then yyyy-MM-dd
+     */
+    public static Date convertStringToDate(String date, int format) {
         if(date == null || date.isEmpty())
             return null;
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+        DateFormat df = new SimpleDateFormat();
+        if(format == 0)
+             df = new SimpleDateFormat("MM/dd/yyyy");
+        if(format == 1)
+             df = new SimpleDateFormat("yyyy-MM-dd");
+
         try {
             return df.parse(date);
         } catch(ParseException e) {
@@ -66,10 +33,48 @@ public class dateHelper {
         return df.format(date);
     }
 
-    public static int getDayOfTheWeek(String date) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(convertStringToDate(date));
-        return c.get(Calendar.DAY_OF_WEEK);
+
+    public static String dayToString(int value) {
+        String day = "";
+        switch (value) {
+            case 1:
+                day = "Sunday";
+                break;
+            case 2:
+                day = "Monday";
+                break;
+            case 3:
+                day = "Tuesday";
+                break;
+            case 4:
+                day = "Wednesday";
+                break;
+            case 5:
+                day = "Thursday";
+                break;
+            case 6:
+                day = "Friday";
+                break;
+            case 7:
+                day = "Saturday";
+                break;
+        }
+        return day;
+    }
+
+    public static Date getStartDate(Date datePicker, int previous) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(datePicker);
+        cal.add(Calendar.DATE,-previous);
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+        String startDate = df . format(cal.getTime());
+        System.out.println("Start Date " + startDate);
+
+        try {
+            return df.parse(startDate);
+        } catch(ParseException e) {
+            return null;
+        }
     }
 
 }

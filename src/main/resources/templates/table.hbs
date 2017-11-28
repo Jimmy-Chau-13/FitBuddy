@@ -1,58 +1,13 @@
-<h1>MONDAY</h1>
-<table>
-    <tr>
-        <th>EXERCISE</th>
-        <th>SETS</th>
-        <th>REPS</th>
-        <th>WEIGHT</th>
-    </tr>
-    {{#each monday}}
-        <tr data-id={{rowId}} data-exercise={{exercise}}>
-            <td>{{exercise}}</td>
-            <td>{{sets}}</td>
-            <td>{{reps}}</td>
-            <td>{{weight}}</td>
-            <td>{{date}}</td>
-            <td><button type="button" data-toggle="modal" data-target="#workoutModal" data-exercise="{{exercise}}"
-                        data-sets="{{sets}}" data-reps="{{reps}}" data-weight="{{weight}}" data-id="{{rowId}}"
-                        data-date="{{date}}" class="editBtn" name="edit">Edit</button> </td>
-            <td><button class="deleteBtn">Delete</button> </td>
-        </tr>
-    {{/each}}
-</table>
 
-<h1>TUESDAY</h1>
-<table>
-    <tr>
-        <th>EXERCISE</th>
-        <th>SETS</th>
-        <th>REPS</th>
-        <th>WEIGHT</th>
-    </tr>
-    {{#each tueday }}
-        <tr data-id={{rowId}} data-exercise={{exercise}}>
-            <td>{{exercise}}</td>
-            <td>{{sets}}</td>
-            <td>{{reps}}</td>
-            <td>{{weight}}</td>
-            <td>{{date}}</td>
-            <td><button type="button" data-toggle="modal" data-target="#workoutModal" data-exercise="{{exercise}}"
-                        data-sets="{{sets}}" data-reps="{{reps}}" data-weight="{{weight}}" data-id="{{rowId}}"
-                        data-date="{{date}}" class="editBtn" name="edit">Edit</button> </td>
-            <td><button class="deleteBtn">Delete</button> </td>
-        </tr>
-    {{/each}}
-</table>
 
-<h1>WEDNESDAY</h1>
-<table>
+<table id="workoutTable">
     <tr>
         <th>EXERCISE</th>
         <th>SETS</th>
         <th>REPS</th>
         <th>WEIGHT</th>
     </tr>
-    {{#each wednesday }}
+    {{#each workout}}
         <tr data-id={{rowId}} data-exercise={{exercise}}>
             <td>{{exercise}}</td>
             <td>{{sets}}</td>
@@ -66,95 +21,4 @@
         </tr>
     {{/each}}
 </table>
-
-<h1>THURSDAY</h1>
-<table>
-    <tr>
-        <th>EXERCISE</th>
-        <th>SETS</th>
-        <th>REPS</th>
-        <th>WEIGHT</th>
-    </tr>
-    {{#each thursday}}
-        <tr data-id={{rowId}} data-exercise={{exercise}}>
-            <td>{{exercise}}</td>
-            <td>{{sets}}</td>
-            <td>{{reps}}</td>
-            <td>{{weight}}</td>
-            <td>{{date}}</td>
-            <td><button type="button" data-toggle="modal" data-target="#workoutModal" data-exercise="{{exercise}}"
-                        data-sets="{{sets}}" data-reps="{{reps}}" data-weight="{{weight}}" data-id="{{rowId}}"
-                        data-date="{{date}}" class="editBtn" name="edit">Edit</button> </td>
-            <td><button class="deleteBtn">Delete</button> </td>
-        </tr>
-    {{/each}}
-</table>
-
-<h1>FRIDAY</h1>
-<table>
-    <tr>
-        <th>EXERCISE</th>
-        <th>SETS</th>
-        <th>REPS</th>
-        <th>WEIGHT</th>
-    </tr>
-    {{#each friday}}
-        <tr data-id={{rowId}} data-exercise={{exercise}}>
-            <td>{{exercise}}</td>
-            <td>{{sets}}</td>
-            <td>{{reps}}</td>
-            <td>{{weight}}</td>
-            <td>{{date}}</td>
-            <td><button type="button" data-toggle="modal" data-target="#workoutModal" data-exercise="{{exercise}}"
-                        data-sets="{{sets}}" data-reps="{{reps}}" data-weight="{{weight}}" data-id="{{rowId}}"
-                        data-date="{{date}}" class="editBtn" name="edit">Edit</button> </td>
-            <td><button class="deleteBtn">Delete</button> </td>
-        </tr>
-    {{/each}}
-</table>
-
-<h1>SATURDAY</h1>
-<table>
-    <tr>
-        <th>EXERCISE</th>
-        <th>SETS</th>
-        <th>REPS</th>
-        <th>WEIGHT</th>
-    </tr>
-    {{#each saturday}}
-        <tr data-id={{rowId}} data-exercise={{exercise}}>
-            <td>{{exercise}}</td>
-            <td>{{sets}}</td>
-            <td>{{reps}}</td>
-            <td>{{weight}}</td>
-            <td>{{date}}</td>
-            <td><button type="button" data-toggle="modal" data-target="#workoutModal" data-exercise="{{exercise}}"
-                        data-sets="{{sets}}" data-reps="{{reps}}" data-weight="{{weight}}" data-id="{{rowId}}"
-                        data-date="{{date}}" class="editBtn" name="edit">Edit</button> </td>
-            <td><button class="deleteBtn">Delete</button> </td>
-        </tr>
-    {{/each}}
-</table>
-
-<h1>SUNDAY</h1>
-<table>
-    <tr>
-        <th>EXERCISE</th>
-        <th>SETS</th>
-        <th>REPS</th>
-        <th>WEIGHT</th>
-    </tr>
-    {{#each sunday}}
-        <tr data-id={{rowId}} data-exercise={{exercise}}>
-            <td>{{exercise}}</td>
-            <td>{{sets}}</td>
-            <td>{{reps}}</td>
-            <td>{{weight}}</td>
-            <td>{{date}}</td>
-            <td><button type="button" data-toggle="modal" data-target="#workoutModal" data-exercise="{{exercise}}"
-                        data-sets="{{sets}}" data-reps="{{reps}}" data-weight="{{weight}}" data-id="{{rowId}}"
-                        data-date="{{date}}" class="editBtn" name="edit">Edit</button> </td>
-            <td><button class="deleteBtn">Delete</button> </td>
-        </tr>
-    {{/each}}
-</table>
+    </div>

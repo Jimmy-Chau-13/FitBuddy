@@ -1,71 +1,64 @@
 {{#partial "title"}} YOUR PROFILE{{/partial}}
 
+
 {{#partial "content"}}
     <div id="topMenu">
+        <h1> Welcome {{username}}! </h1>
         <form action ="/logout" method = "post">
-            <button>logout</button>
-        </form>
-    </div>
-    <p>  PROFILE PAGE </p>
-    {{#if username }}
-        <h1> WELCOME {{username}} !! </h1>
-    {{else}}
-        <h1> PLEASE SIGN IN DUDE </h1>
-    {{/if}}
-
-    <input type="button" data-toggle="modal" data-target="#workoutModal" id="addBtn"
-           name="add" value="ADD WORKOUT">
-    <p id="logModal" style="color:red;"></p>
-
-    <div id="weekPickerDiv">
-        <h1> Pick a Day You want to see</h1>
-        <form action="/profile" method="get">
-            <input type="text" placeholder="Date" id="weekPicker" name="dateToShow" value={{date}}>
-            <button id="showBtn">SHOW</button>
+            <button id="logoutBtn">logout</button>
         </form>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="workoutModal" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title"></h4>
-                </div>
-                <div class="modal-body">
-                    <input type="text" placeholder="Exercise" name="exercise" id="editExercise" value="" required >
-                    <input type="number" placeholder="Sets" name="sets" id="editSets" value="" required>
-                    <input type="number" placeholder="Reps" name="reps" id="editReps" value="" required>
-                    <input type="number" placeholder="Weight" name="weight" id="editWeight" value="" required>
-                    <input type="text" placeholder="Date" id="date" value="" required>
-                    <input type="hidden" id="editId" value="" />
-                    <input type="hidden" id="mode" value="" />
-                    <input type="button" id="confirmBtn" name="confirmBtn" value="CONFIRM">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-
-        </div>
+    <div id="optionDiv">
+        <input type="button" data-toggle="modal" data-target="#addModal" id="addBtn"
+           name="add" value="ADD WORKOUT" class="indexButton">
     </div>
 
-    {{> table.hbs}}
+    <div id="calendar"></div>
+
+    {{> addModal.hbs}}
+    {{> viewModal.hbs}}
+
 {{/partial}}
 {{> base.hbs}}
 
 <script type="text/javascript">
     $(document).ready(function (response) {
 
+
         $("#date").datepicker();
         $("#date").datepicker('setDate', new Date());
 
-        $("#weekPicker").datepicker();
+        $("#calendar").fullCalendar({
 
-        $('#workoutModal').on('show.bs.modal', function (event) {
+            dayClick: function(date) {
+
+                $.ajax({
+                    type: "post",
+                    url: "/view",
+                    data: {"date": date.format()},
+                    success: function(response) {
+                        var workout = JSON.parse(response.jsonData);
+                        var dateToShow = response.dateToShow;
+                        console.log(workout);
+                        console.log(workout.length);
+
+
+                        $("#theDateToShow").html(dateToShow);
+
+                        createWorkoutTable(workout);
+
+
+                        $("#viewModal").modal('show');
+
+                    }
+                });
+
+            }
+        });
+
+
+        $('#addModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             console.log("BUTTON MODE  " + button.attr("name"));
             openModal(button);

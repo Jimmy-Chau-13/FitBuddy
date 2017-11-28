@@ -1,10 +1,112 @@
 
+/* index page */
+.mainTitleDiv {
+    background-color: antiquewhite;
+    text-align: center;
+    border: 3px solid black;
+    width:50%;
+    margin: auto;
 
-body {
-    font-family: Arial;
 }
 
-#mainTitle {
-    color: blue;
+#loginDiv {
+    background-color: antiquewhite;
+    border: 3px solid black;
+    text-align: center;
+    width: 70%;
+    height: 500px;
+    margin: auto;
+    margin-top: 10px;
+    padding-top: 100px;
+}
+
+.row {
+    padding-top: 10px;
+}
+
+.loginP{
+    font-size: 20px;
+}
+
+.indexButton {
+    background-color: coral;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.indexButton:hover {
+    background-color: burlywood ; /* Green */
+    color: white;
+}
+
+
+/* register page */
+#signupDiv{
+    background-color: antiquewhite;
+    border: 3px solid black;
+    text-align: center;
+    width: 50%;
+    margin: auto;
+    height: 500px;
+    padding-top: 50px;
+    margin-top: 100px;
+}
+
+/* profile page */
+#topMenu {
+    background-color: antiquewhite;
+    border: 3px solid black;
+
+}
+
+#logoutBtn {
+    background-color: antiquewhite;
+    color: black;
+    border: none;
+}
+
+#optionDiv {
+    margin: auto;
+    background-color: antiquewhite;
+    border: 3px solid black;
+    margin-top: 10px;
+}
+
+
+/* table */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+th {
+    background-color: coral;
+    color: white;
+}
+
+/* modals */
+.modal-body {
+    text-align: center;
+    background-color: antiquewhite;
+}
+
+.modal-header{
+    background-color: coral;
+}
+
+.modal-footer {
+    background-color: coral;
 }
 

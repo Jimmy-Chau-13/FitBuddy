@@ -80,4 +80,15 @@ public class WorkOut {
         this.date = date;
     }
 
+    public String toJson() {
+
+        return  "{" +
+                "\"id\": " + "\"" + getId() + "\", " +
+                "\"Exercise\":" + "\"" + getExercise() + "\", " +
+                "\"Sets\":" + "\"" + getSets() + "\", " +
+                "\"Reps\":" + "\"" + getReps() + "\", " +
+                "\"Weight\":" + "\"" + getWeight() + "\" " +
+                "}" ;
+    }
+
 }

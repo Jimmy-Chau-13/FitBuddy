@@ -1,13 +1,25 @@
 {{#partial "content"}}
-    <div>
-        <form action="/" id="loginForm">
-            <input type="text" placeholder="Email" name="email" id="email" required>
-            <input type="password" placeholder="password" name="password" id="password" required>
-            <input type="submit" name="loginBt" id="loginBt" value="Sign In" />
-            <p id="log" style="color:red;"></p>
-        </form>
 
-        <a href="/register"> Sign Up </a>
+    <div class="mainTitleDiv">
+        <h1 id="mainTitle">FitBuddy</h1>
+    </div>
+
+    <div id="loginDiv">
+        <form action="/" id="loginForm">
+            <div class ="row">
+                <p class="loginP">Email:</p>
+                <input type="text" placeholder="Email" name="email" id="email" required>
+            </div>
+            <div class ="row">
+                <p class="loginP">Password:</p>
+                <input type="password" placeholder="password" name="password" id="password" required>
+            </div>
+            <div class ="row">
+                <input type="submit" name="loginBt" id="loginBt" value="Sign In" class="indexButton" />
+            </div>
+            <p id="log" style="color:red;"></p>
+            <a href="/register"> Sign Up </a>
+        </form>
     </div>
 
     <script type="text/javascript">

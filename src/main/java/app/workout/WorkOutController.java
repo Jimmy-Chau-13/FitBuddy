@@ -1,17 +1,14 @@
 package app.workout;
 
+import app.auth.AuthController;
 import app.db.DataBaseHelper;
 import app.util.Path;
-import app.util.dateHelper;
+import app.util.DateHelper;
 import com.google.gson.Gson;
 import org.bson.types.ObjectId;
 import org.jsoup.Jsoup;
 import org.mongodb.morphia.Datastore;
 import spark.*;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -21,38 +18,25 @@ public class WorkOutController {
     static Datastore datastore;
     static Logger logger = Logger.getLogger("WorkOutController.class");
     static Gson gson = new Gson();
-    static String datePicker = dateHelper.getCurrentDate();
 
-    public WorkOutController() {
 
-    }
+    public WorkOutController() { }
 
     public static ModelAndView serveProfile(Request req, Response res) {
 
-        // Check if current session is already logged in else return to login page
-        String userId = null;
-        try {
-            userId = req.session(false).attribute(Path.Attribute.USERID);
-        }
-        catch(Exception e) {
-            logger.warning("No current UserId in session");
-            res.redirect(Path.Web.GET_INDEX_PAGE);
-            return null;
-        }
+        String userId = AuthController.checkSessionHasUser(req);
 
         if(userId != null && !userId.isEmpty()) {
             String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
-            String email = req.session(false).attribute(Path.Attribute.EMAIL).toString();
-            Date newDatePicker = dateHelper.convertStringToDate(req.queryParams("dateToShow"));
-            if(newDatePicker != null)
-                datePicker = dateHelper.convertDateToString(newDatePicker);
-            HashMap<String,Object> model = fetchWorkOuts(userId, datePicker);
+
+            HashMap<String,Object> model = new HashMap<>();
             model.put("username", username);
-            model.put("date",datePicker);
-            System.out.println("SHOWING: " + datePicker);
+            logger.info("Serve Profile: \n" +
+                            "Username: " + username );
             return new ModelAndView(model, Path.Template.PROFILE);
         }
 
+        logger.warning("No current UserId in session");
         res.redirect(Path.Web.GET_INDEX_PAGE);
         return null;
     }
@@ -67,15 +51,12 @@ public class WorkOutController {
         int sets = Integer.parseInt(Jsoup.parse(req.queryParams("sets")).text());
         int reps = Integer.parseInt(Jsoup.parse(req.queryParams("reps")).text());
         int weight = Integer.parseInt(Jsoup.parse(req.queryParams("weight")).text());
-
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-        Date date = new Date();
-        try {
-            date = df.parse(req.queryParams("date"));
-        } catch (ParseException e) {
-            e.printStackTrace();
+        Date date = DateHelper.convertStringToDate(req.queryParams("date"), 0);
+        if(date == null) {
+            res.status(500);
+            model.put("code", 500);
+            logger.warning("Invalid Date");
         }
-
         String mode = Jsoup.parse(req.queryParams("mode")).text();
         WorkOut workout = new WorkOut(exercise,sets,reps,weight,date);
 
@@ -83,7 +64,7 @@ public class WorkOutController {
                         "\nSets " + workout.getSets() +
                         "\nReps " +workout.getReps() +
                         "\nWeight " + workout.getWeight() +
-                        "\nDate " + df.format(date));
+                        "\nDate " + workout.getDate());
 
         if(userId != null && !userId.isEmpty()) {
             workout.setUserId(userId);
@@ -161,72 +142,64 @@ public class WorkOutController {
 
     }
 
-    private static HashMap<String,Object> fetchWorkOuts(String userId, String datePicker) {
+    public static String handleViewWorkout(Request req, Response res) {
+        res.type("application/json");
+        String date = req.queryParams("date");
+        System.out.println("Date: " + date);
+        String userId = req.session(false).attribute(Path.Attribute.USERID);
+        HashMap<String,Object> model = new HashMap<>();
 
-        Date startDate = dateHelper.getStartDate(dateHelper.convertStringToDate(datePicker));
-        Date endDate = dateHelper.getEndDate(startDate);
+        if(!userId.isEmpty() && userId != null) {
+            model = fetchWorkOuts(userId, date);
+            res.status(200);
+            model.put("code", 200);
+            model.put("dateToShow", date);
+            String json = gson.toJson(model);
+            return json;
 
+        }
+
+        model.put("code", 500);
+        logger.warning("No current UserId in session");
+        res.redirect(Path.Web.GET_INDEX_PAGE);
+        String json = gson.toJson(model);
+        return json;
+    }
+
+    private static HashMap<String,Object> fetchWorkOuts(String userId, String date) {
+
+        Date dateToGet = DateHelper.convertStringToDate(date,1 );
         // Grab all workouts owned by current user
         datastore = dbHelper.getDataStore();
 
         List<WorkOut> list = datastore.createQuery(WorkOut.class)
                 .field("userId").equal(userId)
-                .field("date").greaterThanOrEq(startDate)
-                .field("date").lessThanOrEq(endDate)
+                .field("date").equal(dateToGet)
                 .asList();
 
-        HashMap<String,Object> model = organizeByDay(list);
-        String json = gson.toJson(model);
-        logger.info("json to be returned = " + json);
-        return model;
-    }
-
-    private static HashMap<String,Object> organizeByDay(List<WorkOut> list) {
-        List<WorkOut> monday = new ArrayList<>();
-        List<WorkOut> tuesday = new ArrayList<>();
-        List<WorkOut> wednesday = new ArrayList<>();
-        List<WorkOut> thursday = new ArrayList<>();
-        List<WorkOut> friday = new ArrayList<>();
-        List<WorkOut> saturday = new ArrayList<>();
-        List<WorkOut> sunday = new ArrayList<>();
-
-        for(int i = 0; i < list.size();i++) {
-            WorkOut workout = list.get(i);
-            workout.setRowId();
-            int dayOfWeek = dateHelper.getDayOfTheWeek(workout.getDate());
-            switch (dayOfWeek) {
-                case Calendar.MONDAY:
-                    monday.add(workout);
-                    break;
-                case Calendar.TUESDAY:
-                    tuesday.add(workout);
-                    break;
-                case Calendar.WEDNESDAY:
-                    wednesday.add(workout);
-                    break;
-                case Calendar.THURSDAY:
-                    thursday.add(workout);
-                    break;
-                case Calendar.FRIDAY:
-                    friday.add(workout);
-                    break;
-                case Calendar.SATURDAY:
-                    saturday.add(workout);
-                    break;
-                case Calendar.SUNDAY:
-                    sunday.add(workout);
-                    break;
+        StringBuilder jsonData = new StringBuilder();
+        if(list != null && list.size() > 0) {
+            logger.info("found " + list.size() + " workout ");
+            for(int i = 0; i < list.size(); i++) {
+                WorkOut workout = list.get(i);
+                //jsonData.append("\"" + i + "\":" + workout.toJson()).append(",");
+                jsonData.append(workout.toJson()).append(",");
+                         logger.info("jsonData " + i + " = " + workout.toJson());
             }
+
+            jsonData.deleteCharAt(jsonData.lastIndexOf(",")); //removes the last comma
+            jsonData.insert(0, "[" ).append("]"); //name the array
+
+
+        } else {
+            logger.warning("No user data found for userId " + userId);
+            jsonData.append("{}");
         }
 
+        logger.info(jsonData.toString());
         HashMap<String,Object> model = new HashMap<>();
-        model.put("monday", monday);
-        model.put("tuesday", tuesday);
-        model.put("wednesday", wednesday);
-        model.put("thursday", thursday);
-        model.put("friday", friday);
-        model.put("saturday", saturday);
-        model.put("sunday", sunday);
+        model.put("jsonData", jsonData.toString() );
+
         return model;
     }
 

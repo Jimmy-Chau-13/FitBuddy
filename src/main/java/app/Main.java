@@ -47,6 +47,10 @@ public class Main {
 
         post(Path.Web.DELETE_WORKOUT, (req,res) -> WorkOutController.handleDeleteWorkout(req,res));
 
+        post(Path.Web.VIEW_WORKOUT, (req,res) -> WorkOutController.handleViewWorkout(req,res));
+
+
+
 
     } //EOF MAIN
 } // EOF CLASS
