@@ -1,0 +1,39 @@
+<!-- Modal -->
+<div class="modal fade" id="addModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="text" placeholder="Exercise" name="exercise" id="editExercise" value="" required>
+                </div>
+                <div class="row">
+                    <input type="number" placeholder="Sets" name="sets" id="editSets" value="" required>
+                </div>
+                <div class="row">
+                    <input type="number" placeholder="Reps" name="reps" id="editReps" value="" required>
+                </div>
+                <div class="row">
+                    <input type="number" placeholder="Weight" name="weight" id="editWeight" value="" required>
+                </div>
+                <div class="row">
+                    <input type="text" placeholder="Date" id="date" value="" required>
+                </div>
+                <input type="hidden" id="editId" value="" />
+                <input type="hidden" id="mode" value="" />
+                <div class="row">
+                    <input type="button" id="confirmBtn" name="confirmBtn" value="CONFIRM">
+                </div>
+                <p id="logModal" style="color:red;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
