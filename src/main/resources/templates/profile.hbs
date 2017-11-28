@@ -41,19 +41,18 @@
                         var workout = JSON.parse(response.jsonData);
                         var dateToShow = response.dateToShow;
                         console.log(workout);
-                        console.log(workout.length);
-
-
                         $("#theDateToShow").html(dateToShow);
-
                         createWorkoutTable(workout);
-
-
                         $("#viewModal").modal('show');
+                        $(".deleteBtn").on("click", function () {
+                            console.log("DELETE BUTTON CLICKED");
+                            var tr = $(this).closest("tr")
+                            deleteBtnClicked(tr);
+                        });
 
                     }
-                });
 
+                });
             }
         });
 
@@ -64,28 +63,11 @@
             openModal(button);
         });
 
-        $(".deleteBtn").on("click", function () {
-            console.log("DELETE BUTTON");
-            var data = {};
-            data.workoutId = $(this).closest("tr").attr("data-id");
-            console.log("DELETING = " + data.workoutId );
-            $.ajax({
-                type: "post",
-                url: "/delete",
-                data: data,
-                success: function(response) {
-                    $("#logModal").html("<strong>DELETED</strong>");
-                    console.log("response location = " + response.target);
-                    if(response.target) {
-                        window.location.href = response.target;
-                    }
-                },
-                error: function() {
-                    $("#logModal").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");
-                }
-            });
-
+        $('#viewModal').on('hidden.bs.modal', function(event) {
+            $("#workoutTable tbody").remove();
+            $("#viewModalLog").html("");
         });
+
 
         $("#confirmBtn").on("click", function(){
 

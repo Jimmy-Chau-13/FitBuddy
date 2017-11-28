@@ -136,7 +136,6 @@ public class WorkOutController {
         }
 
         HashMap<String, Object> model = new HashMap<>();
-        model.put("target", Path.Web.GET_PROFILE_PAGE );
         String json = gson.toJson(model);
         return json;
 

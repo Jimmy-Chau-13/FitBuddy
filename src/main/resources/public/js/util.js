@@ -19,6 +19,7 @@ function saveNew(data) {
     });
 }
 
+// Opens a modal for editing existing workout or adding a new workout
 function openModal(button){
     var mode = button.attr("name");
     var modal = $('#workoutModal');
@@ -49,41 +50,36 @@ function openModal(button){
     modal.find('#mode').val(mode);
 }
 
+// Construct a table for a workout on a certain day
 function createWorkoutTable(list) {
 
-    // EXTRACT VALUE FOR HTML HEADER.
-    var col = [];
-    for (var i = 0; i < list.length; i++) {
-        for (var key in list[i]) {
-            if (col.indexOf(key) === -1) {
-                col.push(key);
-            }
-        }
-    }
+    var trHTML = '';
+    $.each(list, function(i,item) {
+        console.log("exercise: " + item.exercise +
+                    "\nid: " + item.id);
+        trHTML += '<tr data-id=' +item.id+ '><td>' + item.exercise + '</td><td>' + item.sets + '</td><td>' +item.reps +
+        '</td><td>' + item.weight +
+            '</td><td><button type="button" class="editBtn"> Edit </button></td>' +
+            '<td><button class="deleteBtn"> Delete </button></td></tr>';
+    });
 
-    var table = document.createElement("table");
-    var tr = table.insertRow(-1);
-
-    // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
-    for (var i = 0; i < col.length; i++) {
-        var th = document.createElement("th");      // TABLE HEADER.
-        th.innerHTML = col[i];
-        tr.appendChild(th);
-    }
-
-    // ADD JSON DATA TO THE TABLE AS ROWS.
-    for (var i = 0; i < list.length; i++) {
-
-        tr = table.insertRow(-1);
-
-        for (var j = 0; j < col.length; j++) {
-            var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = list[i][col[j]];
-        }
-    }
-
-    var divContainer = document.getElementById("table");
-    divContainer.innerHTML = "";
-    divContainer.appendChild(table);
+    $('#workoutTable').append(trHTML);
 }
 
+function deleteBtnClicked(tr) {
+    var data = {};
+    data.workoutId = tr.attr("data-id");
+    console.log("DELETING = " + data.workoutId );
+    $.ajax({
+        type: "post",
+        url: "/delete",
+        data: data,
+        success: function(response) {
+            $("#viewModalLog").html("<strong>DELETED</strong>");
+            tr.remove();
+        },
+        error: function() {
+            $("#viewModalLog").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");
+        }
+    });
+}

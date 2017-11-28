@@ -84,10 +84,10 @@ public class WorkOut {
 
         return  "{" +
                 "\"id\": " + "\"" + getId() + "\", " +
-                "\"Exercise\":" + "\"" + getExercise() + "\", " +
-                "\"Sets\":" + "\"" + getSets() + "\", " +
-                "\"Reps\":" + "\"" + getReps() + "\", " +
-                "\"Weight\":" + "\"" + getWeight() + "\" " +
+                "\"exercise\":" + "\"" + getExercise() + "\", " +
+                "\"sets\":" + "\"" + getSets() + "\", " +
+                "\"reps\":" + "\"" + getReps() + "\", " +
+                "\"weight\":" + "\"" + getWeight() + "\" " +
                 "}" ;
     }
 
