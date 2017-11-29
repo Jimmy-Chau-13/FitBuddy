@@ -19,8 +19,10 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws ClassNotFoundException {
+
+
         staticFileLocation("/public");
-        //workoutDao = new SimpleWorkOutDAO();
+        port(getHerokuAssignedPort());
 
         // Serving Pages
         get(Path.Web.GET_INDEX_PAGE, (req,res) -> IndexController.serveIndexPage(req,res)
@@ -53,4 +55,17 @@ public class Main {
 
 
     } //EOF MAIN
+
+
+
+    public static int getHerokuAssignedPort() {
+//         this will get the heroku assigned port in production
+//         or return 8080 for use in local dev
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+        return 8080; //return 8080 on localhost
+    }
+
 } // EOF CLASS
