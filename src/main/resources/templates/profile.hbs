@@ -10,8 +10,7 @@
     </div>
 
     <div id="optionDiv">
-        <input type="button" data-toggle="modal" data-target="#addModal" id="addBtn"
-           name="add" value="ADD WORKOUT" class="indexButton">
+        <input type="button"  id="addBtn" name="add" value="ADD WORKOUT" class="indexButton">
     </div>
 
     <div id="calendar"></div>
@@ -32,40 +31,24 @@
         $("#calendar").fullCalendar({
 
             dayClick: function(date) {
-
-                $.ajax({
-                    type: "post",
-                    url: "/view",
-                    data: {"date": date.format()},
-                    success: function(response) {
-                        var workout = JSON.parse(response.jsonData);
-                        var dateToShow = response.dateToShow;
-                        console.log(workout);
-                        $("#theDateToShow").html(dateToShow);
-                        createWorkoutTable(workout);
-                        $("#viewModal").modal('show');
-                        $(".deleteBtn").on("click", function () {
-                            console.log("DELETE BUTTON CLICKED");
-                            var tr = $(this).closest("tr")
-                            deleteBtnClicked(tr);
-                        });
-
-                    }
-
-                });
+                date = date.format();  //yyyy-MM-dd
+                date = formatDate(date);
+                openViewModal(date);
             }
         });
 
-
-        $('#addModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            console.log("BUTTON MODE  " + button.attr("name"));
-            openModal(button);
+        $('#addBtn').on('click',function () {
+           openAddModal("add");
         });
+
 
         $('#viewModal').on('hidden.bs.modal', function(event) {
             $("#workoutTable tbody").remove();
             $("#viewModalLog").html("");
+        });
+
+        $('#addModal').on('hidden.bs.modal', function(event) {
+            clearAddModal();
         });
 
 
@@ -88,9 +71,11 @@
                 data: data,
                 success: function(response) {
                     $("#logModal").html("<strong>SUBMITTING</strong>");
-                    console.log("response location = " + response.target);
-                    if(response.target) {
-                        window.location.href = response.target;
+                    $("#addModal").modal('hide');
+
+                    if(response.mode) {
+                        console.log(response.date);
+                        openViewModal(response.date);
                     }
                 },
                 error: function() {
