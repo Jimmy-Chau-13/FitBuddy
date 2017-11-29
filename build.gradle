@@ -24,6 +24,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-//this is required for hosting/deploying to heroku
-defaultTasks=['clean']
-task stage(dependsOn: ['clean', 'installApp'])
+task stage {
+    dependsOn installDist
+}
