@@ -7,8 +7,8 @@
     <div id="loginDiv">
         <form action="/" id="loginForm">
             <div class ="row">
-                <p class="loginP">Email:</p>
-                <input type="text" placeholder="Email" name="email" id="email" required>
+                <p class="loginP">Username:</p>
+                <input type="text" placeholder="Username" name="username" id="username" required>
             </div>
             <div class ="row">
                 <p class="loginP">Password:</p>
@@ -28,23 +28,23 @@
             $("#loginForm").on("submit", function (event) {
 
                 event.preventDefault();
-                var email = $("#email").val();
+                var username = $("#username").val();
                 var password = $("#password").val();
 
                 $.ajax ({
                     type: "post",
                     url: "/",
-                    data: {"email":email},
+                    data: {"username":username},
                     success: function(response) {
                         var srpClient = new SRP6JavascriptClientSessionSHA256();
-                        srpClient.step1(email, password);
+                        srpClient.step1(username, password);
                         var credentials = srpClient.step2(response.salt, response.B);
                         var M1 = credentials.M1;
                         var A = credentials.A;
                         $.ajax({
                             type:"POST",
                             url: "/auth",
-                            data: {"email":email, "M1":M1, "A":A},
+                            data: {"username":username, "M1":M1, "A":A},
                             success:function(res2) {
                                 console.log("resp2 location = " + res2.target);
                                 if(res2.target) {

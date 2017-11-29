@@ -3,7 +3,6 @@ package app.workout;
 import app.auth.AuthController;
 import app.db.DataBaseHelper;
 import app.util.Path;
-import app.util.DateHelper;
 import com.google.gson.Gson;
 import org.bson.types.ObjectId;
 import org.jsoup.Jsoup;
@@ -51,12 +50,8 @@ public class WorkOutController {
         int sets = Integer.parseInt(Jsoup.parse(req.queryParams("sets")).text());
         int reps = Integer.parseInt(Jsoup.parse(req.queryParams("reps")).text());
         int weight = Integer.parseInt(Jsoup.parse(req.queryParams("weight")).text());
-        Date date = DateHelper.convertStringToDate(req.queryParams("date"), 0);
-        if(date == null) {
-            res.status(500);
-            model.put("code", 500);
-            logger.warning("Invalid Date");
-        }
+        String date = req.queryParams("date");
+
         String mode = Jsoup.parse(req.queryParams("mode")).text();
         WorkOut workout = new WorkOut(exercise,sets,reps,weight,date);
 
@@ -73,8 +68,11 @@ public class WorkOutController {
             if(mode.equals("edit")) {
                 String workoutId = Jsoup.parse(req.queryParams("editId")).text();
                 logger.info("Editing workout id " + workoutId);
-                if(workoutId != null && !workoutId.isEmpty())
+                if(workoutId != null && !workoutId.isEmpty()) {
                     workout.setId(workoutId);
+                    model.put("mode", "edit");
+                    model.put("date",date);
+                }
                 else {
                     logger.warning("Can not " + mode + " workout, workout id is invalid");
                     res.status(500);
@@ -144,7 +142,6 @@ public class WorkOutController {
     public static String handleViewWorkout(Request req, Response res) {
         res.type("application/json");
         String date = req.queryParams("date");
-        System.out.println("Date: " + date);
         String userId = req.session(false).attribute(Path.Attribute.USERID);
         HashMap<String,Object> model = new HashMap<>();
 
@@ -155,7 +152,6 @@ public class WorkOutController {
             model.put("dateToShow", date);
             String json = gson.toJson(model);
             return json;
-
         }
 
         model.put("code", 500);
@@ -167,13 +163,12 @@ public class WorkOutController {
 
     private static HashMap<String,Object> fetchWorkOuts(String userId, String date) {
 
-        Date dateToGet = DateHelper.convertStringToDate(date,1 );
         // Grab all workouts owned by current user
         datastore = dbHelper.getDataStore();
-
+        System.out.println(date);
         List<WorkOut> list = datastore.createQuery(WorkOut.class)
                 .field("userId").equal(userId)
-                .field("date").equal(dateToGet)
+                .field("date").equal(date)
                 .asList();
 
         StringBuilder jsonData = new StringBuilder();

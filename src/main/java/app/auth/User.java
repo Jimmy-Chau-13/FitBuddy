@@ -12,9 +12,8 @@ public class User {
 
     @Id
     private ObjectId id;
-    private String username = "";
     @Indexed(options = @IndexOptions(unique = true))
-    private String email = "";
+    private String username = "";
     private String salt;
     private String verifier;
     private String token = "";
@@ -23,9 +22,8 @@ public class User {
 
     }
 
-    public User(String username, String email, String salt, String verifier) {
+    public User(String username, String salt, String verifier) {
         this.username = username;
-        this.email = email;
         this.salt = salt;
         this.verifier = verifier;
     }
@@ -40,14 +38,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getSalt() {

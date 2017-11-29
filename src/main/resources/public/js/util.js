@@ -1,53 +1,50 @@
-function saveNew(data) {
 
-    console.log("Saving = \n" + JSON.stringify(data));
-
-    $.ajax({
-        type: "post",
-        url: "/add",
-        data: data,
-        success: function(response) {
-            $("#logModal").html("<strong>WORKOUT SAVED SUCCESSFULLY!</strong>");
-            console.log("response location = " + response.target);
-            if(response.target) {
-                window.location.href = response.target;
-            }
-        },
-        error: function() {
-            $("#logModal").html("<strong>OOPS! UNABLE TO SAVE CONTACT! PLEASE TRY AGAIN</strong>");
-        }
-    });
-}
 
 // Opens a modal for editing existing workout or adding a new workout
-function openModal(button){
-    var mode = button.attr("name");
-    var modal = $('#workoutModal');
+function openAddModal(mode){
+    var modal = $('#addModal');
+    modal.modal('show');
 
     if(mode == "add" ) {
         console.log("ADD BUTTON CLICKED");
         $(".modal-title").html("Add a New Workout");
     }
-
     else {
         console.log("EDIT BUTTON CLICKED");
-        $(".modal-title").html("Edit a Workout");
-        var exercise = button.data('exercise');
-        var sets = button.data('sets');
-        var reps = button.data('reps');
-        var weight = button.data('weight');
-        var id = button.data('id');
-        var date = button.data('date');
-
-        modal.find('#editExercise').val(exercise);
-        modal.find('#editSets').val(sets);
-        modal.find('#editReps').val(reps);
-        modal.find('#editWeight').val(weight);
-        modal.find('#editId').val(id);
-        modal.find('#date').datepicker('setDate', date);
+        $(".modal-title").html("Edit Workout");
     }
-
     modal.find('#mode').val(mode);
+}
+
+// date should be in the format as MM/dd/YYYY
+function openViewModal(date) {
+    $.ajax({
+        type: "post",
+        url: "/view",
+        data: {"date": date},
+        success: function(response) {
+            var workout = JSON.parse(response.jsonData);
+            var dateToShow = response.dateToShow;
+            console.log(workout);
+            $("#theDateToShow").html(dateToShow);
+            createWorkoutTable(workout);
+            $("#viewModal").modal('show');
+
+            $(".deleteBtn").on("click", function () {
+                console.log("DELETE BUTTON CLICKED");
+                var tr = $(this).closest("tr");
+                deleteBtnClicked(tr);
+            });
+
+            $(".editBtn").on("click", function () {
+                var tr = $(this).closest("tr");
+                editBtnClicked(tr,dateToShow);
+            });
+
+        }
+
+    });
+
 }
 
 // Construct a table for a workout on a certain day
@@ -59,12 +56,13 @@ function createWorkoutTable(list) {
                     "\nid: " + item.id);
         trHTML += '<tr data-id=' +item.id+ '><td>' + item.exercise + '</td><td>' + item.sets + '</td><td>' +item.reps +
         '</td><td>' + item.weight +
-            '</td><td><button type="button" class="editBtn"> Edit </button></td>' +
+            '</td><td><button class="editBtn" name="edit"> Edit </button></td>' +
             '<td><button class="deleteBtn"> Delete </button></td></tr>';
     });
 
     $('#workoutTable').append(trHTML);
 }
+
 
 function deleteBtnClicked(tr) {
     var data = {};
@@ -83,3 +81,50 @@ function deleteBtnClicked(tr) {
         }
     });
 }
+
+// Populate forms with the exercise we want to edit
+function editBtnClicked(tr, dateToShow) {
+
+    $("#viewModal").modal('hide');
+    openAddModal("edit");
+    var modal = $('#addModal');
+
+    var exercise = tr.find("td:nth-child(1)").text();
+    modal.find('#editExercise').val(exercise);
+
+    var sets = tr.find("td:nth-child(2)").text();
+    modal.find('#editSets').val(sets);
+
+    var reps = tr.find("td:nth-child(3)").text();
+    modal.find('#editReps').val(reps);
+
+    var weight = tr.find("td:nth-child(4)").text();
+    modal.find('#editWeight').val(weight);
+
+    var id = tr.attr("data-id");
+    modal.find('#editId').val(id);
+
+    modal.find('#date').datepicker('setDate',dateToShow);
+}
+
+function clearAddModal(){
+    var modal = $('#addModal');
+    modal.find('#editExercise').val("");
+    modal.find('#editSets').val("");
+    modal.find('#editReps').val("");
+    modal.find('#editWeight').val("");
+    modal.find('#editId').val("");
+    modal.find('#date').datepicker('setDate',new Date());
+    $("#logModal").html("");
+
+}
+
+// Given date (YYYY-MM-dd) reformat it to (MM/dd/YYYY)
+function formatDate(date) {
+    var dArr = date.split("-");
+    return dArr[1]+ "/" +dArr[2]+ "/" +dArr[0];
+
+}
+
+
+

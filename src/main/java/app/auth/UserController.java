@@ -27,10 +27,10 @@ public class UserController {
         return 1;
     }
 
-    public static User getUserByEmail(String email) {
+    public static User getUserByUsername(String username) {
         datastore = dbHelper.getDataStore();
         List<User> userList = datastore.createQuery(User.class)
-                .field("email").equal(email)
+                .field("username").equal(username)
                 .limit(1)
                 .asList();
 

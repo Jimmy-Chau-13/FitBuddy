@@ -4,7 +4,6 @@ package app.auth;
 import app.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSessionSHA256;
 import app.util.Path;
 import com.google.gson.Gson;
-import com.nimbusds.srp6.SRP6CryptoParams;
 import org.jsoup.Jsoup;
 import spark.ModelAndView;
 import spark.*;
@@ -17,7 +16,6 @@ public class AuthController {
 
     private static final Logger logger = Logger.getLogger(AuthController.class.getName());
     static Gson gson = new Gson();
-    static SRP6CryptoParams config;
     static SRP6JavascriptServerSessionSHA256 server;
 
     public static ModelAndView serveRegisterPage(Request req, Response res) {
@@ -51,17 +49,11 @@ public class AuthController {
         res.type("application/json");
         HashMap<String, Object> model = new HashMap<>();
 
-  /*    String username = Jsoup.parse(req.queryParams("username")).text();
-        String email = Jsoup.parse(req.queryParams("email")).text();
-        String salt = Jsoup.parse(req.queryParams("salt")).text();
-        String verifier = Jsoup.parse(req.queryParams("verifier")).text();
-*/
         String username = req.queryParams("username");
-        String email = req.queryParams("email");
         String salt = req.queryParams("salt");
         String verifier = req.queryParams("verifier");
 
-        User user = new User(username, email, salt, verifier);
+        User user = new User(username, salt, verifier);
 
         int success = UserController.createUser(user);
 
@@ -76,7 +68,7 @@ public class AuthController {
             logger.info("Unable to create user " + user.getUsername());
             res.status(401);
             model.put("code", "401");
-            model.put("status", "ERROR! username/email exists already!");
+            model.put("status", "ERROR! username exists already!");
         }
 
         String json = gson.toJson(model);
@@ -89,21 +81,21 @@ public class AuthController {
         HashMap<String, String> model = new HashMap<>();
         res.type("application/json");
 
-        // Grab the email from the client
-        String email = Jsoup.parse(req.queryParams("email")).text();
-        logger.info("email from the client = " + email);
+        // Grab the username from the client
+        String username = Jsoup.parse(req.queryParams("username")).text();
+        logger.info("username from the client = " + username);
 
         // Send B value and salt to client
-        if(email != null && !email.isEmpty()) {
+        if(username != null && !username.isEmpty()) {
             server = new SRP6JavascriptServerSessionSHA256(CryptoParams.N_base10, CryptoParams.g_base10);
-            User user = UserController.getUserByEmail(email);
+            User user = UserController.getUserByUsername(username);
             // Generate public server value 'B'
             if(user != null) {
 
                 String salt = user.getSalt();
                 String verifier = user.getVerifier();
                 logger.info("Salt = " + salt + "\nVerifier = " + verifier);
-                String B = server.step1(email, salt, verifier);
+                String B = server.step1(username, salt, verifier);
 
                 logger.info("server  challenge B = " + B);
                 if(B != null) {
@@ -120,7 +112,7 @@ public class AuthController {
         res.status(401);
         model.put("status", "Invalid User Credentials");
         model.put("code", "401");
-        logger.info( "Email does not exist or null B value");
+        logger.info( "Username does not exist or null B value");
         return gson.toJson(model);
     }
 
@@ -130,7 +122,7 @@ public class AuthController {
         String A = Jsoup.parse(req.queryParams("A")).text();
         String M1 = Jsoup.parse(req.queryParams("M1")).text();
         logger.info("Client Credentials Sent to Authenticate = \n: M1 = " + M1 + " \nA = " + A);
-        String email = Jsoup.parse(req.queryParams("email")).text();
+        String username = Jsoup.parse(req.queryParams("username")).text();
         String M2 = null;
 
         try {
@@ -143,12 +135,12 @@ public class AuthController {
             String m2 = M2.toString();
             logger.info("M2 Generated in Authenticate = " + m2);
             Session session = req.session(true);
-            User user = UserController.getUserByEmail(email);
+            User user = UserController.getUserByUsername(username);
 
             session.attribute(Path.Attribute.USERNAME, user.getUsername());
             session.attribute(Path.Attribute.USERID, user.getId().toString()); //saves the id as String
             session.attribute(Path.Attribute.AUTH_STATUS, true);
-            session.attribute(Path.Attribute.EMAIL, user.getEmail());
+            session.attribute(Path.Attribute.EMAIL, user.getUsername());
 
             model.put("M2", M2);
             model.put("code", "200");

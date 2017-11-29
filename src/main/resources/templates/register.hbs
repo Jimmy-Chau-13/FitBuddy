@@ -4,10 +4,6 @@
     <div id="signupDiv">
         <form action="/register" method="post" id="signupForm">
             <div class="row">
-                <p class="loginP">Email:</p>
-                <input type="text" placeholder="Email" name="email" id="email" required>
-            </div>
-            <div class="row">
                 <p class="loginP">Username:</p>
                 <input type="text" placeholder="username" name="username" id="username" required>
             </div>
@@ -41,31 +37,29 @@
             $("#signupForm").on('submit', function(event) {
                 event.preventDefault();
                 var username = $("#username").val();
-                var email = $("#email").val();
                 var p1 = $("#password1").val();
                 var p2 = $("#password2").val();
 
                 if(p1 === p2) {
                     var srpClient = new SRP6JavascriptClientSessionSHA256();
                     var salt = srpClient.generateRandomSalt();
-                    var verifier = srpClient.generateVerifier(salt, email, p1);
+                    var verifier = srpClient.generateVerifier(salt, username, p1);
 
                     $.ajax({
                         type: "POST",
                         url: "/register",
                         data: {"username": username, "salt":salt
-                            , "verifier":verifier, "email":email},
+                            , "verifier":verifier},
                         success: function(response) {
 
                             $("#username").val("");
-                            $("#email").val("");
                             $("#password1, #password2").val("");
                             $("#signupDiv").hide();
                             $("#loginDiv").show();
                         },
                         error: function(error) {
 
-                            $("#log").html("<strong> That EMAIL exists ALREADY! </strong>\n\
+                            $("#log").html("<strong> That USERNAME exists ALREADY! </strong>\n\
                             <br>");
                         }
                     });

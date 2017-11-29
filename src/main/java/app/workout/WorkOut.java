@@ -17,12 +17,11 @@ public class WorkOut {
     private int reps;
     private int weight;
     private String userId;
-    private String rowId;
-    private Date date;
+    private String date;
 
     public WorkOut() { }
 
-    public WorkOut(String exercise, int sets, int reps, int weight, Date date) {
+    public WorkOut(String exercise, int sets, int reps, int weight, String date) {
         this.exercise = exercise;
         this.sets = sets;
         this.reps = reps;
@@ -62,21 +61,11 @@ public class WorkOut {
         return weight;
     }
 
-    public void setRowId() {
-        rowId = id.toString();
-    }
-
-    public String getRowId() {
-        return rowId;
-    }
-
     public String getDate() {
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-        String workoutDate = df.format(date);
-        return workoutDate;
+        return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
