@@ -1,4 +1,4 @@
-package app;
+
 
 import app.auth.AuthController;
 import app.index.IndexController;
