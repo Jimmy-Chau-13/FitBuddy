@@ -1,1 +1,1 @@
-web: build/install/fitbuddy/bin/fitbuddy
+web: ./build/install/fitbuddy/bin/fitbuddy
