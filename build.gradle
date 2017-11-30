@@ -6,11 +6,11 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
-mainClassName = "Main"
-
 repositories {
     mavenCentral()
 }
+
+mainClassName = "Main"
 
 dependencies {
     compile 'com.sparkjava:spark-core:2.3'
