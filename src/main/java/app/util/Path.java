@@ -36,7 +36,7 @@ public class Path {
         public static final int PORT = 27017;
 
 
-        public static String HEROKU_DB_URI = "mongodb://heroku_n35m7bx6:vf99qjg9otp744biaqjtepvurd@ds011725.mlab.com:11725/heroku_n35m7bx6";
-        public static String HEROKU_DB_NAME = "heroku_n35m7bx6"; //this is the last part of the HEROKU_DB_URI
+        public static String HEROKU_DB_URI = "mongodb://heroku_6tnh94hh:khe2h2oilo3c9qdcejh8tlhk7b@ds125896.mlab.com:25896/heroku_6tnh94hh";
+        public static String HEROKU_DB_NAME = "heroku_6tnh94hh"; //this is the last part of the HEROKU_DB_URI
     }
 }

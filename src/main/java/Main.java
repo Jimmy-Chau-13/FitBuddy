@@ -1,6 +1,7 @@
 
 
 import app.auth.AuthController;
+import app.db.DataBaseHelper;
 import app.index.IndexController;
 
 import app.workout.WorkOutController;
@@ -23,6 +24,8 @@ public class Main {
 
         staticFileLocation("/public");
         port(getHerokuAssignedPort());
+
+        new DataBaseHelper();
 
         // Serving Pages
         get(Path.Web.GET_INDEX_PAGE, (req,res) -> IndexController.serveIndexPage(req,res)
@@ -65,7 +68,7 @@ public class Main {
         if (processBuilder.environment().get("PORT") != null) {
             return Integer.parseInt(processBuilder.environment().get("PORT"));
         }
-        return 4567; //return 8080 on localhost
+        return 4567;
     }
 
 } // EOF CLASS
