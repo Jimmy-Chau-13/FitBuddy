@@ -1,12 +1,10 @@
-
-
 // Opens a modal for editing existing workout or adding a new workout
 function openAddModal(mode){
     var modal = $('#addModal');
     modal.modal('show');
 
     if(mode == "add" ) {
-        console.log("ADD BUTTON CLICKED");
+        //console.log("ADD BUTTON CLICKED");
         $(".modal-title").html("Add a New Workout");
     }
     else {
@@ -31,7 +29,7 @@ function openViewModal(date) {
             $("#viewModal").modal('show');
 
             $(".deleteBtn").on("click", function () {
-                console.log("DELETE BUTTON CLICKED");
+                //console.log("DELETE BUTTON CLICKED");
                 var tr = $(this).closest("tr");
                 deleteBtnClicked(tr);
             });
@@ -40,14 +38,12 @@ function openViewModal(date) {
                 var tr = $(this).closest("tr");
                 editBtnClicked(tr,dateToShow);
             });
-
         }
-
     });
 
 }
 
-// Construct a table for a workout on a certain day
+// Construct a table when the view modal is open for a workout on a certain day
 function createWorkoutTable(list) {
 
     var trHTML = '';
@@ -75,14 +71,7 @@ function deleteBtnClicked(tr) {
         success: function(response) {
             $("#viewModalLog").html("<strong>DELETED</strong>");
             tr.remove();
-            if(response.numberOfWorkouts == "0 workouts")
-                $("#calendar").fullCalendar('removeEvents', response.date);
-            else {
-                var event = $("#calendar").fullCalendar('clientEvents', response.date);
-                console.log(event[0].title);
-                event[0].title = response.numberOfWorkouts;
-                $("#calendar").fullCalendar('updateEvent', event[0]);
-            }
+            deleteWorkoutEvent(response.date, response.numberOfWorkouts);
         },
         error: function() {
             $("#viewModalLog").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");
@@ -124,8 +113,37 @@ function clearAddModal(){
     modal.find('#editId').val("");
     modal.find('#date').datepicker('setDate',new Date());
     $("#logModal").html("");
+}
+
+// increment the calendar's event by one
+function addWorkoutEvent(date, numberOfWorkouts) {
+
+    if(numberOfWorkouts == "1 workouts") {
+        var event = {id : date, title : numberOfWorkouts,
+            start : date, allDay : true};
+        $("#calendar").fullCalendar('renderEvent', event, true);
+    }
+
+    else {
+        var event = $("#calendar").fullCalendar('clientEvents', date);
+        event[0].title = numberOfWorkouts;
+        $("#calendar").fullCalendar('updateEvent', event[0]);
+    }
 
 }
+
+// decrement the calendar's event by one
+function deleteWorkoutEvent(date, numberOfWorkouts) {
+    if(numberOfWorkouts == "0 workouts")
+        $("#calendar").fullCalendar('removeEvents',date);
+    else {
+        var event = $("#calendar").fullCalendar('clientEvents', date);
+        event[0].title = numberOfWorkouts;
+        $("#calendar").fullCalendar('updateEvent', event[0]);
+    }
+}
+
+
 
 // Given date (YYYY-MM-dd) reformat it to (MM/dd/YYYY)
 function formatDate(date) {
