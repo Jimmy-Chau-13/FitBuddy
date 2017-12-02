@@ -4,10 +4,14 @@ import app.auth.AuthController;
 import app.db.DataBaseHelper;
 import app.util.Path;
 import com.google.gson.Gson;
+import net.sf.cglib.core.Local;
 import org.bson.types.ObjectId;
 import org.jsoup.Jsoup;
 import org.mongodb.morphia.Datastore;
 import spark.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -25,6 +29,7 @@ public class WorkOutController {
 
         String userId = AuthController.checkSessionHasUser(req);
 
+
         if(userId != null && !userId.isEmpty()) {
             String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
 
@@ -32,6 +37,10 @@ public class WorkOutController {
             model.put("username", username);
             logger.info("Serve Profile: \n" +
                             "Username: " + username );
+
+            String eventArray = getMonthEvent(userId);
+            model.put("eventArray", eventArray);
+
             return new ModelAndView(model, Path.Template.PROFILE);
         }
 
@@ -71,7 +80,6 @@ public class WorkOutController {
                 if(workoutId != null && !workoutId.isEmpty()) {
                     workout.setId(workoutId);
                     model.put("mode", "edit");
-                    model.put("date",date);
                 }
                 else {
                     logger.warning("Can not " + mode + " workout, workout id is invalid");
@@ -86,7 +94,9 @@ public class WorkOutController {
             datastore = dbHelper.getDataStore();
             datastore.save(workout);
             res.status(200);
-            model.put("target", Path.Web.GET_PROFILE_PAGE);
+            model.put("numberOfWorkouts", getNumberOfWorkout(date,userId));
+            model.put("date",date);
+            //model.put("target", Path.Web.GET_PROFILE_PAGE);
             model.put("code", 200);
             model.put("status", "Added workout Successfully");
         }
@@ -104,6 +114,7 @@ public class WorkOutController {
 
     public static String handleDeleteWorkout(Request req, Response res) {
         res.type("application/json");
+        HashMap<String, Object> model = new HashMap<>();
         String workoutId = Jsoup.parse(req.queryParams("workoutId")).text();
         String userId = req.session(false).attribute(Path.Attribute.USERID);
         logger.info("Workout id to be deleted: " + workoutId +
@@ -117,9 +128,12 @@ public class WorkOutController {
                     .get();
 
             if(workout != null) {
+                String date = workout.getDate();
                 logger.info("DELETING WORKOUT: " + workout.getExercise());
                 datastore.delete(workout);
                 res.status(200);
+                model.put("numberOfWorkouts", getNumberOfWorkout(date,userId));
+                model.put("date", date);
             }
 
             else {
@@ -133,7 +147,6 @@ public class WorkOutController {
             res.status(500);
         }
 
-        HashMap<String, Object> model = new HashMap<>();
         String json = gson.toJson(model);
         return json;
 
@@ -165,7 +178,6 @@ public class WorkOutController {
 
         // Grab all workouts owned by current user
         datastore = dbHelper.getDataStore();
-        System.out.println(date);
         List<WorkOut> list = datastore.createQuery(WorkOut.class)
                 .field("userId").equal(userId)
                 .field("date").equal(date)
@@ -196,5 +208,54 @@ public class WorkOutController {
 
         return model;
     }
+
+
+    private static String getMonthEvent(String userId) {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        StringBuilder eventArray = new StringBuilder();
+        datastore = dbHelper.getDataStore();
+        List<WorkOut> list = datastore.createQuery(WorkOut.class)
+                .field("userId").equal(userId)
+                .order("date")
+                .asList();
+
+        int numberOfWorkout = 0;
+        String prevDate = list.get(0).getDate();
+        for(int i = 0; i < list.size(); i++) {
+            WorkOut currWorkout = list.get(i);
+            String currDate = currWorkout.getDate();
+
+            if(!currDate.equals(prevDate)) {
+                eventArray.append( "{ title: '" + numberOfWorkout + " workouts', " +
+                        "id: '" + prevDate + "', " +
+                        "start : '" + LocalDate.parse(prevDate, df)+ "' }, ");
+
+                numberOfWorkout = 1;
+                prevDate = currDate;
+
+            }
+
+            else {
+                numberOfWorkout++;
+            }
+        }
+        eventArray.append( "{ title: '" + numberOfWorkout + " workouts', " +
+                "id: '" + prevDate + "', " +
+                "start : '" + LocalDate.parse(prevDate, df)+ "' }, ");
+        return eventArray.toString();
+    }
+
+    private static String getNumberOfWorkout(String date, String userId) {
+        datastore = dbHelper.getDataStore();
+        List<WorkOut> list = datastore.createQuery(WorkOut.class)
+                .field("userId").equal(userId)
+                .field("date").equal(date)
+                .asList();
+        System.out.println("WORKOUTS: " + list.size());
+        return list.size() + " workouts";
+
+    }
+
+
 
 }

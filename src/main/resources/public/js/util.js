@@ -25,7 +25,7 @@ function openViewModal(date) {
         success: function(response) {
             var workout = JSON.parse(response.jsonData);
             var dateToShow = response.dateToShow;
-            console.log(workout);
+
             $("#theDateToShow").html(dateToShow);
             createWorkoutTable(workout);
             $("#viewModal").modal('show');
@@ -52,8 +52,8 @@ function createWorkoutTable(list) {
 
     var trHTML = '';
     $.each(list, function(i,item) {
-        console.log("exercise: " + item.exercise +
-                    "\nid: " + item.id);
+        //console.log("exercise: " + item.exercise +
+         //           "\nid: " + item.id);
         trHTML += '<tr data-id=' +item.id+ '><td>' + item.exercise + '</td><td>' + item.sets + '</td><td>' +item.reps +
         '</td><td>' + item.weight +
             '</td><td><button class="editBtn" name="edit"> Edit </button></td>' +
@@ -75,6 +75,14 @@ function deleteBtnClicked(tr) {
         success: function(response) {
             $("#viewModalLog").html("<strong>DELETED</strong>");
             tr.remove();
+            if(response.numberOfWorkouts == "0 workouts")
+                $("#calendar").fullCalendar('removeEvents', response.date);
+            else {
+                var event = $("#calendar").fullCalendar('clientEvents', response.date);
+                console.log(event[0].title);
+                event[0].title = response.numberOfWorkouts;
+                $("#calendar").fullCalendar('updateEvent', event[0]);
+            }
         },
         error: function() {
             $("#viewModalLog").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");

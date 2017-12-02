@@ -30,6 +30,10 @@
 
         $("#calendar").fullCalendar({
 
+            events: [
+                {{{eventArray}}}
+            ],
+
             dayClick: function(date) {
                 date = date.format();  //yyyy-MM-dd
                 date = formatDate(date);
@@ -76,6 +80,29 @@
                     if(response.mode) {
                         console.log(response.date);
                         openViewModal(response.date);
+                    }
+                    else{
+
+                        if(response.numberOfWorkouts == "0 workouts")
+                            $("#calendar").fullCalendar('removeEvents', response.date);
+                        else if(response.numberOfWorkouts == "1 workouts") {
+
+
+                            var event = {id : response.date, title : response.numberOfWorkouts,
+                                        start : response.date, allDay : true};
+                            console.log(event);
+                            $("#calendar").fullCalendar('renderEvent', event, true);
+                        }
+
+
+
+                        else {
+                            var event = $("#calendar").fullCalendar('clientEvents', response.date);
+                            console.log(event[0].title);
+                            event[0].title = response.numberOfWorkouts;
+                            $("#calendar").fullCalendar('updateEvent', event[0]);
+                        }
+
                     }
                 },
                 error: function() {

@@ -17,7 +17,7 @@ import static spark.Spark.*;
 public class Main {
 
     //public static WorkOutDAO workoutDao;
-    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    //private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws ClassNotFoundException {
 
@@ -62,8 +62,8 @@ public class Main {
 
 
     public static int getHerokuAssignedPort() {
-//         this will get the heroku assigned port in production
-//         or return 8080 for use in local dev
+    //this will get the heroku assigned port in production
+
         ProcessBuilder processBuilder = new ProcessBuilder();
         if (processBuilder.environment().get("PORT") != null) {
             return Integer.parseInt(processBuilder.environment().get("PORT"));
