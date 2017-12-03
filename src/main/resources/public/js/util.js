@@ -30,8 +30,6 @@ function createAddModalBody2(sets) {
             '</div>';
         $("#body2").append(html);
     }
-    var confirmBtn = '<button type="button" class="btn btn-primary" id="confirmBtn">Confirm</button>';
-    $("#addModalBody2").append(confirmBtn);
 }
 
 function fillAllSets(sets, reps, weight) {
@@ -43,6 +41,52 @@ function fillAllSets(sets, reps, weight) {
     }
 }
 
+function getReps() {
+    var sets = $("#sets").val();
+    var reps = new Array(sets);
+    for (i = 1; i < sets*1 + 1; i++) {
+        var repId = "#reps" + i;
+        reps[i*1-1] = $(repId).val();
+    }
+    return reps;
+}
+
+function getWeight() {
+    var sets = $("#sets").val();
+    var weight = new Array(sets);
+    for (i = 1; i < sets*1 + 1; i++) {
+        var weightId = "#weight" + i;
+        weight[i*1-1] = $(weightId).val();
+    }
+    return weight;
+}
+
+function getWorkout() {
+    var data = {};
+    data.exercise = $("#exercise").val();
+    data.sets = $("#sets").val();
+    data.editId = $("#editId").val();
+    data.date = $("#date").val();
+    data.mode = $('#mode').val();
+    data.reps = getReps();
+    data.weight = getWeight();
+    return data;
+}
+
+function checkAddModalBody2IsFilled() {
+    var sets = $("#sets").val();
+    for (i = 1; i < sets*1 + 1; i++) {
+        var repId = "#reps" + i;
+        var weightId = "#weight" + i;
+        var reps = $(repId).val();
+        var weight = $(weightId).val();
+        if(reps=="" || weight=="") {
+            $("#logModal2").html("Oops you forgot to fill it all");
+            return -1;
+        }
+    }
+
+}
 function clearAddModalBody1(){
     var modal = $('#addModal');
     $("#logModal").html("");
@@ -54,8 +98,8 @@ function clearAddModalBody1(){
 
 function clearAddModalBody2(){
     $("#logModal").html("");
+    $("#logModal2").html("");
     $("#body2").empty();
-    $("#confirmBtn").remove();
     $("#addModalBody2").hide();
     $("#addModalBody1").show();
 }
