@@ -1,0 +1,39 @@
+<!-- Modal -->
+<div class="modal fade" id="editModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Workout</h4>
+            </div>
+
+            <!-- FIRST PART OF ADD MODAL -->
+            <div class="modal-body" id="editModalBody">
+                <div class="form-group row">
+                    <div class="col-xs-4">
+                        <label for="exercise">Exercise</label>
+                        <input class="form-control" id="editExercise" type="text" placeholder="Enter Exercise" required>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for="sets">Sets</label>
+                        <input class="form-control" id="editSets" type="number"  readOnly>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for="date">Date</label>
+                        <input class="form-control" id="editDate" type="text" placeholder="Pick Date" required>
+                    </div>
+                </div>
+                <div id="editBody"></div>
+                <button type="button" class="btn btn-primary" id="editConfirmBtn">Confirm</button>;
+                <input type="hidden" id="editId" value="" />
+                <p id="logModal3" style="color:red;"></p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

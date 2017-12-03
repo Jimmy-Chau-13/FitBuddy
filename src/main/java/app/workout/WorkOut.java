@@ -1,6 +1,7 @@
 package app.workout;
 
 
+import app.util.StringHelper;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Id;
 
@@ -14,14 +15,14 @@ public class WorkOut {
     private ObjectId id;
     private String exercise;
     private int sets;
-    private int reps;
-    private int weight;
+    private int[] reps;
+    private int[] weight;
     private String userId;
     private String date;
 
     public WorkOut() { }
 
-    public WorkOut(String exercise, int sets, int reps, int weight, String date) {
+    public WorkOut(String exercise, int sets, int[] reps, int[] weight, String date) {
         this.exercise = exercise;
         this.sets = sets;
         this.reps = reps;
@@ -53,11 +54,11 @@ public class WorkOut {
         return sets;
     }
 
-    public int getReps() {
+    public int[] getReps() {
         return reps;
     }
 
-    public int getWeight() {
+    public int[] getWeight() {
         return weight;
     }
 
@@ -75,9 +76,11 @@ public class WorkOut {
                 "\"id\": " + "\"" + getId() + "\", " +
                 "\"exercise\":" + "\"" + getExercise() + "\", " +
                 "\"sets\":" + "\"" + getSets() + "\", " +
-                "\"reps\":" + "\"" + getReps() + "\", " +
-                "\"weight\":" + "\"" + getWeight() + "\" " +
+                "\"reps\":" + "\"" + StringHelper.ArrayToString(getReps()) + "\", " +
+                "\"weight\":" + "\"" + StringHelper.ArrayToString(getWeight()) + "\" " +
                 "}" ;
     }
+
+
 
 }

@@ -13,6 +13,7 @@ public class Path {
         public static final String DO_LOGOUT = "/logout";
 
         public static final String ADD_WORKOUT = "/add";
+        public static final String EDIT_WORKOUT = "/edit";
         public static final String DELETE_WORKOUT = "/delete";
         public static final String VIEW_WORKOUT = "/view";
     }

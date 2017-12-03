@@ -1,20 +1,6 @@
 
 /////////////////////////////////////// ALL FUNCTIONS DEALING WITH THE ADD MODAL ////////////////////////////////
 
-// Opens a modal for editing existing workout or adding a new workout
-function openAddModal(mode){
-    var modal = $('#addModal');
-    modal.modal('show');
-
-    if(mode == "add" ) {
-        $(".modal-title").html("Add a New Workout");
-    }
-    else {
-        $(".modal-title").html("Edit Workout");
-    }
-    modal.find('#mode').val(mode);
-}
-
 function createAddModalBody2(sets) {
     for(i = 1; i < sets*1 + 1; i++) {
         var setNum = "Set " + i;
@@ -65,11 +51,9 @@ function getWorkout() {
     var data = {};
     data.exercise = $("#exercise").val();
     data.sets = $("#sets").val();
-    data.editId = $("#editId").val();
     data.date = $("#date").val();
-    data.mode = $('#mode').val();
-    data.reps = getReps();
-    data.weight = getWeight();
+    data.reps = getReps().toString();
+    data.weight = getWeight().toString();
     return data;
 }
 
@@ -105,6 +89,9 @@ function clearAddModalBody2(){
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////// ALL VIEW MODAL FUNCTIONALITY //////////////////////////////////////////
 
 // date should be in the format as MM/dd/YYYY
 function openViewModal(date) {
@@ -175,28 +162,106 @@ function deleteBtnClicked(tr) {
 function editBtnClicked(tr, dateToShow) {
 
     $("#viewModal").modal('hide');
-    openAddModal("edit");
-    var modal = $('#addModal');
+
+    var modal = $('#editModal');
+    var sets = tr.find("td:nth-child(2)").text();
+    modal.find('#editSets').val(sets);
+    createEditModalBody(sets);
 
     var exercise = tr.find("td:nth-child(1)").text();
     modal.find('#editExercise').val(exercise);
 
-    var sets = tr.find("td:nth-child(2)").text();
-    modal.find('#editSets').val(sets);
+    var reps = JSON.parse(tr.find("td:nth-child(3)").text());
+    for(i = 1; i < sets*1 + 1; i++) {
+        var repId = "#editReps" + i;
+        $(repId).val(reps[i-1]);
+    }
 
-    var reps = tr.find("td:nth-child(3)").text();
-    modal.find('#editReps').val(reps);
-
-    var weight = tr.find("td:nth-child(4)").text();
-    modal.find('#editWeight').val(weight);
+    var weight = JSON.parse(tr.find("td:nth-child(4)").text());
+    for(i = 1; i < sets*1 + 1; i++) {
+        var weightId = "#editWeight" + i;
+        $(weightId).val(weight[i-1]);
+    }
 
     var id = tr.attr("data-id");
     modal.find('#editId').val(id);
 
-    modal.find('#date').datepicker('setDate',dateToShow);
+    modal.find('#editDate').datepicker('setDate',dateToShow);
+    modal.modal('show');
 }
 
+function createEditModalBody(sets) {
+    for(i = 1; i < sets*1 + 1; i++) {
+        var setNum = "Set " + i;
+        var repId = "editReps" + i;
+        var weightId = "editWeight" + i;
 
+        var html = '<div class="form-group row">' +
+            '<div class="col-xs-4">' +
+            '<label for="reps">' + setNum + '</label>' +
+            '<input class="form-control" id=' + repId + ' type="number" placeholder="Enter # of Reps" required>' +
+            '<input class="form-control" id=' + weightId + ' type="number" placeholder="Enter Weight" required>' +
+            '</div>' +
+            '</div>';
+        $("#editBody").append(html);
+    }
+}
+
+function getEditedReps() {
+    var sets = $("#editSets").val();
+    var reps = new Array(sets);
+    for (i = 1; i < sets*1 + 1; i++) {
+        var repId = "#editReps" + i;
+        reps[i*1-1] = $(repId).val();
+    }
+    return reps;
+}
+
+function getEditedWeight() {
+    var sets = $("#editSets").val();
+    var weight = new Array(sets);
+    for (i = 1; i < sets*1 + 1; i++) {
+        var weightId = "#editWeight" + i;
+        weight[i*1-1] = $(weightId).val();
+    }
+    return weight;
+}
+
+function getEditedWorkout() {
+    var data = {};
+    data.exercise = $("#editExercise").val();
+    data.sets = $("#editSets").val();
+    data.editId = $("#editId").val();
+    data.date = $("#editDate").val();
+    data.reps = getEditedReps().toString();
+    data.weight = getEditedWeight().toString();
+    return data;
+}
+
+function checkEditModalBodyIsFilled() {
+    var sets = $("#editSets").val();
+    if ($("#editDate").val() == "" || $("#editExercise").val() == "") {
+        $("#logModal3").html("Oops you forgot to fill it all");
+        return -1;
+    }
+    for (i = 1; i < sets*1 + 1; i++) {
+        var repId = "#editReps" + i;
+        var weightId = "#editWeight" + i;
+        var reps = $(repId).val();
+        var weight = $(weightId).val();
+        if(reps=="" || weight=="") {
+            $("#logModal3").html("Oops you forgot to fill it all");
+            return -1;
+        }
+    }
+
+}
+function clearEditModalBody(){
+    $("#logModal3").html("");
+    $("#editBody").empty();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // increment the calendar's event by one
 function addWorkoutEvent(date, numberOfWorkouts) {

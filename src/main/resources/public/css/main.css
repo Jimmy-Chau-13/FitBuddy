@@ -110,3 +110,7 @@ th {
     background-color: coral;
 }
 
+#editModal {
+   overflow-y: scroll
+}
+

@@ -3,6 +3,7 @@ package app.workout;
 import app.auth.AuthController;
 import app.db.DataBaseHelper;
 import app.util.Path;
+import app.util.StringHelper;
 import com.google.gson.Gson;
 import org.bson.types.ObjectId;
 import org.jsoup.Jsoup;
@@ -48,60 +49,97 @@ public class WorkOutController {
         return null;
     }
 
-    public static String handleUpdateWorkout (Request req, Response res) {
+    public static String handleAddWorkout (Request req, Response res) {
         res.type("application/json");
+
         HashMap<String, Object> model = new HashMap<>();
 
         String userId = req.session(false).attribute(Path.Attribute.USERID);
-
         String exercise = Jsoup.parse(req.queryParams("exercise")).text();
         int sets = Integer.parseInt(Jsoup.parse(req.queryParams("sets")).text());
-        int reps = Integer.parseInt(Jsoup.parse(req.queryParams("reps")).text());
-        int weight = Integer.parseInt(Jsoup.parse(req.queryParams("weight")).text());
         String date = req.queryParams("date");
+        int[] reps = StringHelper.stringToArray(Jsoup.parse(req.queryParams("reps")).text(),sets);
+        int[] weight = StringHelper.stringToArray(Jsoup.parse(req.queryParams("weight")).text(),sets);
 
-        String mode = Jsoup.parse(req.queryParams("mode")).text();
         WorkOut workout = new WorkOut(exercise,sets,reps,weight,date);
 
-        logger.info(mode + " workout: " + workout.getExercise() +
+        logger.info( "Add workout: " + workout.getExercise() +
                         "\nSets " + workout.getSets() +
-                        "\nReps " +workout.getReps() +
-                        "\nWeight " + workout.getWeight() +
+                        "\nReps " + StringHelper.printArray(workout.getReps()) +
+                        "\nWeight " + StringHelper.printArray(workout.getWeight()) +
                         "\nDate " + workout.getDate());
 
         if(userId != null && !userId.isEmpty()) {
             workout.setUserId(userId);
             logger.info("Where user id is " + userId);
 
-            if(mode.equals("edit")) {
-                String workoutId = Jsoup.parse(req.queryParams("editId")).text();
-                logger.info("Editing workout id " + workoutId);
-                if(workoutId != null && !workoutId.isEmpty()) {
-                    workout.setId(workoutId);
-                    model.put("mode", "edit");
-                }
-                else {
-                    logger.warning("Can not " + mode + " workout, workout id is invalid");
-                    res.status(500);
-                    model.put("code", 500);
-                    String json = gson.toJson(model);
-                    logger.info("json to be returned = " + json);
-                    return json;
-                }
-            }
-
             datastore = dbHelper.getDataStore();
             datastore.save(workout);
             res.status(200);
             model.put("numberOfWorkouts", getNumberOfWorkout(date,userId));
             model.put("date",date);
-            //model.put("target", Path.Web.GET_PROFILE_PAGE);
             model.put("code", 200);
             model.put("status", "Added workout Successfully");
         }
 
         else {
-            logger.warning("Can not " + mode + " workout, user id is invalid");
+            logger.warning("Can not add workout, user id is invalid");
+            res.status(500);
+            model.put("code", 500);
+        }
+
+        String json = gson.toJson(model);
+        logger.info("json to be returned = " + json);
+        return json;
+    }
+
+    public static String handleUpdateWorkout (Request req, Response res) {
+        res.type("application/json");
+
+        HashMap<String, Object> model = new HashMap<>();
+
+        String userId = req.session(false).attribute(Path.Attribute.USERID);
+        String exercise = Jsoup.parse(req.queryParams("exercise")).text();
+        int sets = Integer.parseInt(Jsoup.parse(req.queryParams("sets")).text());
+        String date = req.queryParams("date");
+        int[] reps = StringHelper.stringToArray(Jsoup.parse(req.queryParams("reps")).text(),sets);
+        int[] weight = StringHelper.stringToArray(Jsoup.parse(req.queryParams("weight")).text(),sets);
+
+        WorkOut workout = new WorkOut(exercise,sets,reps,weight,date);
+
+        logger.info("Edit workout: " + workout.getExercise() +
+                "\nSets " + workout.getSets() +
+                "\nReps " + StringHelper.printArray(workout.getReps()) +
+                "\nWeight " + StringHelper.printArray(workout.getWeight()) +
+                "\nDate " + workout.getDate());
+
+        if(userId != null && !userId.isEmpty()) {
+            workout.setUserId(userId);
+            logger.info("Where user id is " + userId);
+            String workoutId = Jsoup.parse(req.queryParams("editId")).text();
+            logger.info("Editing workout id " + workoutId);
+            if(workoutId != null && !workoutId.isEmpty()) {
+                workout.setId(workoutId);
+            }
+            else {
+                logger.warning("Can not edit workout, workout id is invalid");
+                res.status(500);
+                model.put("code", 500);
+                String json = gson.toJson(model);
+                logger.info("json to be returned = " + json);
+                return json;
+            }
+
+            datastore = dbHelper.getDataStore();
+            datastore.save(workout);
+            res.status(200);
+            model.put("date",date);
+            model.put("code", 200);
+            model.put("status", "Edited workout Successfully");
+        }
+
+        else {
+            logger.warning("Can not workout, user id is invalid");
             res.status(500);
             model.put("code", 500);
         }
@@ -187,11 +225,9 @@ public class WorkOutController {
             logger.info("found " + list.size() + " workout ");
             for(int i = 0; i < list.size(); i++) {
                 WorkOut workout = list.get(i);
-                //jsonData.append("\"" + i + "\":" + workout.toJson()).append(",");
                 jsonData.append(workout.toJson()).append(",");
                          logger.info("jsonData " + i + " = " + workout.toJson());
             }
-
             jsonData.deleteCharAt(jsonData.lastIndexOf(",")); //removes the last comma
             jsonData.insert(0, "[" ).append("]"); //name the array
 
@@ -256,7 +292,6 @@ public class WorkOutController {
         return list.size() + " workouts";
 
     }
-
 
 
 }

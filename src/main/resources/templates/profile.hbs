@@ -17,6 +17,7 @@
 
     {{> addModal.hbs}}
     {{> viewModal.hbs}}
+    {{> editModal.hbs}}
 
 {{/partial}}
 {{> base.hbs}}
@@ -47,7 +48,7 @@
         $("#addModalBody2").hide();
 
         $('#addBtn').on('click',function () {
-            openAddModal("add");
+            $("#addModal").modal('show');
         });
 
         $("#nextBtn").on('click',function () {
@@ -95,13 +96,8 @@
                 data: data,
                 success: function(response) {
                     $("#addModal").modal('hide');
+                    addWorkoutEvent(response.date, response.numberOfWorkouts);
 
-                    if(response.mode) {
-                        openViewModal(response.date);
-                    }
-                    else{
-                        addWorkoutEvent(response.date, response.numberOfWorkouts);
-                    }
                 },
                 error: function() {
                     $("#logModal2").html("<strong>OOPS! UNABLE TO SUBMIT WORKOUT! PLEASE TRY AGAIN</strong>");
@@ -118,15 +114,47 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
+////////////////////////////////////////// VIEW MODAL FUNCTIONALITY ////////////////////////////////////////////////
         $('#viewModal').on('hidden.bs.modal', function(event) {
             $("#workoutTable tbody").remove();
             $("#viewModalLog").html("");
         });
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////// Edit MODAL FUNCTIONALITY ////////////////////////////////////////////////
+        $('#editDate').datepicker();
+
+        $('#editConfirmBtn').on('click', function () {
+            if(checkEditModalBodyIsFilled() == -1)
+                return;
+
+            var data = getEditedWorkout();
+            console.log("Submitting = \n" + JSON.stringify(data));
+            $.ajax({
+                type: "post",
+                url: "/edit",
+                data: data,
+                success: function(response) {
+                    $("#editModal").modal('hide');
+                    openViewModal(response.date);
+                },
+                error: function() {
+                    $("#logModal3").html("<strong>OOPS! UNABLE TO SUBMIT WORKOUT! PLEASE TRY AGAIN</strong>");
+                }
+            });
+        });
+
+        $('#editModal').on('hidden.bs.modal', function() {
+
+            clearEditModalBody();
+            $("#logModal3").html("");
+        });
+
+
     });
-
-
-
-
 </script>
