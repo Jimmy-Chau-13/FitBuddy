@@ -218,6 +218,8 @@ public class WorkOutController {
                 .order("date")
                 .asList();
 
+        if (list.size() == 0) return null;
+
         int numberOfWorkout = 0;
         String prevDate = list.get(0).getDate();
         for(int i = 0; i < list.size(); i++) {

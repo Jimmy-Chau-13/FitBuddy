@@ -24,10 +24,7 @@
 <script type="text/javascript">
     $(document).ready(function (response) {
 
-
-        $("#date").datepicker();
-        $("#date").datepicker('setDate', new Date());
-
+//////////////////////////////////// ALL FULL CALENDAR FUNCTIONALITY////////////////////////////////////////////////
         $("#calendar").fullCalendar({
 
             events: [
@@ -40,10 +37,60 @@
                 openViewModal(date);
             }
         });
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////// ALL ADD MODAL FUNCTIONS ///////////////////////////////////////////////////
+        $("#date").datepicker();
+        $("#date").datepicker('setDate', new Date());
+
+        $("#addModalBody2").hide();
 
         $('#addBtn').on('click',function () {
-           openAddModal("add");
+            openAddModal("add");
         });
+
+        $("#nextBtn").on('click',function () {
+
+            var sets = $("#sets").val();
+            var exercise = $("#exercise").val();
+
+            if(exercise == "") {
+                $("#logModal").html("Exercise is required")
+                return;
+            }
+
+            if(sets == "") {
+                $("#logModal").html("Sets is required")
+                return;
+            }
+
+           $("#addModalBody1").hide();
+           $("#addModalBody2").show();
+
+           var sets = $("#sets").val();
+           createAddModalBody2(sets);
+        });
+
+        $("#setBtn").on('click',function () {
+            var sets = $("#sets").val();
+            var reps = $("#reps1").val();
+            var weight = $("#weight1").val();
+            fillAllSets(sets,reps,weight);
+        });
+
+        $("#backBtn").on('click', function () {
+            clearAddModalBody2();
+        });
+
+
+        $('#addModal').on('hidden.bs.modal', function(event) {
+            clearAddModalBody1();
+            clearAddModalBody2();
+        });
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
         $('#viewModal').on('hidden.bs.modal', function(event) {
@@ -51,9 +98,7 @@
             $("#viewModalLog").html("");
         });
 
-        $('#addModal').on('hidden.bs.modal', function(event) {
-            clearAddModal();
-        });
+
 
 
         $("#confirmBtn").on("click", function(){

@@ -1,18 +1,66 @@
+
+/////////////////////////////////////// ALL FUNCTIONS DEALING WITH THE ADD MODAL ////////////////////////////////
+
 // Opens a modal for editing existing workout or adding a new workout
 function openAddModal(mode){
     var modal = $('#addModal');
     modal.modal('show');
 
     if(mode == "add" ) {
-        //console.log("ADD BUTTON CLICKED");
         $(".modal-title").html("Add a New Workout");
     }
     else {
-        console.log("EDIT BUTTON CLICKED");
         $(".modal-title").html("Edit Workout");
     }
     modal.find('#mode').val(mode);
 }
+
+function createAddModalBody2(sets) {
+    for(i = 1; i < sets*1 + 1; i++) {
+        var setNum = "Set " + i;
+        var repId = "reps" + i;
+        var weightId = "weight" + i;
+
+        var html = '<div class="form-group row">' +
+            '<div class="col-xs-4">' +
+            '<label for="reps">' + setNum + '</label>' +
+            '<input class="form-control" id=' + repId + ' type="number" placeholder="Enter # of Reps" required>' +
+            '<input class="form-control" id=' + weightId + ' type="number" placeholder="Enter Weight" required>' +
+            '</div>' +
+            '</div>';
+        $("#body2").append(html);
+    }
+    var confirmBtn = '<button type="button" class="btn btn-primary" id="confirmBtn">Confirm</button>';
+    $("#addModalBody2").append(confirmBtn);
+}
+
+function fillAllSets(sets, reps, weight) {
+    for (i = 1; i < sets*1 + 1; i++) {
+        var repId = "#reps" + i;
+        var weightId = "#weight" + i;
+        $(repId).val(reps);
+        $(weightId).val(weight);
+    }
+}
+
+function clearAddModalBody1(){
+    var modal = $('#addModal');
+    $("#logModal").html("");
+    modal.find('#exercise').val("");
+    modal.find('#sets').val("");
+    modal.find('#editId').val("");
+    modal.find('#date').datepicker('setDate',new Date());
+}
+
+function clearAddModalBody2(){
+    $("#logModal").html("");
+    $("#body2").empty();
+    $("#confirmBtn").remove();
+    $("#addModalBody2").hide();
+    $("#addModalBody1").show();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // date should be in the format as MM/dd/YYYY
 function openViewModal(date) {
@@ -104,16 +152,7 @@ function editBtnClicked(tr, dateToShow) {
     modal.find('#date').datepicker('setDate',dateToShow);
 }
 
-function clearAddModal(){
-    var modal = $('#addModal');
-    modal.find('#editExercise').val("");
-    modal.find('#editSets').val("");
-    modal.find('#editReps').val("");
-    modal.find('#editWeight').val("");
-    modal.find('#editId').val("");
-    modal.find('#date').datepicker('setDate',new Date());
-    $("#logModal").html("");
-}
+
 
 // increment the calendar's event by one
 function addWorkoutEvent(date, numberOfWorkouts) {
