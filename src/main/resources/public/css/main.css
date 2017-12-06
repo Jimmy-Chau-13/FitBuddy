@@ -4,7 +4,7 @@
     background-color: antiquewhite;
     text-align: center;
     border: 3px solid black;
-    width:50%;
+    width:30%;
     margin: auto;
 
 }
@@ -13,11 +13,16 @@
     background-color: antiquewhite;
     border: 3px solid black;
     text-align: center;
-    width: 70%;
+    width: 50%;
     height: 500px;
     margin: auto;
     margin-top: 10px;
     padding-top: 100px;
+}
+body {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 .row {

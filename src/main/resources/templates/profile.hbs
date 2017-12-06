@@ -2,6 +2,7 @@
 
 
 {{#partial "content"}}
+    <body>
     <div id="topMenu">
         <h1> Welcome {{username}}! </h1>
         <form action ="/logout" method = "post">
@@ -18,7 +19,7 @@
     {{> addModal.hbs}}
     {{> viewModal.hbs}}
     {{> editModal.hbs}}
-
+    </body>
 {{/partial}}
 {{> base.hbs}}
 
