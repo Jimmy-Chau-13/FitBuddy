@@ -70,13 +70,15 @@ body {
 }
 
 #logoutBtn {
-    background-color: antiquewhite;
-    color: black;
-    border: none;
+    float: right;
+}
+
+#logoutBtn2 {
+    padding: 5px 32px;
 }
 
 #optionDiv {
-    margin: auto;
+
     background-color: antiquewhite;
     border: 3px solid black;
     margin-top: 10px;

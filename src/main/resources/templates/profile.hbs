@@ -5,13 +5,20 @@
     <body>
     <div id="topMenu">
         <h1> Welcome {{username}}! </h1>
-        <form action ="/logout" method = "post">
-            <button id="logoutBtn">logout</button>
-        </form>
+
     </div>
 
     <div id="optionDiv">
-        <input type="button"  id="addBtn" name="add" value="ADD WORKOUT" class="indexButton">
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary" id="addBtn">Add Workout</button>
+            <button type="button" class="btn btn-primary" id="findBtn">Find Workout</button>
+        </div>
+        <div id="logoutBtn">
+            <form action ="/logout" method = "post">
+                <input type="submit" value="Logout" id="logoutBtn2" class="indexButton" />
+             </form>
+        </div>
     </div>
 
     <div id="calendar"></div>
@@ -141,8 +148,13 @@
                 url: "/edit",
                 data: data,
                 success: function(response) {
+                    if(response.old_date) {
+                        addWorkoutEvent(response.date, response.num_workouts_new);
+                        deleteWorkoutEvent(response.old_date, response.num_workouts_old);
+                    }
                     $("#editModal").modal('hide');
                     openViewModal(response.date);
+
                 },
                 error: function() {
                     $("#logModal3").html("<strong>OOPS! UNABLE TO SUBMIT WORKOUT! PLEASE TRY AGAIN</strong>");

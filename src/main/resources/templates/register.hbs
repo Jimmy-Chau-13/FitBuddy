@@ -41,6 +41,7 @@
                 var username = $("#username").val();
                 var p1 = $("#password1").val();
                 var p2 = $("#password2").val();
+                username = $.trim(username);
 
                 if(p1 === p2) {
                     var srpClient = new SRP6JavascriptClientSessionSHA256();

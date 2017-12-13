@@ -34,6 +34,8 @@
                 var username = $("#username").val();
                 var password = $("#password").val();
 
+                username = $.trim(username);
+
                 $.ajax ({
                     type: "post",
                     url: "/",

@@ -120,6 +120,7 @@ public class WorkOutController {
             logger.info("Editing workout id " + workoutId);
             if(workoutId != null && !workoutId.isEmpty()) {
                 workout.setId(workoutId);
+
             }
             else {
                 logger.warning("Can not edit workout, workout id is invalid");
@@ -131,7 +132,13 @@ public class WorkOutController {
             }
 
             datastore = dbHelper.getDataStore();
+            WorkOut old_workout = datastore.get(WorkOut.class, new ObjectId(workoutId));
             datastore.save(workout);
+            if(old_workout.getDate() != date) {
+                model.put("old_date", old_workout.getDate());
+                model.put("num_workouts_new", getNumberOfWorkout(date,userId));
+                model.put("num_workouts_old", getNumberOfWorkout(old_workout.getDate(),userId));
+            }
             res.status(200);
             model.put("date",date);
             model.put("code", 200);
