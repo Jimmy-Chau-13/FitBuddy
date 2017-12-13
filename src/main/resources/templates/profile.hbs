@@ -59,6 +59,13 @@
             $("#addModal").modal('show');
         });
 
+        $('#addBtnFromView').on('click',function () {
+            $("#viewModal").modal('hide');
+            var editDate = $("#theDateToShow").text();
+            $("#date").datepicker('setDate', editDate);
+            $("#addModal").modal('show');
+        });
+
         $("#nextBtn").on('click',function () {
 
             var sets = $("#sets").val();
