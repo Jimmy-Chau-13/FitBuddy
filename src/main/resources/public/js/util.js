@@ -162,7 +162,6 @@ function deleteBtnClicked(tr) {
 function editBtnClicked(tr, dateToShow) {
 
     $("#viewModal").modal('hide');
-
     var modal = $('#editModal');
     var sets = tr.find("td:nth-child(2)").text();
     modal.find('#editSets').val(sets);

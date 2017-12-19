@@ -218,6 +218,16 @@ public class WorkOutController {
         return json;
     }
 
+    public static String handleGraphWorkout(Request req, Response res) {
+        res.type("application/json");
+        String userId = req.session(false).attribute(Path.Attribute.USERID);
+        String exercise = req.queryParams("exercise");
+        String num_exercises = req.queryParams("num_exercises");
+        return null;
+
+    }
+
+    // Fetch all workouts of a day to show on view modal
     private static HashMap<String,Object> fetchWorkOuts(String userId, String date) {
 
         // Grab all workouts owned by current user
@@ -289,6 +299,7 @@ public class WorkOutController {
         return eventArray.toString();
     }
 
+    // Return total number of workouts on a single day
     private static String getNumberOfWorkout(String date, String userId) {
         datastore = dbHelper.getDataStore();
         List<WorkOut> list = datastore.createQuery(WorkOut.class)
@@ -297,7 +308,6 @@ public class WorkOutController {
                 .asList();
         System.out.println("WORKOUTS: " + list.size());
         return list.size() + " workouts";
-
     }
 
 
