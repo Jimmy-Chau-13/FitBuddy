@@ -21,7 +21,6 @@ repositories {
 dependencies {
     compile 'com.sparkjava:spark-core:2.3'
     compile 'com.sparkjava:spark-template-handlebars:2.3'
-    compile 'com.h2database:h2:1.4.191'
     compile 'com.nimbusds:srp6a:1.5.3'
     compile 'org.mongodb.morphia:morphia:1.2.1'
     compile 'org.jsoup:jsoup:1.11.1'
