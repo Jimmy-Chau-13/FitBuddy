@@ -18,6 +18,7 @@ public class GraphController {
     static Datastore datastore;
     static Gson gson = new Gson();
 
+    // Get and graph the specific workout, returns an error if workout is not found
     public static String handleGraphWorkout(Request req, Response res) {
         HashMap<String, Object> model = new HashMap<>();
         res.type("application/json");

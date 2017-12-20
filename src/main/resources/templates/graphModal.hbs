@@ -52,7 +52,7 @@
         var exercise = $("#exerciseToGraph").val();
         var num_exercises = $("#numberOfWorkouts").val();
         if(num_exercises < 1) {
-            $("#graphLog").html("The # must be more than 0")
+            $("#graphLog").html("The # must be more than 0");
             return;
         }
 
@@ -68,7 +68,6 @@
                 var chart = new Chart(ctx, {
                     // The type of chart we want to create
                     type: 'line',
-
 
                     // The data for our dataset
                     data: {
@@ -86,7 +85,8 @@
                 });
             },
             error: function() {
-
+                console.log("ERROR");
+                $("#graphLog").html(exercise + " not found");
             }
         });
 

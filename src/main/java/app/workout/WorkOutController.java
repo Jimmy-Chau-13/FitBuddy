@@ -221,41 +221,6 @@ public class WorkOutController {
         return json;
     }
 
-    public static String handleGraphWorkout(Request req, Response res) {
-        HashMap<String, Object> model = new HashMap<>();
-        res.type("application/json");
-        String userId = req.session(false).attribute(Path.Attribute.USERID);
-        String exercise = req.queryParams("exercise");
-        int num_exercises = Integer.parseInt(req.queryParams("num_exercises"));
-        System.out.println("GRAPHING: " + exercise + "  " + num_exercises);
-        datastore = dbHelper.getDataStore();
-        List<WorkOut> list = datastore.createQuery(WorkOut.class)
-                .field("userId").equal(userId)
-                .field("exercise").equal(exercise)
-                .asList();
-
-        list.sort(new WorkoutComparator.SortByDate());
-        String[] workouts_dates = new String[Math.min(num_exercises, list.size())];
-        int[] workouts_score = new int[workouts_dates.length];
-        int i = workouts_dates.length-1;
-        int j = 0;
-        while(i >= 0) {
-            WorkOut workout = list.get(j);
-            workouts_dates[i] = workout.getDate();
-            workouts_score[i] = workout.getAverage();
-            i--;
-            j++;
-        }
-
-        Datasets datasets = new Datasets(exercise, workouts_score);
-        Graph graph = new Graph(workouts_dates, datasets);
-        model.put("code", 200);
-        model.put("data", graph);
-        String json = gson.toJson(model);
-        System.out.println(json);
-        return json;
-
-    }
 
     // Fetch all workouts of a day to show on view modal
     private static HashMap<String,Object> fetchWorkOuts(String userId, String date) {
