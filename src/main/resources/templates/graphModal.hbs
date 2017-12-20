@@ -1,5 +1,5 @@
-<div class="modal fade bd-example-modal-lg" id="graphModal" role="dialog">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade " id="graphModal" role="dialog">
+    <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -12,7 +12,7 @@
                         <input class="form-control" id="exerciseToGraph" type="text" placeholder="Enter Exercise" required>
                     </div>
                     <div class="col-xs-4">
-                        <label for="numberOfWorkouts">Graph # previous workouts</label>
+                        <label for="numberOfWorkouts"># to Graph</label>
                         <input class="form-control" id="numberOfWorkouts" type="number" placeholder="previous #" required>
                     </div>
                     <button type="button" class="btn btn-primary" id="graphBtn">Graph</button>
@@ -41,6 +41,8 @@
 
     $('#graphModal').on('hidden.bs.modal',function() {
         $("#myChart").hide();
+        $("#exerciseToGraph").val("");
+        $("#numberOfWorkouts").val("");
         $("#exerciseToGraphForm").show();
     });
 
