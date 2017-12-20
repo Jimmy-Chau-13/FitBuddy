@@ -13,10 +13,11 @@
                     </div>
                     <div class="col-xs-4">
                         <label for="numberOfWorkouts"># to Graph</label>
-                        <input class="form-control" id="numberOfWorkouts" type="number" placeholder="previous #" required>
+                        <input class="form-control" id="numberOfWorkouts"  placeholder="previous #" required>
                     </div>
                     <button type="button" class="btn btn-primary" id="graphBtn">Graph</button>
                 </div>
+                <p id="graphLog" style="color:red;"></p>
                 <canvas id="myChart" width="400" height="400"></canvas>
             </div>
             <div class="modal-footer">
@@ -43,13 +44,17 @@
         $("#myChart").hide();
         $("#exerciseToGraph").val("");
         $("#numberOfWorkouts").val("");
+        $("#graphLog").html("");
         $("#exerciseToGraphForm").show();
     });
 
     $("#graphBtn").on('click', function () {
-        $("#exerciseToGraphForm").hide();
         var exercise = $("#exerciseToGraph").val();
         var num_exercises = $("#numberOfWorkouts").val();
+        if(num_exercises < 1) {
+            $("#graphLog").html("The # must be more than 0")
+            return;
+        }
 
         var data = {exercise: exercise, num_exercises: num_exercises};
         $.ajax({
@@ -57,6 +62,7 @@
             url: "/graph",
             data: data,
             success: function(response) {
+                $("#exerciseToGraphForm").hide();
                 $("#myChart").show();
                 console.log(response.data.datasets);
                 var chart = new Chart(ctx, {
