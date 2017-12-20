@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="addModal" role="dialog">
+<div class="modal fade" id="addModal" role="dialog" style="overflow-y: auto;">
     <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -44,3 +44,78 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    ////////////////////////////////////// ALL ADD MODAL FUNCTIONS ////////////////////////////////////////////
+    $("#date").datepicker();
+    $("#date").datepicker('setDate', new Date());
+
+    $("#addModalBody2").hide();
+
+    $('#addBtn').on('click',function () {
+        $("#addModal").modal('show');
+    });
+
+
+    $("#nextBtn").on('click',function () {
+
+        var sets = $("#sets").val();
+        var exercise = $("#exercise").val();
+
+        if(exercise == "") {
+            $("#logModal").html("Exercise is required")
+            return;
+        }
+
+        if(sets == "") {
+            $("#logModal").html("Sets is required")
+            return;
+        }
+
+        $("#addModalBody1").hide();
+        $("#addModalBody2").show();
+
+        var sets = $("#sets").val();
+        createAddModalBody2(sets);
+    });
+
+    $("#setBtn").on('click',function () {
+        var sets = $("#sets").val();
+        var reps = $("#reps1").val();
+        var weight = $("#weight1").val();
+        fillAllSets(sets,reps,weight);
+    });
+
+    $("#backBtn").on('click', function () {
+        clearAddModalBody2();
+    });
+
+    $("#confirmBtn").on("click", function(){
+        if(checkAddModalBody2IsFilled() == -1)
+            return;
+
+        var data = getWorkout();
+        console.log("Submitting = \n" + JSON.stringify(data));
+        $.ajax({
+            type: "post",
+            url: "/add",
+            data: data,
+            success: function(response) {
+                $("#addModal").modal('hide');
+                addWorkoutEvent(response.date, response.numberOfWorkouts);
+
+            },
+            error: function() {
+                $("#logModal2").html("<strong>OOPS! UNABLE TO SUBMIT WORKOUT! PLEASE TRY AGAIN</strong>");
+            }
+        });
+
+    });
+
+    $('#addModal').on('hidden.bs.modal', function() {
+        clearAddModalBody1();
+        clearAddModalBody2();
+    });
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+</script>

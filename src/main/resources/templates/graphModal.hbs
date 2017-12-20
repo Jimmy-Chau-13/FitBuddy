@@ -25,3 +25,62 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    //////////////////////////////////////////////GRAPH/////////////////////////////////////////////////////////////
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+
+    $("#findBtn").on('click', function() {
+        $('#graphModal').modal('show');
+    });
+
+    $('#graphModal').on('show.bs.modal',function() {
+        $("#myChart").hide();
+    });
+
+    $('#graphModal').on('hidden.bs.modal',function() {
+        $("#myChart").hide();
+        $("#exerciseToGraphForm").show();
+    });
+
+    $("#graphBtn").on('click', function () {
+        $("#exerciseToGraphForm").hide();
+        var exercise = $("#exerciseToGraph").val();
+        var num_exercises = $("#numberOfWorkouts").val();
+
+        var data = {exercise: exercise, num_exercises: num_exercises};
+        $.ajax({
+            type: "post",
+            url: "/graph",
+            data: data,
+            success: function(response) {
+                $("#myChart").show();
+                console.log(response.data.datasets);
+                var chart = new Chart(ctx, {
+                    // The type of chart we want to create
+                    type: 'line',
+
+
+                    // The data for our dataset
+                    data: {
+                        datasets: [{
+                            label: response.data.datasets.label,
+                            borderColor: response.data.datasets.borderColor,
+                            data: response.data.datasets.data
+                        }],
+                        labels: response.data.labels,
+
+                    },
+
+                    // Configuration options go here
+                    options: {}
+                });
+            },
+            error: function() {
+
+            }
+        });
+
+    });
+</script>

@@ -30,3 +30,22 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+
+    ////////////////////////////////////////// VIEW MODAL FUNCTIONALITY //////////////////////////////////////////////
+    $('#viewModal').on('hidden.bs.modal', function(event) {
+        $("#workoutTable tbody").remove();
+        $("#viewModalLog").html("");
+    });
+
+    $('#addBtnFromView').on('click',function () {
+        $("#viewModal").modal('hide');
+        var editDate = $("#theDateToShow").text();
+        $("#date").datepicker('setDate', editDate);
+        $("#addModal").modal('show');
+    });
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+</script>
