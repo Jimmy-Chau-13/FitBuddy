@@ -223,6 +223,13 @@ public class WorkOutController {
         String userId = req.session(false).attribute(Path.Attribute.USERID);
         String exercise = req.queryParams("exercise");
         String num_exercises = req.queryParams("num_exercises");
+        datastore = dbHelper.getDataStore();
+        List<WorkOut> list = datastore.createQuery(WorkOut.class)
+                .field("userId").equal(userId)
+                .field("exercise").equal(exercise)
+                .asList();
+
+        Collections.sort(list, new WorkoutComparator.SortByDate());
         return null;
 
     }
