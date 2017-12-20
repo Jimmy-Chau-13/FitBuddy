@@ -1,0 +1,79 @@
+<!-- Modal -->
+<div class="modal fade" id="signupModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Sign Up</h4>
+            </div>
+
+            <!-- FIRST PART OF ADD MODAL -->
+            <div class="modal-body" id="editModalBody">
+                <form action="/register" method="post" id="signupForm">
+                    <div class="form-group">
+                        <label class="signupLabel" for="username_signup">Username</label>
+                        <input type="text" class="form-control" placeholder="username"  id="username_signup" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="signupLabel" for="password1_signup">Password</label>
+                        <input type="password" class="form-control" placeholder="password"  id="password1_signup" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="signupLabel" for="password2_signup">Re-enter Password</label>
+                        <input type="password" class="form-control" placeholder="password" id="password2_signup" required>
+                    </div>
+                    <div class="form-group">
+                        <p id="log_signup" style="color:red;"></p>
+                        <input type="submit" name="signupBt" id="signupBt" value="Sign Up" class="indexButton" />
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" >
+    $(document).ready(function() {
+        $("#signupForm").on('submit', function(event) {
+            event.preventDefault();
+            var username = $("#username_signup").val();
+            var p1 = $("#password1_signup").val();
+            var p2 = $("#password2_signup").val();
+            username = $.trim(username);
+
+            if(p1 === p2) {
+                var srpClient = new SRP6JavascriptClientSessionSHA256();
+                var salt = srpClient.generateRandomSalt();
+                var verifier = srpClient.generateVerifier(salt, username, p1);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/register",
+                    data: {"username": username, "salt":salt
+                        , "verifier":verifier},
+                    success: function(response) {
+
+                        $("#username_signup").val("");
+                        $("#password1_signup, #password2_signup").val("");
+                        $("#log_signup").html("<strong> Great you are all registered! </strong>");
+
+                    },
+                    error: function(error) {
+
+                        $("#log_signup").html("<strong> That USERNAME exists ALREADY! </strong>\n\
+                            <br>");
+                    }
+                });
+            } else {
+                $("#log_signup").html("<strong>Passwords Do not Match</strong> <br/> ");
+            }
+        });
+
+    });
+</script>

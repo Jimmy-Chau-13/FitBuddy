@@ -20,7 +20,7 @@
                     <input type="submit" name="loginBt" id="loginBt" value="Sign In" class="indexButton" />
                 </div>
                 <p id="log" style="color:red;"></p>
-                <a href="/register" style="color: #bce8f1;"> Sign Up </a>
+                <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#signupModal">Sign Up</button>
             </form>
         </div>
     </div>
@@ -77,3 +77,5 @@
 {{/partial}}
 
 {{> base.hbs}}
+
+{{> signupModal.hbs}}
