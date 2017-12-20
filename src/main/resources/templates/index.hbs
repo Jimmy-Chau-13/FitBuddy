@@ -1,30 +1,34 @@
 {{#partial "content"}}
-
-    <body background="/pictures/main-title-pic.jpeg">
-
-    <div class="mainTitleDiv">
-        <h1 id="mainTitle">FitBuddy</h1>
+    <body style="background-color: black;">
+    <div id="mainTitleDiv" >
+        <img id="logo" src="pictures/fitbuddy-logo.png" alt="fitbuddy logo">
+        <p style="color: white; position:absolute; top: 10%; left: 50%; "> Tracking your lifts, made it easy!</p>
     </div>
 
-    <div id="loginDiv">
-        <form action="/" id="loginForm">
-            <div class ="row">
-                <p class="loginP">Username:</p>
-                <input type="text" placeholder="Username" name="username" id="username" required>
-            </div>
-            <div class ="row">
-                <p class="loginP">Password:</p>
-                <input type="password" placeholder="password" name="password" id="password" required>
-            </div>
-            <div class ="row">
-                <input type="submit" name="loginBt" id="loginBt" value="Sign In" class="indexButton" />
-            </div>
-            <p id="log" style="color:red;"></p>
-            <a href="/register"> Sign Up </a>
-        </form>
+    <div id="mainPictureDiv" background="/pictures/main-title-pic.jpeg">
+        <div id="loginDiv" style="background-color: rgba(0, 0, 0, 0.4);">
+            <form action="/" id="loginForm" style="height: 100%;">
+                <div class="form-group" style="margin-top: 25%;">
+                    <label class="indexLabel" for="username">Username</label>
+                    <input type="text" class="form-control form-control-lg" id="username" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <label class="indexLabel" for="password">Password</label>
+                    <input type="password" class="form-control form-control-lg" id="password" placeholder="password"  required>
+                </div>
+                <div class ="form-group">
+                    <input type="submit" name="loginBt" id="loginBt" value="Sign In" class="indexButton" />
+                </div>
+                <p id="log" style="color:red;"></p>
+                <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#signupModal">Sign Up</button>
+            </form>
+        </div>
     </div>
+
+    <div id="footerDiv"></div>
 
     </body>
+
     <script type="text/javascript">
         $("document").ready(function() {
 
@@ -51,7 +55,6 @@
                             url: "/auth",
                             data: {"username":username, "M1":M1, "A":A},
                             success:function(res2) {
-                                console.log("resp2 location = " + res2.target);
                                 if(res2.target) {
                                     window.location.href = res2.target;
                                 }
@@ -74,3 +77,5 @@
 {{/partial}}
 
 {{> base.hbs}}
+
+{{> signupModal.hbs}}
