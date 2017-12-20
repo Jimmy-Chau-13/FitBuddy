@@ -299,5 +299,20 @@ function formatDate(date) {
 
 }
 
+// Create table from the graph
+function createGraphtTable(list) {
+
+    var trHTML = '';
+    $.each(list, function(i,item) {
+        //console.log("exercise: " + item.exercise +
+        //           "\nid: " + item.id);
+        trHTML += '<tr data-id=' +item.id+ '><td>' + item.exercise + '</td><td>' + item.sets + '</td><td>' +item.reps +
+            '</td><td>' + item.weight + '</td><td>' + item.date + '</td></tr>';
+    });
+
+    $('#graph_table').append(trHTML);
+}
+
+
 
 
