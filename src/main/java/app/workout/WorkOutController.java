@@ -2,9 +2,12 @@ package app.workout;
 
 import app.auth.AuthController;
 import app.db.DataBaseHelper;
+import app.graph.Datasets;
+import app.graph.Graph;
 import app.util.Path;
 import app.util.StringHelper;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.bson.types.ObjectId;
 import org.jsoup.Jsoup;
 import org.mongodb.morphia.Datastore;
@@ -218,14 +221,6 @@ public class WorkOutController {
         return json;
     }
 
-    public static String handleGraphWorkout(Request req, Response res) {
-        res.type("application/json");
-        String userId = req.session(false).attribute(Path.Attribute.USERID);
-        String exercise = req.queryParams("exercise");
-        String num_exercises = req.queryParams("num_exercises");
-        return null;
-
-    }
 
     // Fetch all workouts of a day to show on view modal
     private static HashMap<String,Object> fetchWorkOuts(String userId, String date) {

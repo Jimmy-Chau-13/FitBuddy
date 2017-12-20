@@ -2,6 +2,7 @@
 
 import app.auth.AuthController;
 import app.db.DataBaseHelper;
+import app.graph.GraphController;
 import app.index.IndexController;
 
 import app.workout.WorkOutController;
@@ -31,8 +32,8 @@ public class Main {
         get(Path.Web.GET_INDEX_PAGE, (req,res) -> IndexController.serveIndexPage(req,res)
                 ,new HandlebarsTemplateEngine());
 
-        get(Path.Web.GET_REGISTER_PAGE, (req,res) -> AuthController.serveRegisterPage(req,res)
-                , new HandlebarsTemplateEngine());
+        get(Path.Web.GET_PROFILE_PAGE, (req,res) -> WorkOutController.serveProfile(req,res)
+                ,new HandlebarsTemplateEngine());
 
 
         // Handle Authentication
@@ -49,12 +50,11 @@ public class Main {
 
         post(Path.Web.EDIT_WORKOUT, (req,res) -> WorkOutController.handleUpdateWorkout(req,res));
 
-        get(Path.Web.GET_PROFILE_PAGE, (req,res) -> WorkOutController.serveProfile(req,res)
-                ,new HandlebarsTemplateEngine());
-
         post(Path.Web.DELETE_WORKOUT, (req,res) -> WorkOutController.handleDeleteWorkout(req,res));
 
         post(Path.Web.VIEW_WORKOUT, (req,res) -> WorkOutController.handleViewWorkout(req,res));
+
+        post(Path.Web.GRAPH_WORKOUT, (req,res) -> GraphController.handleGraphWorkout(req,res));
 
 
 

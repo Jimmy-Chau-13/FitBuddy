@@ -37,3 +37,39 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    ////////////////////////////////////////////// Edit MODAL FUNCTIONALITY ////////////////////////////////////////////////
+    $('#editDate').datepicker();
+
+    $('#editConfirmBtn').on('click', function () {
+        if(checkEditModalBodyIsFilled() == -1)
+            return;
+
+        var data = getEditedWorkout();
+        console.log("Submitting = \n" + JSON.stringify(data));
+        $.ajax({
+            type: "post",
+            url: "/edit",
+            data: data,
+            success: function(response) {
+                if(response.old_date) {
+                    addWorkoutEvent(response.date, response.num_workouts_new);
+                    deleteWorkoutEvent(response.old_date, response.num_workouts_old);
+                }
+                $("#editModal").modal('hide');
+                openViewModal(response.date);
+
+            },
+            error: function() {
+                $("#logModal3").html("<strong>OOPS! UNABLE TO SUBMIT WORKOUT! PLEASE TRY AGAIN</strong>");
+            }
+        });
+    });
+
+    $('#editModal').on('hidden.bs.modal', function() {
+
+        clearEditModalBody();
+        $("#logModal3").html("");
+    });
+</script>
