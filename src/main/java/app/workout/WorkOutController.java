@@ -2,9 +2,12 @@ package app.workout;
 
 import app.auth.AuthController;
 import app.db.DataBaseHelper;
+import app.graph.Datasets;
+import app.graph.Graph;
 import app.util.Path;
 import app.util.StringHelper;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.bson.types.ObjectId;
 import org.jsoup.Jsoup;
 import org.mongodb.morphia.Datastore;
@@ -219,18 +222,38 @@ public class WorkOutController {
     }
 
     public static String handleGraphWorkout(Request req, Response res) {
+        HashMap<String, Object> model = new HashMap<>();
         res.type("application/json");
         String userId = req.session(false).attribute(Path.Attribute.USERID);
         String exercise = req.queryParams("exercise");
-        String num_exercises = req.queryParams("num_exercises");
+        int num_exercises = Integer.parseInt(req.queryParams("num_exercises"));
+        System.out.println("GRAPHING: " + exercise + "  " + num_exercises);
         datastore = dbHelper.getDataStore();
         List<WorkOut> list = datastore.createQuery(WorkOut.class)
                 .field("userId").equal(userId)
                 .field("exercise").equal(exercise)
                 .asList();
 
-        Collections.sort(list, new WorkoutComparator.SortByDate());
-        return null;
+        list.sort(new WorkoutComparator.SortByDate());
+        String[] workouts_dates = new String[Math.min(num_exercises, list.size())];
+        int[] workouts_score = new int[workouts_dates.length];
+        int i = workouts_dates.length-1;
+        int j = 0;
+        while(i >= 0) {
+            WorkOut workout = list.get(j);
+            workouts_dates[i] = workout.getDate();
+            workouts_score[i] = workout.getAverage();
+            i--;
+            j++;
+        }
+
+        Datasets datasets = new Datasets(exercise, workouts_score);
+        Graph graph = new Graph(workouts_dates, datasets);
+        model.put("code", 200);
+        model.put("data", graph);
+        String json = gson.toJson(model);
+        System.out.println(json);
+        return json;
 
     }
 

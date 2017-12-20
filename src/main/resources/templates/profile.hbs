@@ -178,6 +178,8 @@
         });
 //////////////////////////////////////////////GRAPH/////////////////////////////////////////////////////////////
 
+        var ctx = document.getElementById('myChart').getContext('2d');
+
         $("#findBtn").on('click', function() {
            $('#graphModal').modal('show');
         });
@@ -193,27 +195,44 @@
 
         $("#graphBtn").on('click', function () {
            $("#exerciseToGraphForm").hide();
-           $("#myChart").show();
+           var exercise = $("#exerciseToGraph").val();
+           var num_exercises = $("#numberOfWorkouts").val();
+
+           var data = {exercise: exercise, num_exercises: num_exercises};
+            $.ajax({
+                type: "post",
+                url: "/graph",
+                data: data,
+                success: function(response) {
+                    $("#myChart").show();
+                    console.log(response.data.datasets);
+                    var chart = new Chart(ctx, {
+                        // The type of chart we want to create
+                        type: 'line',
+
+
+                        // The data for our dataset
+                        data: {
+                            datasets: [{
+                                label: response.data.datasets.label,
+                                borderColor: response.data.datasets.borderColor,
+                                data: response.data.datasets.data
+                            }],
+                            labels: response.data.labels,
+
+                        },
+
+                        // Configuration options go here
+                        options: {}
+                    });
+                },
+                error: function() {
+
+                }
+            });
+
         });
 
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            // The type of chart we want to create
-            type: 'line',
-
-            // The data for our dataset
-            data: {
-                labels: ["January", "February", "March", "April", "May", "June", "July"],
-                datasets: [{
-                    label: "My First dataset",
-                    borderColor: 'rgb(255, 99, 132)',
-                    data: [0, 10, 5, 2, 20, 30, 45],
-                }]
-            },
-
-            // Configuration options go here
-            options: {}
-        });
 
     });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

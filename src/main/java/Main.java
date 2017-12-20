@@ -56,6 +56,8 @@ public class Main {
 
         post(Path.Web.VIEW_WORKOUT, (req,res) -> WorkOutController.handleViewWorkout(req,res));
 
+        post("/graph", (req,res) -> WorkOutController.handleGraphWorkout(req,res));
+
 
 
 

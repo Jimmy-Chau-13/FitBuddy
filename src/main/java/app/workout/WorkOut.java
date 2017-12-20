@@ -73,12 +73,15 @@ public class WorkOut implements Comparable<WorkOut> {
 
     public int getAverage() {
         int total = 0;
+        int total_reps = 0;
         for(int i = 0; i < sets; i++) {
             total += (reps[i] * weight[i]);
+            total_reps += reps[i];
         }
-        return total / sets ;
+        return total / total_reps ;
     }
 
+    // Sort by most recent date
     @Override
     public int compareTo(WorkOut workout) {
         int compareYear = Integer.parseInt(workout.getDate().substring(6,10));
