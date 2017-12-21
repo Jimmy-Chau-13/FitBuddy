@@ -90,6 +90,70 @@ function clearAddModalBody2(){
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////SUPERSET FUNCTIONS///////////////////////////////////////////////////////////////
+function createSupersetModalBody2(sets, num_exercises, curr_exercise) {
+
+    var the_exercise_number = curr_exercise * 1 + 1;
+    var html =  '<label for="superset_exercise_name"> Exercise ' + the_exercise_number + '</label>' +
+                 '<input class="form-control" id = "superset_exercise_name" placeholder="Exercise Name" required>';
+    $("#supersetBody2").append(html);
+
+    for(i = 0; i < sets*1 ; i++) {
+        var setNum = "Set " + (i*1 + 1);
+        var repId = "reps" + i;
+        var weightId = "weight" + i;
+
+        var html = '<div class="form-group row">' +
+            '<div class="col-xs-4">' +
+            '<label for="reps">' + setNum + '</label>' +
+            '<input class="form-control" id=' + repId + ' type="number" placeholder="Enter # of Reps" required>' +
+            '<input class="form-control" id=' + weightId + ' type="number" placeholder="Enter Weight" required>' +
+            '</div>' +
+            '</div>';
+        $("#supersetBody2").append(html);
+    }
+
+    if(curr_exercise == num_exercises*1 - 1) {
+        var html = '<button type="button" class="btn btn-primary" id="supersetConfirmBtn">Confirm</button>';
+        $("#supersetBody2").append(html);
+    }
+    else {
+        var html = '<button type="button" class="btn btn-primary" id="supersetBody2NextBtn">Next</button>';
+        $("#supersetBody2").append(html);
+    }
+}
+
+function getSupersetReps() {
+    var sets = $("#superset_sets").val();
+    var reps = [];
+    for (i = 0; i < sets*1 ; i++) {
+        var repId = "#reps" + i;
+        reps[i*1] = $(repId).val();
+    }
+    return reps;
+}
+
+function getSupersetWeight() {
+    var sets = $("#superset_sets").val();
+    var weight = [];
+    for (i = 0; i < sets*1; i++) {
+        var weightId = "#weight" + i;
+        weight[i*1] = $(weightId).val();
+    }
+    return weight;
+}
+
+function getSupersetExercise(workout) {
+    workout.exercise = $("#superset_exercise_name").val();
+    workout.sets = $("#superset_sets").val();
+    workout.date = $("#superset_date").val();
+    workout.reps = getSupersetReps();
+    workout.weight = getSupersetWeight();
+    return workout;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////// ALL VIEW MODAL FUNCTIONALITY //////////////////////////////////////////
 
