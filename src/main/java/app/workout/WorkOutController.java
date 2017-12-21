@@ -229,7 +229,7 @@ public class WorkOutController {
 
             if(!currDate.equals(prevDate)) {
                 eventArray.append( "{ title: '" + numberOfWorkout + " workouts', " +
-                        "id: '" + prevDate + "', " +
+                        "id: '" + prevDate + " workout', " +
                         "start : '" + LocalDate.parse(prevDate, df)+ "' }, ");
 
                 numberOfWorkout = 1;
@@ -242,7 +242,7 @@ public class WorkOutController {
             }
         }
         eventArray.append( "{ title: '" + numberOfWorkout + " workouts', " +
-                "id: '" + prevDate + "', " +
+                "id: '" + prevDate + " workout', " +
                 "start : '" + LocalDate.parse(prevDate, df)+ "' }, ");
         return eventArray.toString();
     }

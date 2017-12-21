@@ -61,6 +61,8 @@ public class Main {
         // CRUD operations for Supersets
         post("/add_superset", (req,res) -> SupersetController.handleAddSuperset(req,res));
 
+        post("/delete_superset", (req,res) -> SupersetController.handleDeleteSuperset(req,res));
+
 
 
     } //EOF MAIN

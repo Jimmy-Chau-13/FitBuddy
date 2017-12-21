@@ -153,21 +153,7 @@ function getSupersetExercise() {
     return workout;
 }
 
-function addSupersetEvent(date, numberOfSupersets) {
 
-    if(numberOfSupersets == "1 supersets") {
-        var event = {id : date, title : numberOfSupersets,
-            start : date, allDay : true, color: "green"};
-        $("#calendar").fullCalendar('renderEvent', event, true);
-    }
-
-    else {
-        var event = $("#calendar").fullCalendar('clientEvents', date);
-        event[0].title = numberOfSupersets;
-        $("#calendar").fullCalendar('updateEvent', event[0]);
-    }
-
-}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,12 +170,9 @@ function openViewModal(date) {
             var workout = JSON.parse(response.jsonData);
             var dateToShow = response.dateToShow;
             var supersets = response.supersets;
-            //console.log(supersets);
-            //console.log(supersets[0].workouts[0].exercise);
-            //console.log(supersets.workouts[0].weight[0]);
-            $("#theDateToShow").html(dateToShow);
+            var supersets_id = response.supersets_id;
             createWorkoutTable(workout);
-            createSupersetTable(supersets);
+            createSupersetTable(supersets, supersets_id);
             $("#viewModal").modal('show');
 
             $(".deleteBtn").on("click", function () {
@@ -201,6 +184,12 @@ function openViewModal(date) {
             $(".editBtn").on("click", function () {
                 var tr = $(this).closest("tr");
                 editBtnClicked(tr,dateToShow);
+            });
+
+            $(".deleteSupersetBtn").on('click', function () {
+                console.log("DELETE");
+                var tr = $(this).closest("tr");
+                deleteSupersetBtnClicked(tr);
             });
         }
     });
@@ -223,23 +212,43 @@ function createWorkoutTable(list) {
     $('#workoutTable').append(trHTML);
 }
 
-function  createSupersetTable(list) {
+function  createSupersetTable(list, supersets_id) {
     var html = '';
     $.each(list, function (i,item) {
         var superset_num = "Superset " + (i*1+1);
-       html += '<h4>' + superset_num + '</h4>';
-       html += '<table><thead><tr><th>EXERCISE</th><th>SETS</th><th>REPS</th><th>WEIGHT</th></tr></thead><tbody>';
+        html += '<br><table><tr data-id='+ supersets_id[i] + '><th colspan="3" style="text-align: center;">' +superset_num+ '</th>' +
+            '<th style="align: right;"><button class="deleteSupersetBtn" style="background-color: darkblue; ' +
+            'border-color: darkblue "> Delete </button></th></tr>' +
+            '<tr><th>EXERCISE</th><th>SETS</th>' +
+           '<th>REPS</th><th>WEIGHT</th></tr>';
 
        $.each(item.workouts, function (j, workout) {
            html += '<tr ><td>' + workout.exercise + '</td><td>' + workout.sets + '</td><td>' + workout.reps +
                '</td><td>' + workout.weight + '</td></tr>';
        });
-       html += '</tbody></table>';
+       html += '</table><br>';
     });
 
     $('#supersetTableDiv').append(html);
 }
 
+function deleteSupersetBtnClicked(tr) {
+    var data = {};
+    data.supersetId = tr.attr("data-id");
+    $.ajax({
+        type: "post",
+        url: "/delete_superset",
+        data: data,
+        success: function(response) {
+            $("#viewModalLog").html("<strong>DELETED</strong>");
+            tr.parent().remove();
+            deleteSupersetEvent(response.date, response.numberOfSupersets);
+        },
+        error: function() {
+            $("#viewModalLog").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");
+        }
+    });
+}
 
 function deleteBtnClicked(tr) {
     var data = {};
@@ -366,15 +375,15 @@ function clearEditModalBody(){
 
 // increment the calendar's event by one
 function addWorkoutEvent(date, numberOfWorkouts) {
-
-    if(numberOfWorkouts == "1 workouts") {
-        var event = {id : date, title : numberOfWorkouts,
+    if(numberOfWorkouts === "1 workouts") {
+        console.log("")
+        var event = {id : date + " workout", title : numberOfWorkouts,
             start : date, allDay : true};
         $("#calendar").fullCalendar('renderEvent', event, true);
     }
 
     else {
-        var event = $("#calendar").fullCalendar('clientEvents', date);
+        var event = $("#calendar").fullCalendar('clientEvents', date + " workout");
         event[0].title = numberOfWorkouts;
         $("#calendar").fullCalendar('updateEvent', event[0]);
     }
@@ -384,10 +393,37 @@ function addWorkoutEvent(date, numberOfWorkouts) {
 // decrement the calendar's event by one
 function deleteWorkoutEvent(date, numberOfWorkouts) {
     if(numberOfWorkouts == "0 workouts")
-        $("#calendar").fullCalendar('removeEvents',date);
+        $("#calendar").fullCalendar('removeEvents',date + " workout");
     else {
-        var event = $("#calendar").fullCalendar('clientEvents', date);
+        var event = $("#calendar").fullCalendar('clientEvents', date + " workout");
         event[0].title = numberOfWorkouts;
+        $("#calendar").fullCalendar('updateEvent', event[0]);
+    }
+}
+
+function addSupersetEvent(date, numberOfSupersets) {
+
+    if(numberOfSupersets == "1 supersets") {
+        var event = {id : date + " superset", title : numberOfSupersets,
+            start : date, allDay : true, color: "green"};
+        $("#calendar").fullCalendar('renderEvent', event, true);
+    }
+
+    else {
+        var event = $("#calendar").fullCalendar('clientEvents', date + " superset");
+        event[0].title = numberOfSupersets;
+        $("#calendar").fullCalendar('updateEvent', event[0]);
+    }
+
+}
+
+// decrement the calendar's event by one
+function deleteSupersetEvent(date, numberOfSupersets) {
+    if(numberOfSupersets == "0 supersets")
+        $("#calendar").fullCalendar('removeEvents',date + " superset");
+    else {
+        var event = $("#calendar").fullCalendar('clientEvents', date + " superset");
+        event[0].title = numberOfSupersets;
         $("#calendar").fullCalendar('updateEvent', event[0]);
     }
 }
