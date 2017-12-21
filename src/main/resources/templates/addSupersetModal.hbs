@@ -45,7 +45,6 @@
 
 <script type="text/javascript">
     var superset = {}; //Superset object 1. WorkOut[], 2. String date
-    var workout = {};   // Holds the current workout object
     var workouts = [];  // array of workout objects
     var num_exercise;   // the number of different exercises in the superset
     var curr_exercise;  // the current exercise we are on, starts at 0 to num_exercises - 1
@@ -88,9 +87,9 @@
     });
 
     $(document).on('click', '#supersetBody2NextBtn ', function(){
-        workout = getSupersetExercise(workout);
-        console.log(workout);
-        workouts[curr_exercise] = workout;
+
+        //console.log(workout);
+        workouts[curr_exercise] = getSupersetExercise();
         curr_exercise++;
         $("#supersetBody2").empty();
         createSupersetModalBody2(sets, num_exercise, curr_exercise);
@@ -98,18 +97,19 @@
 
     $(document).on('click', '#supersetConfirmBtn ', function(){
         console.log("CONFIRMING");
-        workout = getSupersetExercise(workout);
-        console.log(workout);
-        workouts[curr_exercise] = workout;
+        workouts[curr_exercise] = getSupersetExercise();
+        console.log(workouts);
         $("#supersetBody2").empty();
         superset.date = $("#superset_date").val();
         superset.workouts = workouts;
         console.log(superset);
         var data = {superset: superset};
+        //console.log(data);
+
         $.ajax({
             type: "post",
             url: "/add_superset",
-            data: data,
+            data: JSON.stringify(data),
             success: function(response) {
                 $("#addSupersetModal").modal('hide');
             },

@@ -4,6 +4,8 @@ import app.workout.WorkOut;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Id;
 
+import java.util.Arrays;
+
 public class Superset {
 
     @Id
@@ -12,6 +14,7 @@ public class Superset {
     private WorkOut[] workouts;
     private String date;
 
+    public  Superset() {}
 
     public Superset(WorkOut[] workouts, String date ) {
         this.date = date;
@@ -44,8 +47,20 @@ public class Superset {
         this.date = date;
     }
 
-    public void setId(ObjectId id) {
-        this.id = id;
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "Superset{" +
+                "workouts=" + Arrays.toString(workouts) +
+                ", date='" + date + '\'' +
+                '}';
     }
 }
 

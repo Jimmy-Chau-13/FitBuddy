@@ -4,6 +4,7 @@ import app.auth.AuthController;
 import app.db.DataBaseHelper;
 import app.graph.Datasets;
 import app.graph.Graph;
+import app.superset.SupersetController;
 import app.util.Path;
 import app.util.StringHelper;
 import com.google.gson.Gson;
@@ -42,8 +43,9 @@ public class WorkOutController {
                             "Username: " + username );
 
             String eventArray = getMonthEvent(userId);
+            String eventArray2 = SupersetController.getSupersetMonthEvent(userId);
             model.put("eventArray", eventArray);
-
+            model.put("eventArray2", eventArray2);
             return new ModelAndView(model, Path.Template.PROFILE);
         }
 
