@@ -44,7 +44,7 @@
 </div>
 
 <script type="text/javascript">
-    var supersets = {}; //Superset object 1. WorkOut[], 2. String date
+    var superset = {}; //Superset object 1. WorkOut[], 2. String date
     var workout = {};   // Holds the current workout object
     var workouts = [];  // array of workout objects
     var num_exercise;   // the number of different exercises in the superset
@@ -102,9 +102,21 @@
         console.log(workout);
         workouts[curr_exercise] = workout;
         $("#supersetBody2").empty();
-        supersets.date = $("#superset_date").val();
-        supersets.workouts = workouts;
-        console.log(supersets);
+        superset.date = $("#superset_date").val();
+        superset.workouts = workouts;
+        console.log(superset);
+        var data = {superset: superset};
+        $.ajax({
+            type: "post",
+            url: "/add_superset",
+            data: data,
+            success: function(response) {
+                $("#addSupersetModal").modal('hide');
+            },
+            error: function() {
+                $("#superset_log").html("<strong>OOPS! UNABLE TO SUBMIT SUPERSET! PLEASE TRY AGAIN</strong>");
+            }
+        });
     });
 
 
