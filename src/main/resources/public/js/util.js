@@ -143,7 +143,8 @@ function getSupersetWeight() {
     return weight;
 }
 
-function getSupersetExercise(workout) {
+function getSupersetExercise() {
+    var workout = {};
     workout.exercise = $("#superset_exercise_name").val();
     workout.sets = $("#superset_sets").val();
     workout.date = $("#superset_date").val();
