@@ -153,6 +153,22 @@ function getSupersetExercise() {
     return workout;
 }
 
+function addSupersetEvent(date, numberOfSupersets) {
+
+    if(numberOfSupersets == "1 supersets") {
+        var event = {id : date, title : numberOfSupersets,
+            start : date, allDay : true, color: "green"};
+        $("#calendar").fullCalendar('renderEvent', event, true);
+    }
+
+    else {
+        var event = $("#calendar").fullCalendar('clientEvents', date);
+        event[0].title = numberOfSupersets;
+        $("#calendar").fullCalendar('updateEvent', event[0]);
+    }
+
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

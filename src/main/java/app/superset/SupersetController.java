@@ -38,6 +38,8 @@ public class SupersetController {
             res.status(200);
             model.put("code", 200);
             model.put("status", "Added workout Successfully");
+            model.put("numberOfSupersets", getNumberOfSupersetsForSingleDay(superset.getDate(),userId));
+            model.put("date",superset.getDate());
         }
 
         else {
@@ -86,5 +88,15 @@ public class SupersetController {
                 "color: 'green', " +
                 "start : '" + LocalDate.parse(prevDate, df)+ "' }, ");
         return eventArray.toString();
+    }
+
+    // Return total number of workouts on a single day
+    private static String getNumberOfSupersetsForSingleDay(String date, String userId) {
+        datastore = dbHelper.getDataStore();
+        List<Superset> list = datastore.createQuery(Superset.class)
+                .field("userId").equal(userId)
+                .field("date").equal(date)
+                .asList();
+        return list.size() + " supersets";
     }
 }

@@ -112,6 +112,7 @@
             data: JSON.stringify(data),
             success: function(response) {
                 $("#addSupersetModal").modal('hide');
+                addSupersetEvent(response.date, response.numberOfSupersets);
             },
             error: function() {
                 $("#superset_log").html("<strong>OOPS! UNABLE TO SUBMIT SUPERSET! PLEASE TRY AGAIN</strong>");
