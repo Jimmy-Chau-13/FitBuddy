@@ -13,8 +13,8 @@ public class Superset {
     private String date;
 
 
-    public Superset(ObjectId id, WorkOut[] workouts) {
-        this.id = id;
+    public Superset(WorkOut[] workouts, String date ) {
+        this.date = date;
         this.workouts = workouts;
     }
 

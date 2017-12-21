@@ -5,6 +5,7 @@ import app.db.DataBaseHelper;
 import app.graph.GraphController;
 import app.index.IndexController;
 
+import app.superset.SupersetController;
 import app.workout.WorkOutController;
 import app.util.Path;
 import spark.template.handlebars.HandlebarsTemplateEngine;
@@ -56,6 +57,8 @@ public class Main {
 
         post(Path.Web.GRAPH_WORKOUT, (req,res) -> GraphController.handleGraphWorkout(req,res));
 
+        // CRUD operations for Supersets
+        post("/add_superset", (req,res) -> SupersetController.handleAddSuperset(req,res));
 
 
 
