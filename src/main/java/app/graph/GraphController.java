@@ -38,12 +38,14 @@ public class GraphController {
 
         String[] workouts_dates = new String[Math.min(num_exercises, list.size())];
         int[] workouts_score = new int[workouts_dates.length];
+        WorkOut[] workouts = new WorkOut[workouts_dates.length];
         int i = workouts_dates.length-1;
         int j = 0;
         while(i >= 0) {
             WorkOut workout = list.get(j);
             workouts_dates[i] = workout.getDate();
             workouts_score[i] = workout.getAverage();
+            workouts[i] = workout;
             i--;
             j++;
         }
@@ -52,6 +54,7 @@ public class GraphController {
         Graph graph = new Graph(workouts_dates, datasets);
         model.put("code", 200);
         model.put("data", graph);
+        model.put("list", workouts);
         String json = gson.toJson(model);
         System.out.println(json);
         return json;

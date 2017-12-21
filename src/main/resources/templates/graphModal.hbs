@@ -16,9 +16,32 @@
                         <input class="form-control" id="numberOfWorkouts"  placeholder="previous #" required>
                     </div>
                     <button type="button" class="btn btn-primary" id="graphBtn">Graph</button>
+                    <p id="graphLog" style="color:red;"></p>
                 </div>
-                <p id="graphLog" style="color:red;"></p>
-                <canvas id="myChart" width="400" height="400"></canvas>
+
+
+                <div id="graph">
+                    <canvas id="myChart" width="400" height="400"></canvas>
+                    <button type="button" class="btn btn-primary" id="toTableBtn">To Table</button>;
+                </div>
+
+                <div id="graphTable">
+                    <table id="graph_table">
+                        <thead>
+                        <tr>
+                            <th>EXERCISE</th>
+                            <th>SETS</th>
+                            <th>REPS</th>
+                            <th>WEIGHT</th>
+                            <th>DATE</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary" id="toGraphBtn">To Graph</button>;
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -37,14 +60,17 @@
     });
 
     $('#graphModal').on('show.bs.modal',function() {
-        $("#myChart").hide();
+        $("#graph").hide();
+        $("#graphTable").hide();
     });
 
     $('#graphModal').on('hidden.bs.modal',function() {
-        $("#myChart").hide();
+        $("#graph").hide();
+        $("#graphTable").hide();
         $("#exerciseToGraph").val("");
         $("#numberOfWorkouts").val("");
         $("#graphLog").html("");
+        $("#graph_table tbody").remove();
         $("#exerciseToGraphForm").show();
     });
 
@@ -63,7 +89,7 @@
             data: data,
             success: function(response) {
                 $("#exerciseToGraphForm").hide();
-                $("#myChart").show();
+                $("#graph").show();
                 console.log(response.data.datasets);
                 var chart = new Chart(ctx, {
                     // The type of chart we want to create
@@ -83,12 +109,25 @@
                     // Configuration options go here
                     options: {}
                 });
+                createGraphtTable(response.list);
             },
             error: function() {
                 console.log("ERROR");
                 $("#graphLog").html(exercise + " not found");
             }
         });
+
+        $("#toGraphBtn").on('click', function () {
+            $("#graphTable").hide();
+            $("#graph").show();
+        });
+
+        $("#toTableBtn").on('click', function () {
+            $("#graph").hide();
+            $("#graphTable").show();
+        });
+
+
 
     });
 </script>
