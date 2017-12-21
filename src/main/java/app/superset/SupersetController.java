@@ -90,6 +90,17 @@ public class SupersetController {
         return eventArray.toString();
     }
 
+    public static HashMap<String, Object> fetchSupersets(String userId, String date, HashMap<String,Object> model) {
+        // Grab all supersets on a single date owned by current user
+        datastore = dbHelper.getDataStore();
+        List<Superset> list = datastore.createQuery(Superset.class)
+                .field("userId").equal(userId)
+                .field("date").equal(date)
+                .asList();
+        model.put("supersets", list);
+        return model;
+    }
+
     // Return total number of workouts on a single day
     private static String getNumberOfSupersetsForSingleDay(String date, String userId) {
         datastore = dbHelper.getDataStore();

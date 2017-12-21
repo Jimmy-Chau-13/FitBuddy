@@ -50,6 +50,7 @@ public class ProfileController {
         }
 
         model = WorkOutController.fetchWorkOuts(userId, date, model);
+        model = SupersetController.fetchSupersets(userId, date, model);
         model.put("dateToShow", date);
         return gson.toJson(model);
     }

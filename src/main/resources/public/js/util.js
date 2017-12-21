@@ -183,9 +183,13 @@ function openViewModal(date) {
         success: function(response) {
             var workout = JSON.parse(response.jsonData);
             var dateToShow = response.dateToShow;
-
+            var supersets = response.supersets;
+            //console.log(supersets);
+            //console.log(supersets[0].workouts[0].exercise);
+            //console.log(supersets.workouts[0].weight[0]);
             $("#theDateToShow").html(dateToShow);
             createWorkoutTable(workout);
+            createSupersetTable(supersets);
             $("#viewModal").modal('show');
 
             $(".deleteBtn").on("click", function () {
@@ -217,6 +221,23 @@ function createWorkoutTable(list) {
     });
 
     $('#workoutTable').append(trHTML);
+}
+
+function  createSupersetTable(list) {
+    var html = '';
+    $.each(list, function (i,item) {
+        var superset_num = "Superset " + (i*1+1);
+       html += '<h4>' + superset_num + '</h4>';
+       html += '<table><thead><tr><th>EXERCISE</th><th>SETS</th><th>REPS</th><th>WEIGHT</th></tr></thead><tbody>';
+
+       $.each(item.workouts, function (j, workout) {
+           html += '<tr ><td>' + workout.exercise + '</td><td>' + workout.sets + '</td><td>' + workout.reps +
+               '</td><td>' + workout.weight + '</td></tr>';
+       });
+       html += '</tbody></table>';
+    });
+
+    $('#supersetTableDiv').append(html);
 }
 
 
