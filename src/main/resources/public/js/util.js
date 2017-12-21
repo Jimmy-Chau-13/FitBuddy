@@ -90,6 +90,73 @@ function clearAddModalBody2(){
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////SUPERSET FUNCTIONS///////////////////////////////////////////////////////////////
+function createSupersetModalBody2(sets, num_exercises, curr_exercise) {
+
+    var the_exercise_number = curr_exercise * 1 + 1;
+    var html =  '<label for="superset_exercise_name"> Exercise ' + the_exercise_number + '</label>' +
+                 '<input class="form-control" id = "superset_exercise_name" placeholder="Exercise Name" required>';
+    $("#supersetBody2").append(html);
+
+    for(i = 0; i < sets*1 ; i++) {
+        var setNum = "Set " + (i*1 + 1);
+        var repId = "reps" + i;
+        var weightId = "weight" + i;
+
+        var html = '<div class="form-group row">' +
+            '<div class="col-xs-4">' +
+            '<label for="reps">' + setNum + '</label>' +
+            '<input class="form-control" id=' + repId + ' type="number" placeholder="Enter # of Reps" required>' +
+            '<input class="form-control" id=' + weightId + ' type="number" placeholder="Enter Weight" required>' +
+            '</div>' +
+            '</div>';
+        $("#supersetBody2").append(html);
+    }
+
+    if(curr_exercise == num_exercises*1 - 1) {
+        var html = '<button type="button" class="btn btn-primary" id="supersetConfirmBtn">Confirm</button>';
+        $("#supersetBody2").append(html);
+    }
+    else {
+        var html = '<button type="button" class="btn btn-primary" id="supersetBody2NextBtn">Next</button>';
+        $("#supersetBody2").append(html);
+    }
+}
+
+function getSupersetReps() {
+    var sets = $("#superset_sets").val();
+    var reps = [];
+    for (i = 0; i < sets*1 ; i++) {
+        var repId = "#reps" + i;
+        reps[i*1] = $(repId).val();
+    }
+    return reps;
+}
+
+function getSupersetWeight() {
+    var sets = $("#superset_sets").val();
+    var weight = [];
+    for (i = 0; i < sets*1; i++) {
+        var weightId = "#weight" + i;
+        weight[i*1] = $(weightId).val();
+    }
+    return weight;
+}
+
+function getSupersetExercise() {
+    var workout = {};
+    workout.exercise = $("#superset_exercise_name").val();
+    workout.sets = $("#superset_sets").val();
+    workout.date = $("#superset_date").val();
+    workout.reps = getSupersetReps();
+    workout.weight = getSupersetWeight();
+    return workout;
+}
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////// ALL VIEW MODAL FUNCTIONALITY //////////////////////////////////////////
 
@@ -102,9 +169,10 @@ function openViewModal(date) {
         success: function(response) {
             var workout = JSON.parse(response.jsonData);
             var dateToShow = response.dateToShow;
-
-            $("#theDateToShow").html(dateToShow);
+            var supersets = response.supersets;
+            var supersets_id = response.supersets_id;
             createWorkoutTable(workout);
+            createSupersetTable(supersets, supersets_id);
             $("#viewModal").modal('show');
 
             $(".deleteBtn").on("click", function () {
@@ -116,6 +184,12 @@ function openViewModal(date) {
             $(".editBtn").on("click", function () {
                 var tr = $(this).closest("tr");
                 editBtnClicked(tr,dateToShow);
+            });
+
+            $(".deleteSupersetBtn").on('click', function () {
+                console.log("DELETE");
+                var tr = $(this).closest("tr");
+                deleteSupersetBtnClicked(tr);
             });
         }
     });
@@ -138,6 +212,43 @@ function createWorkoutTable(list) {
     $('#workoutTable').append(trHTML);
 }
 
+function  createSupersetTable(list, supersets_id) {
+    var html = '';
+    $.each(list, function (i,item) {
+        var superset_num = "Superset " + (i*1+1);
+        html += '<br><table><tr data-id='+ supersets_id[i] + '><th colspan="3" style="text-align: center;">' +superset_num+ '</th>' +
+            '<th style="align: right;"><button class="deleteSupersetBtn" style="background-color: darkblue; ' +
+            'border-color: darkblue "> Delete </button></th></tr>' +
+            '<tr><th>EXERCISE</th><th>SETS</th>' +
+           '<th>REPS</th><th>WEIGHT</th></tr>';
+
+       $.each(item.workouts, function (j, workout) {
+           html += '<tr ><td>' + workout.exercise + '</td><td>' + workout.sets + '</td><td>' + workout.reps +
+               '</td><td>' + workout.weight + '</td></tr>';
+       });
+       html += '</table><br>';
+    });
+
+    $('#supersetTableDiv').append(html);
+}
+
+function deleteSupersetBtnClicked(tr) {
+    var data = {};
+    data.supersetId = tr.attr("data-id");
+    $.ajax({
+        type: "post",
+        url: "/delete_superset",
+        data: data,
+        success: function(response) {
+            $("#viewModalLog").html("<strong>DELETED</strong>");
+            tr.parent().remove();
+            deleteSupersetEvent(response.date, response.numberOfSupersets);
+        },
+        error: function() {
+            $("#viewModalLog").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");
+        }
+    });
+}
 
 function deleteBtnClicked(tr) {
     var data = {};
@@ -264,15 +375,15 @@ function clearEditModalBody(){
 
 // increment the calendar's event by one
 function addWorkoutEvent(date, numberOfWorkouts) {
-
-    if(numberOfWorkouts == "1 workouts") {
-        var event = {id : date, title : numberOfWorkouts,
+    if(numberOfWorkouts === "1 workouts") {
+        console.log("")
+        var event = {id : date + " workout", title : numberOfWorkouts,
             start : date, allDay : true};
         $("#calendar").fullCalendar('renderEvent', event, true);
     }
 
     else {
-        var event = $("#calendar").fullCalendar('clientEvents', date);
+        var event = $("#calendar").fullCalendar('clientEvents', date + " workout");
         event[0].title = numberOfWorkouts;
         $("#calendar").fullCalendar('updateEvent', event[0]);
     }
@@ -282,10 +393,37 @@ function addWorkoutEvent(date, numberOfWorkouts) {
 // decrement the calendar's event by one
 function deleteWorkoutEvent(date, numberOfWorkouts) {
     if(numberOfWorkouts == "0 workouts")
-        $("#calendar").fullCalendar('removeEvents',date);
+        $("#calendar").fullCalendar('removeEvents',date + " workout");
     else {
-        var event = $("#calendar").fullCalendar('clientEvents', date);
+        var event = $("#calendar").fullCalendar('clientEvents', date + " workout");
         event[0].title = numberOfWorkouts;
+        $("#calendar").fullCalendar('updateEvent', event[0]);
+    }
+}
+
+function addSupersetEvent(date, numberOfSupersets) {
+
+    if(numberOfSupersets == "1 supersets") {
+        var event = {id : date + " superset", title : numberOfSupersets,
+            start : date, allDay : true, color: "green"};
+        $("#calendar").fullCalendar('renderEvent', event, true);
+    }
+
+    else {
+        var event = $("#calendar").fullCalendar('clientEvents', date + " superset");
+        event[0].title = numberOfSupersets;
+        $("#calendar").fullCalendar('updateEvent', event[0]);
+    }
+
+}
+
+// decrement the calendar's event by one
+function deleteSupersetEvent(date, numberOfSupersets) {
+    if(numberOfSupersets == "0 supersets")
+        $("#calendar").fullCalendar('removeEvents',date + " superset");
+    else {
+        var event = $("#calendar").fullCalendar('clientEvents', date + " superset");
+        event[0].title = numberOfSupersets;
         $("#calendar").fullCalendar('updateEvent', event[0]);
     }
 }

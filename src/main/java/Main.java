@@ -1,10 +1,12 @@
 
 
+import app.Profile.ProfileController;
 import app.auth.AuthController;
 import app.db.DataBaseHelper;
 import app.graph.GraphController;
 import app.index.IndexController;
 
+import app.superset.SupersetController;
 import app.workout.WorkOutController;
 import app.util.Path;
 import spark.template.handlebars.HandlebarsTemplateEngine;
@@ -32,7 +34,7 @@ public class Main {
         get(Path.Web.GET_INDEX_PAGE, (req,res) -> IndexController.serveIndexPage(req,res)
                 ,new HandlebarsTemplateEngine());
 
-        get(Path.Web.GET_PROFILE_PAGE, (req,res) -> WorkOutController.serveProfile(req,res)
+        get(Path.Web.GET_PROFILE_PAGE, (req,res) -> ProfileController.serveProfile(req,res)
                 ,new HandlebarsTemplateEngine());
 
 
@@ -52,10 +54,14 @@ public class Main {
 
         post(Path.Web.DELETE_WORKOUT, (req,res) -> WorkOutController.handleDeleteWorkout(req,res));
 
-        post(Path.Web.VIEW_WORKOUT, (req,res) -> WorkOutController.handleViewWorkout(req,res));
+        post(Path.Web.VIEW_WORKOUT, (req,res) -> ProfileController.handleViewDate(req,res));
 
         post(Path.Web.GRAPH_WORKOUT, (req,res) -> GraphController.handleGraphWorkout(req,res));
 
+        // CRUD operations for Supersets
+        post("/add_superset", (req,res) -> SupersetController.handleAddSuperset(req,res));
+
+        post("/delete_superset", (req,res) -> SupersetController.handleDeleteSuperset(req,res));
 
 
 

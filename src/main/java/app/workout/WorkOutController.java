@@ -4,6 +4,7 @@ import app.auth.AuthController;
 import app.db.DataBaseHelper;
 import app.graph.Datasets;
 import app.graph.Graph;
+import app.superset.SupersetController;
 import app.util.Path;
 import app.util.StringHelper;
 import com.google.gson.Gson;
@@ -27,30 +28,6 @@ public class WorkOutController {
 
 
     public WorkOutController() { }
-
-    public static ModelAndView serveProfile(Request req, Response res) {
-
-        String userId = AuthController.checkSessionHasUser(req);
-
-
-        if(userId != null && !userId.isEmpty()) {
-            String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
-
-            HashMap<String,Object> model = new HashMap<>();
-            model.put("username", username);
-            logger.info("Serve Profile: \n" +
-                            "Username: " + username );
-
-            String eventArray = getMonthEvent(userId);
-            model.put("eventArray", eventArray);
-
-            return new ModelAndView(model, Path.Template.PROFILE);
-        }
-
-        logger.warning("No current UserId in session");
-        res.redirect(Path.Web.GET_INDEX_PAGE);
-        return null;
-    }
 
     public static String handleAddWorkout (Request req, Response res) {
         res.type("application/json");
@@ -199,31 +176,8 @@ public class WorkOutController {
 
     }
 
-    public static String handleViewWorkout(Request req, Response res) {
-        res.type("application/json");
-        String date = req.queryParams("date");
-        String userId = req.session(false).attribute(Path.Attribute.USERID);
-        HashMap<String,Object> model = new HashMap<>();
-
-        if(!userId.isEmpty() && userId != null) {
-            model = fetchWorkOuts(userId, date);
-            res.status(200);
-            model.put("code", 200);
-            model.put("dateToShow", date);
-            String json = gson.toJson(model);
-            return json;
-        }
-
-        model.put("code", 500);
-        logger.warning("No current UserId in session");
-        res.redirect(Path.Web.GET_INDEX_PAGE);
-        String json = gson.toJson(model);
-        return json;
-    }
-
-
     // Fetch all workouts of a day to show on view modal
-    private static HashMap<String,Object> fetchWorkOuts(String userId, String date) {
+    public static HashMap<String,Object> fetchWorkOuts(String userId, String date, HashMap<String,Object> model ) {
 
         // Grab all workouts owned by current user
         datastore = dbHelper.getDataStore();
@@ -250,14 +204,13 @@ public class WorkOutController {
         }
 
         logger.info(jsonData.toString());
-        HashMap<String,Object> model = new HashMap<>();
         model.put("jsonData", jsonData.toString() );
 
         return model;
     }
 
 
-    private static String getMonthEvent(String userId) {
+    public static String getWorkoutMonthEvent(String userId) {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         StringBuilder eventArray = new StringBuilder();
         datastore = dbHelper.getDataStore();
@@ -276,7 +229,7 @@ public class WorkOutController {
 
             if(!currDate.equals(prevDate)) {
                 eventArray.append( "{ title: '" + numberOfWorkout + " workouts', " +
-                        "id: '" + prevDate + "', " +
+                        "id: '" + prevDate + " workout', " +
                         "start : '" + LocalDate.parse(prevDate, df)+ "' }, ");
 
                 numberOfWorkout = 1;
@@ -289,7 +242,7 @@ public class WorkOutController {
             }
         }
         eventArray.append( "{ title: '" + numberOfWorkout + " workouts', " +
-                "id: '" + prevDate + "', " +
+                "id: '" + prevDate + " workout', " +
                 "start : '" + LocalDate.parse(prevDate, df)+ "' }, ");
         return eventArray.toString();
     }

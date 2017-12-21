@@ -1,0 +1,125 @@
+<!-- Modal -->
+<div class="modal fade" id="addSupersetModal" role="dialog" style="overflow-y: auto;">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add a Superset</h4>
+            </div>
+
+            <!-- FIRST PART OF SUPERSET ADD MODAL -->
+            <div class="modal-body" id="addSupersetModalBody1">
+                <div class="form-group row">
+                    <div class="col-xs-4">
+                        <label for="exercise">Number of Exercises</label>
+                        <input class="form-control" id="superset_num_exercises" type="number" placeholder="Enter Exercise #" required>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for="sets">Sets</label>
+                        <input class="form-control" id="superset_sets" type="number" placeholder="Enter # of Sets" required>
+                    </div>
+                    <div class="col-xs-4">
+                        <label for="date">Date</label>
+                        <input class="form-control" id="superset_date" type="text" placeholder="Pick Date" required>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" id="supersetNextBtn">Next</button>
+            </div>
+
+            <!-- SECOND PART OF ADD MODAL -->
+            <div class="modal-body" id="supersetModalBody2" >
+               <!-- <button type="button" class="btn btn-primary" id="supersetBackBtn">Back</button> -->
+                <div id="supersetBody2"></div>
+            </div>
+
+            <p id="superset_log" style="color:red;"></p>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var superset = {}; //Superset object 1. WorkOut[], 2. String date
+    var workouts = [];  // array of workout objects
+    var num_exercise;   // the number of different exercises in the superset
+    var curr_exercise;  // the current exercise we are on, starts at 0 to num_exercises - 1
+    var sets;
+
+    $("#superset_date").datepicker();
+    $("#superset_date").datepicker('setDate', new Date());
+    $("#supersetModalBody2").hide();
+
+    $("#addSupersetModal").on('hidden.bs.modal', function () {
+       $("#superset_log").html("");
+        $("#supersetBody2").empty();
+        $("#supersetModalBody2").hide();
+        $("#superset_num_exercises").val("");
+        $("#superset_sets").val("");
+        $("#addSupersetModalBody1").show();
+    });
+
+    $('#supersetAddBtn').on('click',function () {
+        $("#addSupersetModal").modal('show');
+        curr_exercise = 0;
+    });
+
+    $("#supersetNextBtn").on('click',function () {
+        num_exercise = $("#superset_num_exercises").val();
+        sets = $("#superset_sets").val();
+
+        if(num_exercise < 2 ) {
+            $("#superset_log").html("Number of exercises has to be more than 1!")
+            return;
+        }
+        if(sets < 1) {
+            $("#superset_log").html("Number of sets has to be more than 1!")
+            return;
+        }
+        $("#superset_log").html("");
+        $("#addSupersetModalBody1").hide();
+        createSupersetModalBody2(sets, num_exercise,curr_exercise);
+        $("#supersetModalBody2").show();
+    });
+
+    $(document).on('click', '#supersetBody2NextBtn ', function(){
+
+        //console.log(workout);
+        workouts[curr_exercise] = getSupersetExercise();
+        curr_exercise++;
+        $("#supersetBody2").empty();
+        createSupersetModalBody2(sets, num_exercise, curr_exercise);
+    });
+
+    $(document).on('click', '#supersetConfirmBtn ', function(){
+        console.log("CONFIRMING");
+        workouts[curr_exercise] = getSupersetExercise();
+        console.log(workouts);
+        $("#supersetBody2").empty();
+        superset.date = $("#superset_date").val();
+        superset.workouts = workouts;
+        console.log(superset);
+        var data = {superset: superset};
+        //console.log(data);
+
+        $.ajax({
+            type: "post",
+            url: "/add_superset",
+            data: JSON.stringify(data),
+            success: function(response) {
+                $("#addSupersetModal").modal('hide');
+                addSupersetEvent(response.date, response.numberOfSupersets);
+            },
+            error: function() {
+                $("#superset_log").html("<strong>OOPS! UNABLE TO SUBMIT SUPERSET! PLEASE TRY AGAIN</strong>");
+            }
+        });
+    });
+
+
+</script>
+
