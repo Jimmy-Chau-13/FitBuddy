@@ -54,7 +54,7 @@ public class Main {
 
         post(Path.Web.DELETE_WORKOUT, (req,res) -> WorkOutController.handleDeleteWorkout(req,res));
 
-        post(Path.Web.VIEW_WORKOUT, (req,res) -> WorkOutController.handleViewWorkout(req,res));
+        post(Path.Web.VIEW_WORKOUT, (req,res) -> ProfileController.handleViewDate(req,res));
 
         post(Path.Web.GRAPH_WORKOUT, (req,res) -> GraphController.handleGraphWorkout(req,res));
 

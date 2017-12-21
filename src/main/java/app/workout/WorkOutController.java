@@ -29,8 +29,6 @@ public class WorkOutController {
 
     public WorkOutController() { }
 
-
-
     public static String handleAddWorkout (Request req, Response res) {
         res.type("application/json");
 
@@ -178,31 +176,8 @@ public class WorkOutController {
 
     }
 
-    public static String handleViewWorkout(Request req, Response res) {
-        res.type("application/json");
-        String date = req.queryParams("date");
-        String userId = req.session(false).attribute(Path.Attribute.USERID);
-        HashMap<String,Object> model = new HashMap<>();
-
-        if(!userId.isEmpty() && userId != null) {
-            model = fetchWorkOuts(userId, date);
-            res.status(200);
-            model.put("code", 200);
-            model.put("dateToShow", date);
-            String json = gson.toJson(model);
-            return json;
-        }
-
-        model.put("code", 500);
-        logger.warning("No current UserId in session");
-        res.redirect(Path.Web.GET_INDEX_PAGE);
-        String json = gson.toJson(model);
-        return json;
-    }
-
-
     // Fetch all workouts of a day to show on view modal
-    private static HashMap<String,Object> fetchWorkOuts(String userId, String date) {
+    public static HashMap<String,Object> fetchWorkOuts(String userId, String date, HashMap<String,Object> model ) {
 
         // Grab all workouts owned by current user
         datastore = dbHelper.getDataStore();
@@ -229,7 +204,6 @@ public class WorkOutController {
         }
 
         logger.info(jsonData.toString());
-        HashMap<String,Object> model = new HashMap<>();
         model.put("jsonData", jsonData.toString() );
 
         return model;
