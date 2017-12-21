@@ -1,5 +1,6 @@
 
 
+import app.Profile.ProfileController;
 import app.auth.AuthController;
 import app.db.DataBaseHelper;
 import app.graph.GraphController;
@@ -33,7 +34,7 @@ public class Main {
         get(Path.Web.GET_INDEX_PAGE, (req,res) -> IndexController.serveIndexPage(req,res)
                 ,new HandlebarsTemplateEngine());
 
-        get(Path.Web.GET_PROFILE_PAGE, (req,res) -> WorkOutController.serveProfile(req,res)
+        get(Path.Web.GET_PROFILE_PAGE, (req,res) -> ProfileController.serveProfile(req,res)
                 ,new HandlebarsTemplateEngine());
 
 

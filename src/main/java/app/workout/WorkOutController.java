@@ -29,30 +29,7 @@ public class WorkOutController {
 
     public WorkOutController() { }
 
-    public static ModelAndView serveProfile(Request req, Response res) {
 
-        String userId = AuthController.checkSessionHasUser(req);
-
-
-        if(userId != null && !userId.isEmpty()) {
-            String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
-
-            HashMap<String,Object> model = new HashMap<>();
-            model.put("username", username);
-            logger.info("Serve Profile: \n" +
-                            "Username: " + username );
-
-            String eventArray = getMonthEvent(userId);
-            String eventArray2 = SupersetController.getSupersetMonthEvent(userId);
-            model.put("eventArray", eventArray);
-            model.put("eventArray2", eventArray2);
-            return new ModelAndView(model, Path.Template.PROFILE);
-        }
-
-        logger.warning("No current UserId in session");
-        res.redirect(Path.Web.GET_INDEX_PAGE);
-        return null;
-    }
 
     public static String handleAddWorkout (Request req, Response res) {
         res.type("application/json");
@@ -259,7 +236,7 @@ public class WorkOutController {
     }
 
 
-    private static String getMonthEvent(String userId) {
+    public static String getWorkoutMonthEvent(String userId) {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         StringBuilder eventArray = new StringBuilder();
         datastore = dbHelper.getDataStore();
