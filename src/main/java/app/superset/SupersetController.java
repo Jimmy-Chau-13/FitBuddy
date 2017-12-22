@@ -21,24 +21,20 @@ public class SupersetController {
     static Gson gson = new Gson();
     static JsonParser parser = new JsonParser();
 
-
     public static String handleAddSuperset(Request req, Response res) {
         res.type("application/json");
         HashMap<String, Object> model = new HashMap<>();
         String userId = req.session(false).attribute(Path.Attribute.USERID);
 
+        // Save superset to database only if current session has a user
         if(userId != null && !userId.isEmpty()) {
             String jsonString = req.body();
-
             JsonObject obj =  parser.parse(jsonString).getAsJsonObject().getAsJsonObject("superset");
-            System.out.println(obj);
             Superset superset = gson.fromJson(obj, Superset.class);
             superset.setUserId(userId);
             datastore = dbHelper.getDataStore();
             datastore.save(superset);
             res.status(200);
-            model.put("code", 200);
-            model.put("status", "Added workout Successfully");
             model.put("numberOfSupersets", getNumberOfSupersetsForSingleDay(superset.getDate(),userId));
             model.put("date",superset.getDate());
         }
@@ -83,6 +79,7 @@ public class SupersetController {
 
     }
 
+    // Grab all supersets and create full calendar events
     public static String getSupersetMonthEvent(String userId) {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         StringBuilder eventArray = new StringBuilder();
@@ -122,8 +119,8 @@ public class SupersetController {
         return eventArray.toString();
     }
 
+    // Grab all supersets on a single date owned by current user
     public static HashMap<String, Object> fetchSupersets(String userId, String date, HashMap<String,Object> model) {
-        // Grab all supersets on a single date owned by current user
         datastore = dbHelper.getDataStore();
         List<Superset> list = datastore.createQuery(Superset.class)
                 .field("userId").equal(userId)
@@ -139,7 +136,7 @@ public class SupersetController {
         return model;
     }
 
-    // Return total number of workouts on a single day
+    // Return total number of supersets on a single day
     private static String getNumberOfSupersetsForSingleDay(String date, String userId) {
         datastore = dbHelper.getDataStore();
         List<Superset> list = datastore.createQuery(Superset.class)
