@@ -73,20 +73,6 @@
     margin-top: 100px;
 }
 
-/* profile page */
-#topMenu {
-    background-color: antiquewhite;
-    border: 3px solid black;
-
-}
-
-#logoutBtn {
-    float: right;
-}
-
-#logoutBtn2 {
-    padding: 5px 32px;
-}
 
 #optionDiv {
 
