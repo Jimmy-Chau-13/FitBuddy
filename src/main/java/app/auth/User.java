@@ -8,6 +8,7 @@ import org.mongodb.morphia.annotations.Indexed;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class User {
 
@@ -19,9 +20,9 @@ public class User {
     private String salt;
     private String verifier;
     private String token = "";
-    private ArrayList<Friends> friends;
-    private ArrayList<Friends> pending_friends_Added;
-    private ArrayList<Friends> pending_friends_Invitation;
+    private HashSet<Friends> friends;
+    private HashSet<Friends> pending_friends_Added;
+    private HashSet<Friends> pending_friends_Invitation;
 
     public User() {
 
@@ -31,9 +32,9 @@ public class User {
         this.username = username;
         this.salt = salt;
         this.verifier = verifier;
-        this.friends = new ArrayList<>();
-        this.pending_friends_Added = new ArrayList<>();
-        this.pending_friends_Invitation = new ArrayList<>();
+        this.friends = new HashSet<>();
+        this.pending_friends_Added = new HashSet<>();
+        this.pending_friends_Invitation = new HashSet<>();
     }
 
     public ObjectId getId() {
@@ -72,27 +73,27 @@ public class User {
         this.token = token;
     }
 
-    public ArrayList<Friends> getFriends() {
+    public HashSet<Friends> getFriends() {
         return friends;
     }
 
-    public void setFriends(ArrayList<Friends> friends) {
+    public void setFriends(HashSet<Friends> friends) {
         this.friends = friends;
     }
 
-    public ArrayList<Friends> getPending_friends_Added() {
+    public HashSet<Friends> getPending_friends_Added() {
         return pending_friends_Added;
     }
 
-    public void setPending_friends_Added(ArrayList<Friends> pending_friends_Added) {
+    public void setPending_friends_Added(HashSet<Friends> pending_friends_Added) {
         this.pending_friends_Added = pending_friends_Added;
     }
 
-    public ArrayList<Friends> getPending_friends_Invitation() {
+    public HashSet<Friends> getPending_friends_Invitation() {
         return pending_friends_Invitation;
     }
 
-    public void setPending_friends_Invitation(ArrayList<Friends> pending_friends_Invitation) {
+    public void setPending_friends_Invitation(HashSet<Friends> pending_friends_Invitation) {
         this.pending_friends_Invitation = pending_friends_Invitation;
     }
 }
