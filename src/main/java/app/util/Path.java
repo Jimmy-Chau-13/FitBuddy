@@ -21,6 +21,9 @@ public class Path {
         public static final String ADD_SUPERSET = "/add_superset";
         public static final String DELETE_SUPERSET = "/delete_superset";
 
+        public static final String ADD_FRIEND = "/add_friend";
+        public static final String DELETE_FRIEND = "/add_friend";
+
         public static final String GRAPH_WORKOUT = "/graph";
     }
 
