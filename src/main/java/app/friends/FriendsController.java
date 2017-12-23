@@ -22,6 +22,10 @@ public class FriendsController {
         if(userId != null && !userId.isEmpty()) {
             HashMap<String, Object> model = new HashMap<>();
             String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
+            User me = UserController.getUserByUsername(username);
+            model.put("friends", me.getFriends());
+            model.put("added_me", me.getPending_friends_Invitation());
+            model.put("pending", me.getPending_friends_Added());
             model.put("username", username );
             return new ModelAndView(model, Path.Template.FRIENDS);
         }
