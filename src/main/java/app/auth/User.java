@@ -68,4 +68,11 @@ public class User {
         this.token = token;
     }
 
+    public ArrayList<Friends> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(ArrayList<Friends> friends) {
+        this.friends = friends;
+    }
 }
