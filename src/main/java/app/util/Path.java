@@ -35,6 +35,7 @@ public class Path {
         public static final String PROFILE = "profile.hbs";
         public static final String INDEX = "index.hbs";
         public static final String REGISTER = "register.hbs";
+        public static final String FRIENDS = "friends.hbs";
     }
 
     public static class Database {
