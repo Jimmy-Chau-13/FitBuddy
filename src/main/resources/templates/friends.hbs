@@ -1,0 +1,28 @@
+{{#partial "title"}} friends {{/partial}}
+
+
+{{#partial "content"}}
+    <body>
+    {{> navbar.hbs}}
+    </body>
+    <div id="AddFriends">
+        <form class="form-inline">
+            <div class="form-group mx-sm-3">
+                <label for="UsernameFriend" class="sr-only">Username</label>
+                <input type="text" class="form-control" id="UsernameFriend" placeholder="Username">
+            </div>
+            <button type="submit" class="btn btn-primary" id="addFriendBtn">Add</button>
+        </form>
+    </div>
+
+    <div id="AllFriends">
+        You have 0 friends
+    </div>
+
+    <div id="PendingFriends">
+        No Pending friends
+    </div>
+
+{{/partial}}
+
+{{> base.hbs}}

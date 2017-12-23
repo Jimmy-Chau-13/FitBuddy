@@ -1,12 +1,10 @@
-{{#partial "title"}} YOUR PROFILE{{/partial}}
+{{#partial "title"}} fitbuddy {{/partial}}
 
 
 {{#partial "content"}}
     <body>
-    <div id="topMenu">
-        <h1> Welcome {{username}}! </h1>
 
-    </div>
+    {{> navbar.hbs}}
 
     <div id="optionDiv">
 
@@ -15,11 +13,7 @@
             <button type="button" class="btn btn-primary" id="supersetAddBtn">Add Superset</button>
             <button type="button" class="btn btn-primary" id="findBtn">Find Workout</button>
         </div>
-        <div id="logoutBtn">
-            <form action ="/logout" method = "post">
-                <input type="submit" value="Logout" id="logoutBtn2" class="indexButton" />
-             </form>
-        </div>
+
     </div>
 
     <div id="calendar"></div>
@@ -35,7 +29,6 @@
 
 <script type="text/javascript">
     $(document).ready(function (response) {
-
 //////////////////////////////////// ALL FULL CALENDAR FUNCTIONALITY////////////////////////////////////////////////
         $("#calendar").fullCalendar({
 
