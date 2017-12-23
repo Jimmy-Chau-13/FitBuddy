@@ -20,6 +20,8 @@ public class User {
     private String verifier;
     private String token = "";
     private ArrayList<Friends> friends;
+    private ArrayList<Friends> pending_friends_Added;
+    private ArrayList<Friends> pending_friends_Invitation;
 
     public User() {
 
@@ -30,6 +32,8 @@ public class User {
         this.salt = salt;
         this.verifier = verifier;
         this.friends = new ArrayList<>();
+        this.pending_friends_Added = new ArrayList<>();
+        this.pending_friends_Invitation = new ArrayList<>();
     }
 
     public ObjectId getId() {
@@ -74,5 +78,21 @@ public class User {
 
     public void setFriends(ArrayList<Friends> friends) {
         this.friends = friends;
+    }
+
+    public ArrayList<Friends> getPending_friends_Added() {
+        return pending_friends_Added;
+    }
+
+    public void setPending_friends_Added(ArrayList<Friends> pending_friends_Added) {
+        this.pending_friends_Added = pending_friends_Added;
+    }
+
+    public ArrayList<Friends> getPending_friends_Invitation() {
+        return pending_friends_Invitation;
+    }
+
+    public void setPending_friends_Invitation(ArrayList<Friends> pending_friends_Invitation) {
+        this.pending_friends_Invitation = pending_friends_Invitation;
     }
 }
