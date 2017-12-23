@@ -6,6 +6,7 @@ public class Path {
         public static final String GET_PROFILE_PAGE = "/profile";
         public static final String GET_INDEX_PAGE = "/";
         public static final String GET_REGISTER_PAGE = "/register";
+        public static final String GET_FRIENDS_PAGE = "/friends";
 
         public static final String DO_SIGNUP = "/register";
         public static final String DO_SIGNIN = "/";
@@ -16,6 +17,9 @@ public class Path {
         public static final String EDIT_WORKOUT = "/edit";
         public static final String DELETE_WORKOUT = "/delete";
         public static final String VIEW_WORKOUT = "/view";
+
+        public static final String ADD_SUPERSET = "/add_superset";
+        public static final String DELETE_SUPERSET = "/delete_superset";
 
         public static final String GRAPH_WORKOUT = "/graph";
     }
