@@ -3,6 +3,7 @@
 import app.Profile.ProfileController;
 import app.auth.AuthController;
 import app.db.DataBaseHelper;
+import app.friends.FriendsController;
 import app.graph.GraphController;
 import app.index.IndexController;
 
@@ -37,7 +38,8 @@ public class Main {
         get(Path.Web.GET_PROFILE_PAGE, (req,res) -> ProfileController.serveProfile(req,res)
                 ,new HandlebarsTemplateEngine());
 
-        get(Path.Web.GET_FRIENDS_PAGE, (req,res) -> FriendsController.serveFriends(req,res));
+        get(Path.Web.GET_FRIENDS_PAGE, (req,res) -> FriendsController.serveFriends(req,res)
+                , new HandlebarsTemplateEngine());
 
 
         // Handle Authentication
