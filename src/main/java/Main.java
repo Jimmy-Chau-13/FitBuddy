@@ -37,6 +37,8 @@ public class Main {
         get(Path.Web.GET_PROFILE_PAGE, (req,res) -> ProfileController.serveProfile(req,res)
                 ,new HandlebarsTemplateEngine());
 
+        get(Path.Web.GET_FRIENDS_PAGE, (req,res) -> FriendsController.serveFriends(req,res));
+
 
         // Handle Authentication
         post(Path.Web.DO_SIGNIN, (req,res) -> AuthController.handleSignIn(req,res));
@@ -59,9 +61,9 @@ public class Main {
         post(Path.Web.GRAPH_WORKOUT, (req,res) -> GraphController.handleGraphWorkout(req,res));
 
         // CRUD operations for Supersets
-        post("/add_superset", (req,res) -> SupersetController.handleAddSuperset(req,res));
+        post(Path.Web.ADD_SUPERSET, (req,res) -> SupersetController.handleAddSuperset(req,res));
 
-        post("/delete_superset", (req,res) -> SupersetController.handleDeleteSuperset(req,res));
+        post(Path.Web.DELETE_SUPERSET, (req,res) -> SupersetController.handleDeleteSuperset(req,res));
 
 
 
