@@ -50,13 +50,14 @@
             $("#list_current_friends").append('<li>'+item+'</li>');
         });
         $.each({{{added_me}}}, function(i,item) {
-            $("#list_friends_added_you").append('<li>'+item+'</li>');
+            $("#list_friends_added_you").append('<li><p style="float: left;">'+item+'</p>' +
+                    '<button type="button" class="confirmFriendBtn">Confirm</button>' +
+                    '<button type="button" class="declineFriendBtn">Decline</button></li> ');
         });
         $.each( {{{pending}}} , function(i,item) {
             $("#list_friends_you_added").append('<li>'+item+'</li>');
         });
     });
-
 
 
     $("#addFriendBtn").on('click', function () {
@@ -74,6 +75,26 @@
                 $("#friendsLogModal").html(JSON.parse(response.responseText).error_message);
             }
         })
+    });
+
+    $("#list_friends_added_you").on('click', ".confirmFriendBtn",  function () {
+        var username = $(this).closest("li").children("p").text();
+        $.ajax({
+           type:"post",
+           url: "confirm_friend",
+           data: {friend_username: username},
+           success: function (response) {
+               $("#list_current_friends").append('<li>'+response.friend_username+'</li>');
+           },
+           error: function () {
+               $("#friendsLogModal").html("COULD NOT CONFIRM");
+           } 
+        });
+    });
+
+    $("#list_friends_added_you").on('click', ".declineFriendBtn", function () {
+        var username = $(this).closest("li").children("p").text();
+        console.log(username);
     });
 
 </script>
