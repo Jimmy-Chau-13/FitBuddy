@@ -1,29 +1,29 @@
 package app.friends;
 
-import java.util.Objects;
+import java.util.HashSet;
+
 
 public class Friends {
 
-    private String username;
+    private HashSet<String> current_friends;
+    private HashSet<String> pending_friends_added;
+    private HashSet<String> pending_friends_invitation;
 
-    public Friends(String username) {
-        this.username = username;
+    public Friends() {
+        this.current_friends = new HashSet<>();
+        this.pending_friends_added = new HashSet<>();
+        this.pending_friends_invitation = new HashSet<>();
     }
 
-    public String getUsername() {
-        return username;
+    public HashSet<String> getCurrent_friends() {
+        return current_friends;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Friends friends = (Friends) o;
-        return Objects.equals(username, friends.username);
+    public HashSet<String> getPending_friends_added() {
+        return pending_friends_added;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(username);
+    public HashSet<String> getPending_friends_invitation() {
+        return pending_friends_invitation;
     }
 }
