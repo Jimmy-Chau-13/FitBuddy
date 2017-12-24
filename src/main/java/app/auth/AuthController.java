@@ -5,7 +5,6 @@ import app.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSessionSHA256;
 import app.util.Path;
 import com.google.gson.Gson;
 import org.jsoup.Jsoup;
-import spark.ModelAndView;
 import spark.*;
 
 import java.util.*;
@@ -17,11 +16,6 @@ public class AuthController {
     private static final Logger logger = Logger.getLogger(AuthController.class.getName());
     static Gson gson = new Gson();
     static SRP6JavascriptServerSessionSHA256 server;
-
-    public static ModelAndView serveRegisterPage(Request req, Response res) {
-        Map<String,Object> model = new HashMap<>();
-        return new ModelAndView(model, Path.Template.REGISTER);
-    }
 
     public static Object handleSignUp(Request req, Response res) {
         return doSignUp(req,res);

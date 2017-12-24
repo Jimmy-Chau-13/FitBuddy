@@ -29,7 +29,7 @@
     </div>
 
     <div id="PendingFriends">
-        <h4> THESE GUYS ADDED YOU</h4>
+        <h4> ADDED YOU</h4>
         <ul id="list_friends_added_you"></ul>
         <h4> WAITING FOR RESPONSE</h4>
         <ul id="list_friends_you_added"></ul>
@@ -40,7 +40,24 @@
 {{> base.hbs}}
 
 <script type="text/javascript">
-    $("#friends_li").addClass("active");
+
+    $(document).ready(function () {
+
+
+        $("#friends_li").addClass("active");
+
+        $.each({{{friends}}}, function(i,item) {
+            $("#list_current_friends").append('<li>'+item+'</li>');
+        });
+        $.each({{{added_me}}}, function(i,item) {
+            $("#list_friends_added_you").append('<li>'+item+'</li>');
+        });
+        $.each( {{{pending}}} , function(i,item) {
+            $("#list_friends_you_added").append('<li>'+item+'</li>');
+        });
+    });
+
+
 
     $("#addFriendBtn").on('click', function () {
         var friend_username = $("#addFriendForm").val();
@@ -49,11 +66,12 @@
             url: "add_friend",
             data: {friend_username: friend_username},
             success: function (response) {
+                console.log(response);
                 $("#list_friends_you_added").append('<li>'+response.friend_username+'</li>');
                 $("#friendsLogModal").html("ADDED");
             },
             error: function (response) {
-                $("#friendsLogModal").html("Username does not exist!");
+                $("#friendsLogModal").html(JSON.parse(response.responseText).error_message);
             }
         })
     });

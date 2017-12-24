@@ -7,10 +7,12 @@ import app.db.DataBaseHelper;
 import app.util.Path;
 import com.google.gson.Gson;
 import org.mongodb.morphia.Datastore;
+
 import spark.ModelAndView;
 import spark.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class FriendsController {
     static DataBaseHelper dbHelper = new DataBaseHelper();
@@ -23,10 +25,11 @@ public class FriendsController {
             HashMap<String, Object> model = new HashMap<>();
             String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
             User me = UserController.getUserByUsername(username);
-            model.put("friends", me.getFriends());
-            model.put("added_me", me.getPending_friends_Invitation());
-            model.put("pending", me.getPending_friends_Added());
+            model.put("friends", me.getFriends().getCurrent_friends());
+            model.put("added_me", me.getFriends().getPending_friends_invitation());
+            model.put("pending", me.getFriends().getPending_friends_added());
             model.put("username", username );
+            System.out.println("GET FRIENDS PAGE RESPONSE: " + gson.toJson(model));
             return new ModelAndView(model, Path.Template.FRIENDS);
         }
         res.redirect(Path.Web.GET_INDEX_PAGE);
@@ -34,6 +37,7 @@ public class FriendsController {
     }
 
     public static String handleAddFriend(Request req, Response res) {
+        res.type("application/json");
         String userId = AuthController.checkSessionHasUser(req);
         if(userId == null || userId.isEmpty()) {
             res.redirect(Path.Web.GET_INDEX_PAGE);
@@ -48,18 +52,20 @@ public class FriendsController {
         User me = UserController.getUserByUsername(username);
 
         if(addFriendHasError(model,me,friend)) {
+            System.out.println("ADDING FRIEND HAS ERROR");
             res.status(500);
             return gson.toJson(model);
         }
 
-        me.getPending_friends_Added().add(new Friends(friend_username));
-        friend.getPending_friends_Invitation().add(new Friends(username));
-
         datastore = dbHelper.getDataStore();
+        me.setFriends(updateMyAdds(me, friend_username));
         datastore.save(me);
+
+        friend.setFriends(updateMyInvitations(friend, username));
         datastore.save(friend);
 
-        res.status(500);
+        res.status(200);
+        System.out.print("RESPONSE: " + gson.toJson(model));
         return gson.toJson(model);
     }
 
@@ -69,16 +75,42 @@ public class FriendsController {
             model.put("error_message", "Username does not exist!");
             return true;
         }
+        // Can not add yourself as a friend
+        if(me.getId().equals(friend.getId())) {
+            model.put("error_message", "Can not add yourself");
+            return  true;
+        }
         // Check if the username is already a friend
-        if(me.getFriends().contains(friend)) {
+        if( gson.fromJson(me.getFriends().getCurrent_friends(), HashSet.class).contains(friend)) {
             model.put("error_message", "Username is already a friend!");
             return true;
         }
         // Check if username is on pending list, i.e. they added you or you added them
-        if(me.getPending_friends_Added().contains(friend) || me.getPending_friends_Invitation().contains(friend)) {
+        if(gson.fromJson(me.getFriends().getPending_friends_added(),HashSet.class).contains(friend) ||
+                gson.fromJson(me.getFriends().getPending_friends_invitation(), HashSet.class).contains(friend)) {
             model.put("error_message", "This user is on your pending list!");
             return true;
         }
         return false;
+    }
+
+    // Add a username to this User list of friends waiting to confirm as friend
+    private static Friends updateMyAdds(User user, String username_to_add) {
+        Friends my_friends = user.getFriends();
+        HashSet<String> my_adds = gson.fromJson(my_friends.getPending_friends_added(), HashSet.class);
+        my_adds.add(username_to_add);
+        String jsonString = gson.toJson(my_adds);
+        my_friends.setPending_friends_added(jsonString);
+        return my_friends;
+    }
+
+    // Add the username to this User pending invitation
+    private static Friends updateMyInvitations(User user, String username_invitation) {
+        Friends my_friends = user.getFriends();
+        HashSet<String> my_invitations = gson.fromJson(my_friends.getPending_friends_invitation(), HashSet.class);
+        my_invitations.add(username_invitation);
+        String jsonString = gson.toJson(my_invitations);
+        my_friends.setPending_friends_invitation(jsonString);
+        return my_friends;
     }
 }
