@@ -20,7 +20,7 @@ public class User {
     private String salt;
     private String verifier;
     private String token = "";
-    private Object friends;
+    private Friends friends;
 
     public User() {
 
