@@ -69,7 +69,7 @@ public class User {
         this.token = token;
     }
 
-    public Object getFriends() {
+    public Friends getFriends() {
         return friends;
     }
 }
