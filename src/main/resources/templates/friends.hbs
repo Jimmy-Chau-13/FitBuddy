@@ -84,7 +84,7 @@
            url: "confirm_friend",
            data: {friend_username: username},
            success: function (response) {
-               $("#list_current_friends").append('<li>'+response.friend_username+'</li>');
+               location.reload();
            },
            error: function () {
                $("#friendsLogModal").html("COULD NOT CONFIRM");

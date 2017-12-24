@@ -58,10 +58,39 @@ public class FriendsController {
         }
 
         datastore = dbHelper.getDataStore();
-        me.setFriends(updateMyAdds(me, friend_username));
+        me.setFriends(addToMyAdds(me, friend_username));
         datastore.save(me);
 
-        friend.setFriends(updateMyInvitations(friend, username));
+        friend.setFriends(addToMyInvitations(friend, username));
+        datastore.save(friend);
+
+        res.status(200);
+        System.out.print("RESPONSE: " + gson.toJson(model));
+        return gson.toJson(model);
+    }
+
+    public static String handleConfirmFriend(Request req, Response res) {
+        res.type("application/json");
+        String userId = AuthController.checkSessionHasUser(req);
+        if(userId == null || userId.isEmpty()) {
+            res.redirect(Path.Web.GET_INDEX_PAGE);
+            return null;
+        }
+        HashMap<String,Object> model = new HashMap<>();
+        String friend_username = req.queryParams("friend_username");
+        model.put("friend_username", friend_username);
+        String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
+        User friend = UserController.getUserByUsername(friend_username);
+        User me = UserController.getUserByUsername(username);
+
+        me.setFriends(addToMyFriendsList(me, friend_username));
+        me.setFriends(deleteFromMyInvitations(me,friend_username));
+
+        friend.setFriends(addToMyFriendsList(friend, username));
+        friend.setFriends(deleteFromMyAdds(friend,username));
+
+        datastore = dbHelper.getDataStore();
+        datastore.save(me);
         datastore.save(friend);
 
         res.status(200);
@@ -95,7 +124,7 @@ public class FriendsController {
     }
 
     // Add a username to this User list of friends waiting to confirm as friend
-    private static Friends updateMyAdds(User user, String username_to_add) {
+    private static Friends addToMyAdds(User user, String username_to_add) {
         Friends my_friends = user.getFriends();
         HashSet<String> my_adds = gson.fromJson(my_friends.getPending_friends_added(), HashSet.class);
         my_adds.add(username_to_add);
@@ -104,13 +133,43 @@ public class FriendsController {
         return my_friends;
     }
 
+    // Add a username to this User list of friends waiting to confirm as friend
+    private static Friends deleteFromMyAdds(User user, String username_to_delete) {
+        Friends my_friends = user.getFriends();
+        HashSet<String> my_adds = gson.fromJson(my_friends.getPending_friends_added(), HashSet.class);
+        my_adds.remove(username_to_delete);
+        String jsonString = gson.toJson(my_adds);
+        my_friends.setPending_friends_added(jsonString);
+        return my_friends;
+    }
+
     // Add the username to this User pending invitation
-    private static Friends updateMyInvitations(User user, String username_invitation) {
+    private static Friends addToMyInvitations(User user, String username_invitation) {
         Friends my_friends = user.getFriends();
         HashSet<String> my_invitations = gson.fromJson(my_friends.getPending_friends_invitation(), HashSet.class);
         my_invitations.add(username_invitation);
         String jsonString = gson.toJson(my_invitations);
         my_friends.setPending_friends_invitation(jsonString);
+        return my_friends;
+    }
+
+    // Delete the username to this User pending invitation
+    private static Friends deleteFromMyInvitations(User user, String username_invitation) {
+        Friends my_friends = user.getFriends();
+        HashSet<String> my_invitations = gson.fromJson(my_friends.getPending_friends_invitation(), HashSet.class);
+        my_invitations.remove(username_invitation);
+        String jsonString = gson.toJson(my_invitations);
+        my_friends.setPending_friends_invitation(jsonString);
+        return my_friends;
+    }
+
+    // Add the username to this User friends list
+    private static Friends addToMyFriendsList(User user, String username) {
+        Friends my_friends = user.getFriends();
+        HashSet<String> my_friends_list = gson.fromJson(my_friends.getCurrent_friends(), HashSet.class);
+        my_friends_list.add(username);
+        String jsonString = gson.toJson(my_friends_list);
+        my_friends.setCurrent_friends(jsonString);
         return my_friends;
     }
 }
