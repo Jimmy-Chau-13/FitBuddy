@@ -36,7 +36,7 @@ public class FriendsController {
         return null;
     }
 
-    public static String handleAddFriend(Request req, Response res) {
+    public static String handleFriendOption(Request req, Response res) {
         res.type("application/json");
         String userId = AuthController.checkSessionHasUser(req);
         if(userId == null || userId.isEmpty()) {
@@ -46,13 +46,38 @@ public class FriendsController {
 
         HashMap<String,Object> model = new HashMap<>();
         String friend_username = req.queryParams("friend_username");
+        String option = req.queryParams("option");
         model.put("friend_username", friend_username);
         String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
         User friend = UserController.getUserByUsername(friend_username);
         User me = UserController.getUserByUsername(username);
 
+        if(option.equals("add_friend")) {
+            return handleAddFriend(me,friend,friend_username,username,model,res);
+        }
+
+        else if(option.equals("remove_friend")) {
+            return handleRemoveFriend(me,friend,friend_username,username,model,res);
+        }
+
+        else if(option.equals("confirm_friend")) {
+            return handleConfirmFriend(me,friend,friend_username,username,model,res);
+        }
+
+        else if(option.equals("decline_friend")) {
+            return handleDeclineFriend(me,friend,friend_username,username,model,res);
+        }
+        
+        else {
+            res.status(500);
+            return gson.toJson(model);
+        }
+    }
+
+    public static String handleAddFriend(User me, User friend, String friend_username, String username
+        , HashMap<String, Object> model, Response res) {
+
         if(addFriendHasError(model,me,friend)) {
-            System.out.println("ADDING FRIEND HAS ERROR");
             res.status(500);
             return gson.toJson(model);
         }
@@ -69,20 +94,8 @@ public class FriendsController {
         return gson.toJson(model);
     }
 
-    public static String handleRemoveFriend(Request req, Response res) {
-        res.type("application/json");
-        String userId = AuthController.checkSessionHasUser(req);
-        if(userId == null || userId.isEmpty()) {
-            res.redirect(Path.Web.GET_INDEX_PAGE);
-            return null;
-        }
-
-        HashMap<String,Object> model = new HashMap<>();
-        String friend_username = req.queryParams("friend_username");
-        model.put("friend_username", friend_username);
-        String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
-        User friend = UserController.getUserByUsername(friend_username);
-        User me = UserController.getUserByUsername(username);
+    public static String handleRemoveFriend(User me, User friend, String friend_username, String username
+            , HashMap<String, Object> model, Response res) {
 
         datastore = dbHelper.getDataStore();
         me.setFriends(removeFromMyFriendsList(me, friend_username));
@@ -96,30 +109,29 @@ public class FriendsController {
         return gson.toJson(model);
     }
 
-    public static String handleFriendInvitationOption(Request req, Response res) {
-        res.type("application/json");
-        String userId = AuthController.checkSessionHasUser(req);
-        if(userId == null || userId.isEmpty()) {
-            res.redirect(Path.Web.GET_INDEX_PAGE);
-            return null;
-        }
-        HashMap<String,Object> model = new HashMap<>();
-        String friend_username = req.queryParams("friend_username");
-        String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
-        String option = req.queryParams("option");
-
-        model.put("friend_username", friend_username);
-
-        User friend = UserController.getUserByUsername(friend_username);
-        User me = UserController.getUserByUsername(username);
+    public static String handleConfirmFriend(User me, User friend, String friend_username, String username
+            , HashMap<String, Object> model, Response res) {
 
         me.setFriends(deleteFromMyInvitations(me,friend_username));
         friend.setFriends(deleteFromMyAdds(friend,username));
 
-        if(option.equals("confirm")) {
-            me.setFriends(addToMyFriendsList(me, friend_username));
-            friend.setFriends(addToMyFriendsList(friend, username));
-        }
+        me.setFriends(addToMyFriendsList(me, friend_username));
+        friend.setFriends(addToMyFriendsList(friend, username));
+
+        datastore = dbHelper.getDataStore();
+        datastore.save(me);
+        datastore.save(friend);
+
+        res.status(200);
+        System.out.print("RESPONSE: " + gson.toJson(model));
+        return gson.toJson(model);
+    }
+
+    public static String handleDeclineFriend(User me, User friend, String friend_username, String username
+            , HashMap<String, Object> model, Response res) {
+
+        me.setFriends(deleteFromMyInvitations(me,friend_username));
+        friend.setFriends(deleteFromMyAdds(friend,username));
 
         datastore = dbHelper.getDataStore();
         datastore.save(me);
