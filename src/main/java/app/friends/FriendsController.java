@@ -69,6 +69,33 @@ public class FriendsController {
         return gson.toJson(model);
     }
 
+    public static String handleRemoveFriend(Request req, Response res) {
+        res.type("application/json");
+        String userId = AuthController.checkSessionHasUser(req);
+        if(userId == null || userId.isEmpty()) {
+            res.redirect(Path.Web.GET_INDEX_PAGE);
+            return null;
+        }
+
+        HashMap<String,Object> model = new HashMap<>();
+        String friend_username = req.queryParams("friend_username");
+        model.put("friend_username", friend_username);
+        String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
+        User friend = UserController.getUserByUsername(friend_username);
+        User me = UserController.getUserByUsername(username);
+
+        datastore = dbHelper.getDataStore();
+        me.setFriends(removeFromMyFriendsList(me, friend_username));
+        datastore.save(me);
+
+        friend.setFriends(removeFromMyFriendsList(friend, username));
+        datastore.save(friend);
+
+        res.status(200);
+        System.out.print("RESPONSE: " + gson.toJson(model));
+        return gson.toJson(model);
+    }
+
     public static String handleFriendInvitationOption(Request req, Response res) {
         res.type("application/json");
         String userId = AuthController.checkSessionHasUser(req);
@@ -175,6 +202,16 @@ public class FriendsController {
         Friends my_friends = user.getFriends();
         HashSet<String> my_friends_list = gson.fromJson(my_friends.getCurrent_friends(), HashSet.class);
         my_friends_list.add(username);
+        String jsonString = gson.toJson(my_friends_list);
+        my_friends.setCurrent_friends(jsonString);
+        return my_friends;
+    }
+
+    // Remove the username to this User friends list
+    private static Friends removeFromMyFriendsList(User user, String username) {
+        Friends my_friends = user.getFriends();
+        HashSet<String> my_friends_list = gson.fromJson(my_friends.getCurrent_friends(), HashSet.class);
+        my_friends_list.remove(username);
         String jsonString = gson.toJson(my_friends_list);
         my_friends.setCurrent_friends(jsonString);
         return my_friends;

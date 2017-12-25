@@ -73,6 +73,8 @@ public class Main {
         post(Path.Web.FRIEND_INVITATION_OPTION,
                 (req,res) -> FriendsController.handleFriendInvitationOption(req,res) );
 
+        post(Path.Web.DELETE_FRIEND , (req,res)-> FriendsController.handleRemoveFriend(req,res));
+
     } //EOF MAIN
 
 

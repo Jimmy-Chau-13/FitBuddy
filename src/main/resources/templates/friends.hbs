@@ -24,8 +24,7 @@
 
     <div id="AllFriends">
         <h4> ALL CURRENT FRIENDS </h4>
-        <ul id="list_current_friends">
-        </ul>
+        <ul id="list_current_friends"></ul>
     </div>
 
     <div id="PendingFriends">
@@ -47,7 +46,8 @@
         $("#friends_li").addClass("active");
 
         $.each({{{friends}}}, function(i,item) {
-            $("#list_current_friends").append('<li>'+item+'</li>');
+            $("#list_current_friends").append('<li><p style="float: left;">'+item+'</p>' +
+                    '<button type="button" class="removeFriendBtn">Remove</button></li>');
         });
         $.each({{{added_me}}}, function(i,item) {
             $("#list_friends_added_you").append('<li><p style="float: left;">'+item+'</p>' +
@@ -103,6 +103,21 @@
             },
             error: function () {
                 $("#friendsLogModal").html("ERROR FOR FRIEND OPTION");
+            }
+        });
+    });
+
+    $("#list_current_friends").on('click', ".removeFriendBtn", function () {
+        var username = $(this).closest("li").children("p").text();
+        $.ajax({
+            type:"post",
+            url: "/remove_friend",
+            data: {friend_username: username},
+            success: function () {
+                location.reload();
+            },
+            error: function () {
+                $("#friendsLogModal").html("COULD NOT REMOVE");
             }
         });
     });
