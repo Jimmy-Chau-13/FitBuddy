@@ -70,7 +70,8 @@ public class Main {
         // Friends Operations
         post(Path.Web.ADD_FRIEND, (req,res) -> FriendsController.handleAddFriend(req,res));
 
-        post("/confirm_friend", (req,res) -> FriendsController.handleConfirmFriend(req,res) );
+        post(Path.Web.FRIEND_INVITATION_OPTION,
+                (req,res) -> FriendsController.handleFriendInvitationOption(req,res) );
 
     } //EOF MAIN
 

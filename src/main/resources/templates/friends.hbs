@@ -77,24 +77,34 @@
         })
     });
 
-    $("#list_friends_added_you").on('click', ".confirmFriendBtn",  function () {
+    $("#list_friends_added_you").on('click', ".confirmFriendBtn",    function () {
         var username = $(this).closest("li").children("p").text();
         $.ajax({
            type:"post",
-           url: "confirm_friend",
-           data: {friend_username: username},
-           success: function (response) {
+           url: "/friend_invitation_option",
+           data: {friend_username: username, option: "confirm"},
+           success: function () {
                location.reload();
            },
            error: function () {
-               $("#friendsLogModal").html("COULD NOT CONFIRM");
+               $("#friendsLogModal").html("ERROR FOR FRIEND OPTION");
            } 
         });
     });
 
     $("#list_friends_added_you").on('click', ".declineFriendBtn", function () {
         var username = $(this).closest("li").children("p").text();
-        console.log(username);
+        $.ajax({
+            type:"post",
+            url: "/friend_invitation_option",
+            data: {friend_username: username, option: "decline"},
+            success: function () {
+                location.reload();
+            },
+            error: function () {
+                $("#friendsLogModal").html("ERROR FOR FRIEND OPTION");
+            }
+        });
     });
 
 </script>

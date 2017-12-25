@@ -69,7 +69,7 @@ public class FriendsController {
         return gson.toJson(model);
     }
 
-    public static String handleConfirmFriend(Request req, Response res) {
+    public static String handleFriendInvitationOption(Request req, Response res) {
         res.type("application/json");
         String userId = AuthController.checkSessionHasUser(req);
         if(userId == null || userId.isEmpty()) {
@@ -78,16 +78,21 @@ public class FriendsController {
         }
         HashMap<String,Object> model = new HashMap<>();
         String friend_username = req.queryParams("friend_username");
-        model.put("friend_username", friend_username);
         String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
+        String option = req.queryParams("option");
+
+        model.put("friend_username", friend_username);
+
         User friend = UserController.getUserByUsername(friend_username);
         User me = UserController.getUserByUsername(username);
 
-        me.setFriends(addToMyFriendsList(me, friend_username));
         me.setFriends(deleteFromMyInvitations(me,friend_username));
-
-        friend.setFriends(addToMyFriendsList(friend, username));
         friend.setFriends(deleteFromMyAdds(friend,username));
+
+        if(option.equals("confirm")) {
+            me.setFriends(addToMyFriendsList(me, friend_username));
+            friend.setFriends(addToMyFriendsList(friend, username));
+        }
 
         datastore = dbHelper.getDataStore();
         datastore.save(me);
@@ -97,6 +102,8 @@ public class FriendsController {
         System.out.print("RESPONSE: " + gson.toJson(model));
         return gson.toJson(model);
     }
+
+
 
     private static boolean addFriendHasError(HashMap<String,Object> model, User me, User friend) {
         // Check if username exists

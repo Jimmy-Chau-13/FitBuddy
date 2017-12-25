@@ -5,7 +5,6 @@ public class Path {
     public static class Web {
         public static final String GET_PROFILE_PAGE = "/profile";
         public static final String GET_INDEX_PAGE = "/";
-        public static final String GET_REGISTER_PAGE = "/register";
         public static final String GET_FRIENDS_PAGE = "/friends";
 
         public static final String DO_SIGNUP = "/register";
@@ -22,7 +21,8 @@ public class Path {
         public static final String DELETE_SUPERSET = "/delete_superset";
 
         public static final String ADD_FRIEND = "/add_friend";
-        public static final String DELETE_FRIEND = "/add_friend";
+        public static final String DELETE_FRIEND = "/delete_friend";
+        public static final String FRIEND_INVITATION_OPTION ="/friend_invitation_option";
 
         public static final String GRAPH_WORKOUT = "/graph";
     }
