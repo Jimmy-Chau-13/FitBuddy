@@ -130,6 +130,7 @@ public class AuthController {
             logger.info("M2 Generated in Authenticate = " + m2);
             Session session = req.session(true);
             User user = UserController.getUserByUsername(username);
+            if(user.getFriends() == null) user = UserController.updateUserFields(user);
 
             session.attribute(Path.Attribute.USERNAME, user.getUsername());
             session.attribute(Path.Attribute.USERID, user.getId().toString()); //saves the id as String
