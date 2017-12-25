@@ -67,7 +67,7 @@ public class FriendsController {
         else if(option.equals("decline_friend")) {
             return handleDeclineFriend(me,friend,friend_username,username,model,res);
         }
-        
+
         else {
             res.status(500);
             return gson.toJson(model);

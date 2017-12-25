@@ -68,12 +68,8 @@ public class Main {
         post(Path.Web.DELETE_SUPERSET, (req,res) -> SupersetController.handleDeleteSuperset(req,res));
 
         // Friends Operations
-        post(Path.Web.ADD_FRIEND, (req,res) -> FriendsController.handleAddFriend(req,res));
+        post(Path.Web.FRIEND_OPTION, (req,res) -> FriendsController.handleFriendOption(req,res));
 
-        post(Path.Web.FRIEND_INVITATION_OPTION,
-                (req,res) -> FriendsController.handleFriendInvitationOption(req,res) );
-
-        post(Path.Web.DELETE_FRIEND , (req,res)-> FriendsController.handleRemoveFriend(req,res));
 
     } //EOF MAIN
 
