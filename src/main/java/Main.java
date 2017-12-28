@@ -32,6 +32,15 @@ public class Main {
 
         new DataBaseHelper();
 
+        // Ensure session has a user id
+        before("/*/", (req,res) -> {
+            Session session = req.session(true);
+            String userId = session.attribute(Path.Attribute.USERID);
+            if(userId == null || userId.isEmpty()) {
+                res.redirect(Path.Web.GET_INDEX_PAGE);
+                halt(401);
+            }
+        });
 
 
         // Serving Pages
