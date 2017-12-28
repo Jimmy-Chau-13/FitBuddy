@@ -100,11 +100,10 @@
         workouts[curr_exercise] = getSupersetExercise();
         console.log(workouts);
         $("#supersetBody2").empty();
-        superset.date = $("#superset_date").val();
+        var date =  $("#superset_date").val();
         superset.workouts = workouts;
-        console.log(superset);
-        var data = {superset: superset};
-        //console.log(data);
+        var data = {superset: superset, date:date};
+        console.log(data);
 
         $.ajax({
             type: "post",

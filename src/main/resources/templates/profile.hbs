@@ -10,7 +10,7 @@
 
         <div class="btn-group">
             <button type="button" class="btn btn-primary" id="addBtn">Add Workout</button>
-            <button type="button" class="btn btn-primary" id="supersetAddBtn">Add Superset</button>
+            <!--<button type="button" class="btn btn-primary" id="supersetAddBtn">Add Superset</button> -->
             <button type="button" class="btn btn-primary" id="findBtn">Find Workout</button>
         </div>
 
@@ -33,10 +33,8 @@
 //////////////////////////////////// ALL FULL CALENDAR FUNCTIONALITY////////////////////////////////////////////////
         $("#calendar").fullCalendar({
 
-            events: [
-                {{{eventArray}}}
-                {{{eventArray2}}}
-            ],
+            events:
+                {{{eventArray}}},
 
             dayClick: function(date) {
                 date = date.format();  //yyyy-MM-dd

@@ -2,9 +2,9 @@ package app.graph;
 
 // Represents the y-axis of the graph which are the average weight lifted of a workout
 public class Datasets {
-    String label;
-    String borderColor;
-    int[] data;
+    private String label;
+    private String borderColor;
+    private int[] data;
 
     public Datasets(String label, int[] data) {
         this.label = label;
