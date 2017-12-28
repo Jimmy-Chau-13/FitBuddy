@@ -10,6 +10,7 @@ import app.index.IndexController;
 import app.superset.SupersetController;
 import app.workout.WorkOutController;
 import app.util.Path;
+import spark.Session;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
 import java.util.logging.Logger;
@@ -30,6 +31,8 @@ public class Main {
         port(getHerokuAssignedPort());
 
         new DataBaseHelper();
+
+
 
         // Serving Pages
         get(Path.Web.GET_INDEX_PAGE, (req,res) -> IndexController.serveIndexPage(req,res)
@@ -69,6 +72,9 @@ public class Main {
 
         // Friends Operations
         post(Path.Web.FRIEND_OPTION, (req,res) -> FriendsController.handleFriendOption(req,res));
+
+        get("/friends/:username/:month", (req,res) -> FriendsController.getFriendsInfo(req,res),
+                new HandlebarsTemplateEngine());
 
 
     } //EOF MAIN

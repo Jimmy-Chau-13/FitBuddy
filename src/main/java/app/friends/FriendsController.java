@@ -5,6 +5,7 @@ import app.auth.User;
 import app.auth.UserController;
 import app.db.DataBaseHelper;
 import app.util.Path;
+import app.workout.WorkOutController;
 import com.google.gson.Gson;
 import org.mongodb.morphia.Datastore;
 
@@ -34,6 +35,25 @@ public class FriendsController {
         }
         res.redirect(Path.Web.GET_INDEX_PAGE);
         return null;
+    }
+
+    public static  ModelAndView getFriendsInfo(Request req, Response res) {
+        String userId = AuthController.checkSessionHasUser(req);
+        if(userId == null || userId.isEmpty()) res.redirect(Path.Web.GET_INDEX_PAGE);
+
+        HashMap<String, Object> model = new HashMap<>();
+        String friends_username = req.params(":username");
+        String[] date = req.params(":month").split("_");
+        String your_username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
+        model.put("your_username", your_username);
+        model.put("friends_username", friends_username);
+        model.put("date", date[0] + "/" + date[1]);
+        int num_my_workouts = WorkOutController.getNumberOfWorkoutsForAMonth(userId,date[0],date[1]);
+        int num_friends_workouts = WorkOutController.getNumberOfWorkoutsForAMonth(
+                UserController.getUserByUsername(friends_username).getId().toString(), date[0], date[1]);
+        model.put("num_my_workouts", num_my_workouts);
+        model.put("num_friends_workouts", num_friends_workouts);
+        return new ModelAndView(model, "friendsInfo.hbs");
     }
 
     public static String handleFriendOption(Request req, Response res) {
@@ -73,6 +93,7 @@ public class FriendsController {
             return gson.toJson(model);
         }
     }
+
 
     public static String handleAddFriend(User me, User friend, String friend_username, String username
         , HashMap<String, Object> model, Response res) {

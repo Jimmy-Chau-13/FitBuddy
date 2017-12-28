@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class WorkOutController {
 
@@ -245,6 +246,10 @@ public class WorkOutController {
                 "id: '" + prevDate + " workout', " +
                 "start : '" + LocalDate.parse(prevDate, df)+ "' }, ");
         return eventArray.toString();
+    }
+
+    public static int getNumberOfWorkoutsForAMonth(String userId, String month, String year) {
+        return 0;
     }
 
     // Return total number of workouts on a single day

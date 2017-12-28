@@ -1,0 +1,20 @@
+{{#partial "content"}}
+    <body>
+    {{> navbar.hbs}}
+
+    <h1>{{date}}</h1>
+
+    <div id="yourInfo" style="float: left;">
+        <h1>{{your_username}}</h1>
+        <p>Number of workouts: {{num_my_workouts}}</p>
+    </div>
+
+    <div id="friendsInfo">
+        <h1> {{friends_username}}</h1>
+        <p> Number of workouts: {{num_friends_workouts}}</p>
+    </div>
+
+    </body>
+{{/partial}}
+
+    {{> base.hbs}}

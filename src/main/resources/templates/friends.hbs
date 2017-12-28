@@ -4,7 +4,6 @@
 {{#partial "content"}}
     <body>
     {{> navbar.hbs}}
-    </body>
 
     <div>
         <div class="row">
@@ -33,6 +32,7 @@
         <h4> WAITING FOR RESPONSE</h4>
         <ul id="list_friends_you_added"></ul>
     </div>
+    </body>
 
 {{/partial}}
 
@@ -42,11 +42,14 @@
 
     $(document).ready(function () {
 
+        var month = (new Date).getMonth() + 1;
+        var year = (new Date).getFullYear();
 
         $("#friends_li").addClass("active");
 
         $.each({{{friends}}}, function(i,item) {
-            $("#list_current_friends").append('<li><p style="float: left;">'+item+'</p>' +
+            $("#list_current_friends").append('<li><a href="/friends/'+item+'/'+month+'_'+year+'" ' +
+            'style="float: left;">'+item+'</a>' +
                     '<button type="button" class="removeFriendBtn">Remove</button></li>');
         });
         $.each({{{added_me}}}, function(i,item) {
