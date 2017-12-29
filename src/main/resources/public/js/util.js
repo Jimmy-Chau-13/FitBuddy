@@ -169,10 +169,10 @@ function openViewModal(date) {
             var workout = response.workouts;
             var workouts_id = response.workouts_id;
             var dateToShow = response.dateToShow;
-            var supersets = response.supersets;
-            var supersets_id = response.supersets_id;
+            //var supersets = response.supersets;
+            //var supersets_id = response.supersets_id;
             createWorkoutTable(workout, workouts_id);
-            createSupersetTable(supersets, supersets_id);
+            //createSupersetTable(supersets, supersets_id);
             $("#theDateToShow").html(dateToShow);
             $("#viewModal").modal('show');
 
@@ -186,11 +186,11 @@ function openViewModal(date) {
                 editBtnClicked(tr,dateToShow);
             });
 
-            $(".deleteSupersetBtn").on('click', function () {
+          /*  $(".deleteSupersetBtn").on('click', function () {
                 console.log("DELETE");
                 var tr = $(this).closest("tr");
                 deleteSupersetBtnClicked(tr);
-            });
+            }); */
         }
     });
 
