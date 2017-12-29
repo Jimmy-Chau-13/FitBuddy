@@ -2,7 +2,7 @@
 /////////////////////////////////////// ALL FUNCTIONS DEALING WITH THE ADD MODAL ////////////////////////////////
 
 function createAddModalBody2(sets) {
-    for(i = 1; i < sets*1 + 1; i++) {
+    for(var i = 1; i < sets*1 + 1; i++) {
         var setNum = "Set " + i;
         var repId = "reps" + i;
         var weightId = "weight" + i;
@@ -30,9 +30,9 @@ function fillAllSets(sets, reps, weight) {
 function getReps() {
     var sets = $("#sets").val();
     var reps = new Array(sets);
-    for (i = 1; i < sets*1 + 1; i++) {
+    for (var i = 1; i < sets*1 + 1; i++) {
         var repId = "#reps" + i;
-        reps[i*1-1] = $(repId).val();
+        reps[i-1] = $(repId).val();
     }
     return reps;
 }
@@ -42,7 +42,7 @@ function getWeight() {
     var weight = new Array(sets);
     for (i = 1; i < sets*1 + 1; i++) {
         var weightId = "#weight" + i;
-        weight[i*1-1] = $(weightId).val();
+        weight[i-1] = $(weightId).val();
     }
     return weight;
 }
@@ -51,20 +51,19 @@ function getWorkout() {
     var data = {};
     data.exercise = $("#exercise").val();
     data.sets = $("#sets").val();
-    data.date = $("#date").val();
-    data.reps = getReps().toString();
-    data.weight = getWeight().toString();
+    data.reps = getReps();
+    data.weight = getWeight();
     return data;
 }
 
 function checkAddModalBody2IsFilled() {
     var sets = $("#sets").val();
-    for (i = 1; i < sets*1 + 1; i++) {
+    for (var i = 1; i < sets*1 + 1; i++) {
         var repId = "#reps" + i;
         var weightId = "#weight" + i;
         var reps = $(repId).val();
         var weight = $(weightId).val();
-        if(reps=="" || weight=="") {
+        if(reps==="" || weight==="") {
             $("#logModal2").html("Oops you forgot to fill it all");
             return -1;
         }
@@ -88,9 +87,10 @@ function clearAddModalBody2(){
     $("#addModalBody1").show();
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////END OF ADD MODAL FUNCTIONS/////////////////////////////////////////////////////////////
 
 /////////////////////////////////////SUPERSET FUNCTIONS///////////////////////////////////////////////////////////////
+/*
 function createSupersetModalBody2(sets, num_exercises, curr_exercise) {
 
     var the_exercise_number = curr_exercise * 1 + 1;
@@ -98,7 +98,7 @@ function createSupersetModalBody2(sets, num_exercises, curr_exercise) {
                  '<input class="form-control" id = "superset_exercise_name" placeholder="Exercise Name" required>';
     $("#supersetBody2").append(html);
 
-    for(i = 0; i < sets*1 ; i++) {
+    for(var i = 0; i < sets*1 ; i++) {
         var setNum = "Set " + (i*1 + 1);
         var repId = "reps" + i;
         var weightId = "weight" + i;
@@ -113,7 +113,7 @@ function createSupersetModalBody2(sets, num_exercises, curr_exercise) {
         $("#supersetBody2").append(html);
     }
 
-    if(curr_exercise == num_exercises*1 - 1) {
+    if(curr_exercise === num_exercises*1 - 1) {
         var html = '<button type="button" class="btn btn-primary" id="supersetConfirmBtn">Confirm</button>';
         $("#supersetBody2").append(html);
     }
@@ -126,9 +126,9 @@ function createSupersetModalBody2(sets, num_exercises, curr_exercise) {
 function getSupersetReps() {
     var sets = $("#superset_sets").val();
     var reps = [];
-    for (i = 0; i < sets*1 ; i++) {
+    for (var i = 0; i < sets*1 ; i++) {
         var repId = "#reps" + i;
-        reps[i*1] = $(repId).val();
+        reps[i] = $(repId).val();
     }
     return reps;
 }
@@ -136,9 +136,9 @@ function getSupersetReps() {
 function getSupersetWeight() {
     var sets = $("#superset_sets").val();
     var weight = [];
-    for (i = 0; i < sets*1; i++) {
+    for (var i = 0; i < sets*1; i++) {
         var weightId = "#weight" + i;
-        weight[i*1] = $(weightId).val();
+        weight[i] = $(weightId).val();
     }
     return weight;
 }
@@ -147,13 +147,12 @@ function getSupersetExercise() {
     var workout = {};
     workout.exercise = $("#superset_exercise_name").val();
     workout.sets = $("#superset_sets").val();
-    workout.date = $("#superset_date").val();
     workout.reps = getSupersetReps();
     workout.weight = getSupersetWeight();
     return workout;
 }
 
-
+*/
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,16 +166,17 @@ function openViewModal(date) {
         url: "/view",
         data: {"date": date},
         success: function(response) {
-            var workout = JSON.parse(response.jsonData);
+            var workout = response.workouts;
+            var workouts_id = response.workouts_id;
             var dateToShow = response.dateToShow;
             var supersets = response.supersets;
             var supersets_id = response.supersets_id;
-            createWorkoutTable(workout);
+            createWorkoutTable(workout, workouts_id);
             createSupersetTable(supersets, supersets_id);
+            $("#theDateToShow").html(dateToShow);
             $("#viewModal").modal('show');
 
             $(".deleteBtn").on("click", function () {
-                //console.log("DELETE BUTTON CLICKED");
                 var tr = $(this).closest("tr");
                 deleteBtnClicked(tr);
             });
@@ -197,21 +197,21 @@ function openViewModal(date) {
 }
 
 // Construct a table when the view modal is open for a workout on a certain day
-function createWorkoutTable(list) {
+function createWorkoutTable(list, workouts_id) {
 
-    var trHTML = '';
+    var trHTML = '<table id="workoutTable"><thead><tr><th>EXERCISE</th>' +
+        '<th>SETS</th> <th>REPS</th><th>WEIGHT</th></tr></thead>';
     $.each(list, function(i,item) {
-        //console.log("exercise: " + item.exercise +
-         //           "\nid: " + item.id);
-        trHTML += '<tr data-id=' +item.id+ '><td>' + item.exercise + '</td><td>' + item.sets + '</td><td>' +item.reps +
+        trHTML += '<tr data-id=' +workouts_id[i]+ '><td>' + item.exercise + '</td><td>' + item.sets + '</td><td>' +item.reps +
         '</td><td>' + item.weight +
             '</td><td><button class="editBtn" name="edit"> Edit </button></td>' +
             '<td><button class="deleteBtn"> Delete </button></td></tr>';
     });
-
-    $('#workoutTable').append(trHTML);
+    trHTML += '</table>'
+    $('#workoutTableDiv').append(trHTML);
 }
 
+/*
 function  createSupersetTable(list, supersets_id) {
     var html = '';
     $.each(list, function (i,item) {
@@ -248,7 +248,7 @@ function deleteSupersetBtnClicked(tr) {
             $("#viewModalLog").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");
         }
     });
-}
+} */
 
 function deleteBtnClicked(tr) {
     var data = {};
@@ -281,14 +281,14 @@ function editBtnClicked(tr, dateToShow) {
     var exercise = tr.find("td:nth-child(1)").text();
     modal.find('#editExercise').val(exercise);
 
-    var reps = JSON.parse(tr.find("td:nth-child(3)").text());
-    for(i = 1; i < sets*1 + 1; i++) {
+    var reps = tr.find("td:nth-child(3)").text().split(',');
+    for(var i = 1; i < sets*1 + 1; i++) {
         var repId = "#editReps" + i;
         $(repId).val(reps[i-1]);
     }
 
-    var weight = JSON.parse(tr.find("td:nth-child(4)").text());
-    for(i = 1; i < sets*1 + 1; i++) {
+    var weight = tr.find("td:nth-child(4)").text().split(',');
+    for( i = 1; i < sets*1 + 1; i++) {
         var weightId = "#editWeight" + i;
         $(weightId).val(weight[i-1]);
     }
@@ -301,7 +301,7 @@ function editBtnClicked(tr, dateToShow) {
 }
 
 function createEditModalBody(sets) {
-    for(i = 1; i < sets*1 + 1; i++) {
+    for(var i = 1; i < sets*1 + 1; i++) {
         var setNum = "Set " + i;
         var repId = "editReps" + i;
         var weightId = "editWeight" + i;
@@ -320,9 +320,9 @@ function createEditModalBody(sets) {
 function getEditedReps() {
     var sets = $("#editSets").val();
     var reps = new Array(sets);
-    for (i = 1; i < sets*1 + 1; i++) {
+    for (var i = 1; i < sets*1 + 1; i++) {
         var repId = "#editReps" + i;
-        reps[i*1-1] = $(repId).val();
+        reps[i-1] = $(repId).val();
     }
     return reps;
 }
@@ -330,9 +330,9 @@ function getEditedReps() {
 function getEditedWeight() {
     var sets = $("#editSets").val();
     var weight = new Array(sets);
-    for (i = 1; i < sets*1 + 1; i++) {
+    for (var i = 1; i < sets*1 + 1; i++) {
         var weightId = "#editWeight" + i;
-        weight[i*1-1] = $(weightId).val();
+        weight[i-1] = $(weightId).val();
     }
     return weight;
 }
@@ -341,16 +341,14 @@ function getEditedWorkout() {
     var data = {};
     data.exercise = $("#editExercise").val();
     data.sets = $("#editSets").val();
-    data.editId = $("#editId").val();
-    data.date = $("#editDate").val();
-    data.reps = getEditedReps().toString();
-    data.weight = getEditedWeight().toString();
+    data.reps = getEditedReps();
+    data.weight = getEditedWeight();
     return data;
 }
 
 function checkEditModalBodyIsFilled() {
     var sets = $("#editSets").val();
-    if ($("#editDate").val() == "" || $("#editExercise").val() == "") {
+    if ($("#editDate").val() === "" || $("#editExercise").val() === "") {
         $("#logModal3").html("Oops you forgot to fill it all");
         return -1;
     }
@@ -371,28 +369,29 @@ function clearEditModalBody(){
     $("#editBody").empty();
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////END OF VIEW MODAL////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////FULL CALENDAR EVENT//////////////////////////////////////////
 // increment the calendar's event by one
 function addWorkoutEvent(date, numberOfWorkouts) {
-    if(numberOfWorkouts === "1 workouts") {
-        console.log("")
-        var event = {id : date + " workout", title : numberOfWorkouts,
+    var event;
+    var calendar = $("#calendar");
+    if(numberOfWorkouts === "1 workout") {
+         event = {id : date + " workout", title : numberOfWorkouts,
             start : date, allDay : true};
-        $("#calendar").fullCalendar('renderEvent', event, true);
+        calendar.fullCalendar('renderEvent', event, true);
     }
 
     else {
-        var event = $("#calendar").fullCalendar('clientEvents', date + " workout");
+        event = calendar.fullCalendar('clientEvents', date + " workout");
         event[0].title = numberOfWorkouts;
-        $("#calendar").fullCalendar('updateEvent', event[0]);
+        calendar.fullCalendar('updateEvent', event[0]);
     }
-
 }
 
 // decrement the calendar's event by one
 function deleteWorkoutEvent(date, numberOfWorkouts) {
-    if(numberOfWorkouts == "0 workouts")
+    if(numberOfWorkouts === "0 workouts")
         $("#calendar").fullCalendar('removeEvents',date + " workout");
     else {
         var event = $("#calendar").fullCalendar('clientEvents', date + " workout");
@@ -428,7 +427,18 @@ function deleteSupersetEvent(date, numberOfSupersets) {
     }
 }
 
+// Construct a table for the graph
+function createGraphTable(list,dates) {
 
+    var trHTML = '<table><thead><tr><th>EXERCISE</th>' +
+        '<th>SETS</th> <th>REPS</th><th>WEIGHT</th><th>DATE</th></tr></thead>';
+    $.each(list, function(i,item) {
+        trHTML += '<tr><td>' + item.exercise + '</td><td>' + item.sets + '</td><td>' +item.reps +
+            '</td><td>' + item.weight +'</td><td>'+dates[i]+'</td></tr>';
+    });
+    trHTML += '</table>';
+    $('#graphTable').append(trHTML);
+}
 
 // Given date (YYYY-MM-dd) reformat it to (MM/dd/YYYY)
 function formatDate(date) {
@@ -437,18 +447,13 @@ function formatDate(date) {
 
 }
 
-// Create table from the graph
-function createGraphtTable(list) {
+// Given date (MM/dd/YYYY)
+// return in Json format date = {year:year, month:month, day:day
+function dateToJson(date) {
+    var dArr = date.split("/");
+    var date = {year: dArr[2], month: dArr[0], day: dArr[1] }
+    return date;
 
-    var trHTML = '';
-    $.each(list, function(i,item) {
-        //console.log("exercise: " + item.exercise +
-        //           "\nid: " + item.id);
-        trHTML += '<tr data-id=' +item.id+ '><td>' + item.exercise + '</td><td>' + item.sets + '</td><td>' +item.reps +
-            '</td><td>' + item.weight + '</td><td>' + item.date + '</td></tr>';
-    });
-
-    $('#graph_table').append(trHTML);
 }
 
 

@@ -1,136 +1,95 @@
 package app.workout;
 
-import app.auth.AuthController;
+
 import app.db.DataBaseHelper;
-import app.graph.Datasets;
-import app.graph.Graph;
-import app.superset.SupersetController;
+import app.util.DateHelper;
 import app.util.Path;
-import app.util.StringHelper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
 import org.bson.types.ObjectId;
-import org.jsoup.Jsoup;
 import org.mongodb.morphia.Datastore;
 import spark.*;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import java.util.*;
 import java.util.logging.Logger;
 
+
 public class WorkOutController {
 
-    static DataBaseHelper dbHelper = new DataBaseHelper();
-    static Datastore datastore;
-    static Logger logger = Logger.getLogger("WorkOutController.class");
-    static Gson gson = new Gson();
+    private static DataBaseHelper dbHelper = new DataBaseHelper();
+    private static Datastore datastore;
+    private static Logger logger = Logger.getLogger("WorkOutController.class");
+    private static Gson gson = new Gson();
+    private static JsonParser parser = new JsonParser();
 
 
     public WorkOutController() { }
 
     public static String handleAddWorkout (Request req, Response res) {
         res.type("application/json");
-
         HashMap<String, Object> model = new HashMap<>();
 
+        String jsonString = req.body();
+        System.out.println(jsonString);
+        JsonObject obj =  parser.parse(jsonString).getAsJsonObject();
+
+        WorkOut workout = getWorkoutFromJsonObject(obj);
+        Date date = getDateFromJsonObject(obj);
+
+        workout.setDate(date);
         String userId = req.session(false).attribute(Path.Attribute.USERID);
-        String exercise = Jsoup.parse(req.queryParams("exercise")).text();
-        int sets = Integer.parseInt(Jsoup.parse(req.queryParams("sets")).text());
-        String date = req.queryParams("date");
-        int[] reps = StringHelper.stringToArray(Jsoup.parse(req.queryParams("reps")).text(),sets);
-        int[] weight = StringHelper.stringToArray(Jsoup.parse(req.queryParams("weight")).text(),sets);
+        workout.setUserId(userId);
 
-        WorkOut workout = new WorkOut(exercise,sets,reps,weight,date);
+        datastore = dbHelper.getDataStore();
+        datastore.save(workout);
 
-        logger.info( "Add workout: " + workout.getExercise() +
-                        "\nSets " + workout.getSets() +
-                        "\nReps " + StringHelper.printArray(workout.getReps()) +
-                        "\nWeight " + StringHelper.printArray(workout.getWeight()) +
-                        "\nDate " + workout.getDate());
-
-        if(userId != null && !userId.isEmpty()) {
-            workout.setUserId(userId);
-            logger.info("Where user id is " + userId);
-
-            datastore = dbHelper.getDataStore();
-            datastore.save(workout);
-            res.status(200);
-            model.put("numberOfWorkouts", getNumberOfWorkout(date,userId));
-            model.put("date",date);
-            model.put("code", 200);
-            model.put("status", "Added workout Successfully");
-        }
-
-        else {
-            logger.warning("Can not add workout, user id is invalid");
-            res.status(500);
-            model.put("code", 500);
-        }
-
-        String json = gson.toJson(model);
-        logger.info("json to be returned = " + json);
-        return json;
+        res.status(200);
+        model.put("numberOfWorkouts", getNumberOfWorkoutOnASingleDay(date,userId));
+        model.put("date", DateHelper.dateToEventDateString(date));
+        return gson.toJson(model);
     }
 
     public static String handleUpdateWorkout (Request req, Response res) {
         res.type("application/json");
-
         HashMap<String, Object> model = new HashMap<>();
 
+        String jsonString = req.body();
+        JsonObject obj =  parser.parse(jsonString).getAsJsonObject();
+
+        WorkOut workout = getWorkoutFromJsonObject(obj);
+        Date date = getDateFromJsonObject(obj);
+        workout.setDate(date);
+
         String userId = req.session(false).attribute(Path.Attribute.USERID);
-        String exercise = Jsoup.parse(req.queryParams("exercise")).text();
-        int sets = Integer.parseInt(Jsoup.parse(req.queryParams("sets")).text());
-        String date = req.queryParams("date");
-        int[] reps = StringHelper.stringToArray(Jsoup.parse(req.queryParams("reps")).text(),sets);
-        int[] weight = StringHelper.stringToArray(Jsoup.parse(req.queryParams("weight")).text(),sets);
+        workout.setUserId(userId);
 
-        WorkOut workout = new WorkOut(exercise,sets,reps,weight,date);
+        String workoutId = obj.getAsJsonPrimitive("editId").getAsString();
 
-        logger.info("Edit workout: " + workout.getExercise() +
-                "\nSets " + workout.getSets() +
-                "\nReps " + StringHelper.printArray(workout.getReps()) +
-                "\nWeight " + StringHelper.printArray(workout.getWeight()) +
-                "\nDate " + workout.getDate());
-
-        if(userId != null && !userId.isEmpty()) {
-            workout.setUserId(userId);
-            logger.info("Where user id is " + userId);
-            String workoutId = Jsoup.parse(req.queryParams("editId")).text();
-            logger.info("Editing workout id " + workoutId);
-            if(workoutId != null && !workoutId.isEmpty()) {
-                workout.setId(workoutId);
-
-            }
-            else {
-                logger.warning("Can not edit workout, workout id is invalid");
-                res.status(500);
-                model.put("code", 500);
-                String json = gson.toJson(model);
-                logger.info("json to be returned = " + json);
-                return json;
-            }
-
-            datastore = dbHelper.getDataStore();
-            WorkOut old_workout = datastore.get(WorkOut.class, new ObjectId(workoutId));
-            datastore.save(workout);
-            if(old_workout.getDate() != date) {
-                model.put("old_date", old_workout.getDate());
-                model.put("num_workouts_new", getNumberOfWorkout(date,userId));
-                model.put("num_workouts_old", getNumberOfWorkout(old_workout.getDate(),userId));
-            }
-            res.status(200);
-            model.put("date",date);
-            model.put("code", 200);
-            model.put("status", "Edited workout Successfully");
-        }
-
-        else {
-            logger.warning("Can not workout, user id is invalid");
+        if(workoutId != null && !workoutId.isEmpty()) {
+            workout.setId(workoutId);
+        } else {
+            logger.warning("Can not edit workout, workout id is invalid");
             res.status(500);
-            model.put("code", 500);
+            String json = gson.toJson(model);
+            logger.info("json to be returned = " + json);
+            return json;
         }
 
+        datastore = dbHelper.getDataStore();
+        WorkOut old_workout = datastore.get(WorkOut.class, new ObjectId(workoutId));
+        datastore.save(workout);
+        if(!old_workout.getDate().equals(date)) {
+            model.put("old_date", DateHelper.dateToEventDateString(old_workout.getDate()));
+            model.put("num_workouts_new", getNumberOfWorkoutOnASingleDay(date,userId));
+            model.put("num_workouts_old", getNumberOfWorkoutOnASingleDay(old_workout.getDate(),userId));
+        }
+
+        res.status(200);
+        model.put("date",DateHelper.dateToEventDateString(date));
         String json = gson.toJson(model);
         logger.info("json to be returned = " + json);
         return json;
@@ -139,7 +98,8 @@ public class WorkOutController {
     public static String handleDeleteWorkout(Request req, Response res) {
         res.type("application/json");
         HashMap<String, Object> model = new HashMap<>();
-        String workoutId = Jsoup.parse(req.queryParams("workoutId")).text();
+        String workoutId = req.queryParams("workoutId");
+        System.out.println(workoutId);
         String userId = req.session(false).attribute(Path.Attribute.USERID);
         logger.info("Workout id to be deleted: " + workoutId +
                 "\nUser of workout " + userId);
@@ -152,12 +112,12 @@ public class WorkOutController {
                     .get();
 
             if(workout != null) {
-                String date = workout.getDate();
+                Date date = workout.getDate();
                 logger.info("DELETING WORKOUT: " + workout.getExercise());
                 datastore.delete(workout);
                 res.status(200);
-                model.put("numberOfWorkouts", getNumberOfWorkout(date,userId));
-                model.put("date", date);
+                model.put("numberOfWorkouts", getNumberOfWorkoutOnASingleDay(date,userId));
+                model.put("date", DateHelper.dateToEventDateString(date));
             }
 
             else {
@@ -171,92 +131,134 @@ public class WorkOutController {
             res.status(500);
         }
 
-        String json = gson.toJson(model);
-        return json;
-
+        return gson.toJson(model);
     }
 
-    // Fetch all workouts of a day to show on view modal
-    public static HashMap<String,Object> fetchWorkOuts(String userId, String date, HashMap<String,Object> model ) {
-
-        // Grab all workouts owned by current user
+    // Return a list of all workouts on a day to put on the view Modal
+    public static List<WorkOut> getListOfWorkoutsOnADay(String userId, Date date) {
         datastore = dbHelper.getDataStore();
-        List<WorkOut> list = datastore.createQuery(WorkOut.class)
+        return datastore.createQuery(WorkOut.class)
                 .field("userId").equal(userId)
                 .field("date").equal(date)
                 .asList();
 
-        StringBuilder jsonData = new StringBuilder();
-        if(list != null && list.size() > 0) {
-            logger.info("found " + list.size() + " workout ");
-            for(int i = 0; i < list.size(); i++) {
-                WorkOut workout = list.get(i);
-                jsonData.append(workout.toJson()).append(",");
-                         logger.info("jsonData " + i + " = " + workout.toJson());
-            }
-            jsonData.deleteCharAt(jsonData.lastIndexOf(",")); //removes the last comma
-            jsonData.insert(0, "[" ).append("]"); //name the array
-
-
-        } else {
-            logger.warning("No user data found for userId " + userId);
-            jsonData.append("{}");
-        }
-
-        logger.info(jsonData.toString());
-        model.put("jsonData", jsonData.toString() );
-
-        return model;
     }
 
 
-    public static String getWorkoutMonthEvent(String userId) {
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        StringBuilder eventArray = new StringBuilder();
+    public static List<WorkOut> getListOfAllWorkouts(String userId) {
         datastore = dbHelper.getDataStore();
-        List<WorkOut> list = datastore.createQuery(WorkOut.class)
+        return datastore.createQuery(WorkOut.class)
                 .field("userId").equal(userId)
                 .order("date")
                 .asList();
 
-        if (list.size() == 0) return null;
+    }
 
-        int numberOfWorkout = 0;
-        String prevDate = list.get(0).getDate();
-        for(int i = 0; i < list.size(); i++) {
-            WorkOut currWorkout = list.get(i);
-            String currDate = currWorkout.getDate();
+    public static List<WorkOut> getListOfAllSpecificExercise(String userId, String exercise) {
+        datastore = dbHelper.getDataStore();
+        return datastore.createQuery(WorkOut.class)
+                .field("userId").equal(userId)
+                .field("exercise").equal(exercise)
+                .order("date")
+                .asList();
 
-            if(!currDate.equals(prevDate)) {
-                eventArray.append( "{ title: '" + numberOfWorkout + " workouts', " +
-                        "id: '" + prevDate + " workout', " +
-                        "start : '" + LocalDate.parse(prevDate, df)+ "' }, ");
+    }
 
-                numberOfWorkout = 1;
-                prevDate = currDate;
+    public static List<WorkOut> getListOfAllWorkoutsOfThisMonth(String userId, Date date) {
+        datastore = dbHelper.getDataStore();
+        Date first_day_of_month = DateHelper.getFirstDateOfMonth(date);
+        Date last_day_of_month = DateHelper.getLastDateOfMonth(date);
+        System.out.println(first_day_of_month);
+        System.out.println(last_day_of_month);
+        return datastore.createQuery(WorkOut.class)
+                .field("userId").equal(userId)
+                .field("date").greaterThanOrEq(first_day_of_month)
+                .field("date").lessThanOrEq(last_day_of_month)
+                .order("date")
+                .asList();
+    }
 
-            }
+    public static String[] getArrayOfWorkoutIdsFromList(List<WorkOut> workout_list) {
+        String[] ids = new String[workout_list.size()];
+        for (int i = 0; i < workout_list.size(); i++) {
+            ids[i] = workout_list.get(i).getId().toString();
+        }
+        return ids;
+    }
 
-            else {
-                numberOfWorkout++;
+    // Given a list ordered by date
+    public static int getNumberOfDaysWorkoutInAMonth(List<WorkOut> list) {
+        int count = 0;
+        if(list.size() == 0) return count;
+        Date currDate = list.get(0).getDate();
+        for(WorkOut workout: list) {
+            if(!currDate.equals(workout.getDate())) {
+                count++;
             }
         }
-        eventArray.append( "{ title: '" + numberOfWorkout + " workouts', " +
-                "id: '" + prevDate + " workout', " +
-                "start : '" + LocalDate.parse(prevDate, df)+ "' }, ");
-        return eventArray.toString();
+        return count + 1;
+    }
+
+    public static ArrayList<WorkOut> getListOfFavoriteWorkoutOfMonth(List<WorkOut> list) {
+        HashMap<String,ArrayList<WorkOut>> map = new HashMap<>();
+        for (WorkOut w: list) {
+            String exercise = w.getExercise();
+            if(map.containsKey(exercise)) {
+                map.get(exercise).add(w);
+            } else {
+                ArrayList<WorkOut> arr_list = new ArrayList<>();
+                arr_list.add(w);
+                map.put(exercise,arr_list);
+            }
+        }
+        int max = 0;
+        ArrayList<WorkOut> result = new ArrayList<>();
+        for (Map.Entry<String, ArrayList<WorkOut>> entry : map.entrySet()) {
+            int size = entry.getValue().size();
+            if(size > max) {
+                max = size;
+                result = entry.getValue();
+            }
+        }
+        return result;
+    }
+
+    // Given a list of the same workouts, get the highest scoring one
+    public static WorkOut getBestWorkoutFromList(ArrayList<WorkOut> list) {
+        WorkOut best = list.get(0);
+        int score = 0;
+        for(WorkOut w: list) {
+            int curr_score = w.getAverage();
+            if(curr_score > score) {
+                score = curr_score;
+                best = w;
+            }
+        }
+        return best;
     }
 
     // Return total number of workouts on a single day
-    private static String getNumberOfWorkout(String date, String userId) {
+    private static String getNumberOfWorkoutOnASingleDay(Date date, String userId) {
         datastore = dbHelper.getDataStore();
         List<WorkOut> list = datastore.createQuery(WorkOut.class)
                 .field("userId").equal(userId)
                 .field("date").equal(date)
                 .asList();
-        System.out.println("WORKOUTS: " + list.size());
-        return list.size() + " workouts";
+        if(list.size() == 1) return list.size() + " workout";
+        else return list.size() + " workouts";
     }
+
+
+    private static WorkOut getWorkoutFromJsonObject(JsonObject obj) {
+        JsonObject workout_obj = obj.getAsJsonObject("workout");
+        return gson.fromJson(workout_obj, WorkOut.class);
+    }
+
+    private static Date getDateFromJsonObject(JsonObject obj) {
+        JsonPrimitive date_obj = obj.getAsJsonPrimitive("date");
+        return DateHelper.jsonToDate(date_obj);
+    }
+
 
 
 }

@@ -5,8 +5,12 @@ import app.util.StringHelper;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Id;
 
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Date;
 
-public class WorkOut implements Comparable<WorkOut> {
+
+public class WorkOut /*implements Comparable<WorkOut>*/ {
 
     @Id
     private ObjectId id;
@@ -15,16 +19,15 @@ public class WorkOut implements Comparable<WorkOut> {
     private int[] reps;
     private int[] weight;
     private String userId;
-    private String date;
+    private Date date;  //yyyy-MM-dd
 
     public WorkOut() { }
 
-    public WorkOut(String exercise, int sets, int[] reps, int[] weight, String date) {
+    public WorkOut(String exercise, int sets, int[] reps, int[] weight) {
         this.exercise = exercise;
         this.sets = sets;
         this.reps = reps;
         this.weight = weight;
-        this.date = date;
     }
 
     public void setId(String id) {
@@ -59,11 +62,11 @@ public class WorkOut implements Comparable<WorkOut> {
         return weight;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -76,7 +79,7 @@ public class WorkOut implements Comparable<WorkOut> {
         }
         return total / total_reps ;
     }
-
+/*
     // Sort by most recent date
     @Override
     public int compareTo(WorkOut workout) {
@@ -95,7 +98,7 @@ public class WorkOut implements Comparable<WorkOut> {
 
         else return compareYear - year;
     }
-
+*/
     public String toJson() {
 
         return  "{" +
@@ -107,4 +110,14 @@ public class WorkOut implements Comparable<WorkOut> {
                 "}" ;
     }
 
+    @Override
+    public String toString() {
+        return "WorkOut{" +
+                "exercise='" + exercise + '\'' +
+                ", sets=" + sets +
+                ", reps=" + Arrays.toString(reps) +
+                ", weight=" + Arrays.toString(weight) +
+                ", date=" + date +
+                '}';
+    }
 }

@@ -22,25 +22,14 @@
 
                 <div id="graph">
                     <canvas id="myChart" width="400" height="400"></canvas>
-                    <button type="button" class="btn btn-primary" id="toTableBtn">To Table</button>;
+                    <button type="button" class="btn btn-primary" id="toTableBtn">To Table</button>
                 </div>
 
-                <div id="graphTable">
-                    <table id="graph_table">
-                        <thead>
-                        <tr>
-                            <th>EXERCISE</th>
-                            <th>SETS</th>
-                            <th>REPS</th>
-                            <th>WEIGHT</th>
-                            <th>DATE</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                    <button type="button" class="btn btn-primary" id="toGraphBtn">To Graph</button>;
+                <div id="graphTableDiv">
+                    <div id="graphTable"></div>
+                    <button type="button" class="btn btn-primary" id="toGraphBtn">To Graph</button>
                 </div>
+
 
             </div>
             <div class="modal-footer">
@@ -61,16 +50,16 @@
 
     $('#graphModal').on('show.bs.modal',function() {
         $("#graph").hide();
-        $("#graphTable").hide();
+        $("#graphTableDiv").hide();
     });
 
     $('#graphModal').on('hidden.bs.modal',function() {
         $("#graph").hide();
-        $("#graphTable").hide();
+        $("#graphTableDiv").hide();
         $("#exerciseToGraph").val("");
         $("#numberOfWorkouts").val("");
         $("#graphLog").html("");
-        $("#graph_table tbody").remove();
+        $("#graphTable").empty();
         $("#exerciseToGraphForm").show();
     });
 
@@ -109,7 +98,7 @@
                     // Configuration options go here
                     options: {}
                 });
-                createGraphtTable(response.list);
+                createGraphTable(response.list, response.data.labels);
             },
             error: function() {
                 console.log("ERROR");
@@ -118,13 +107,13 @@
         });
 
         $("#toGraphBtn").on('click', function () {
-            $("#graphTable").hide();
+            $("#graphTableDiv").hide();
             $("#graph").show();
         });
 
         $("#toTableBtn").on('click', function () {
             $("#graph").hide();
-            $("#graphTable").show();
+            $("#graphTableDiv").show();
         });
 
 

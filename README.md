@@ -92,7 +92,7 @@ post(Path.Web.DELETE_WORKOUT, (req,res) -> WorkOutController.handleDeleteWorkout
 ### Edit a workout
   1. Click on the date the workout was done on
   2. A table will popup, find the desired workout and click "Edit" button to the right of that workout
-  3. The exericse, date, weight, and reps are editable, but currently the sets are not (To DO)
+  3. The exercise, date, weight, and reps are editable, but currently the sets are not (To DO)
   4. Click confirm to edit the workout
   
   The route below deals with editing a workout.
@@ -102,9 +102,9 @@ post(Path.Web.EDIT_WORKOUT, (req,res) -> WorkOutController.handleUpdateWorkout(r
 
 ## TODO
 
-  1. Graph a lift
-  2. Implement Supersets
-  3. Implement Max lifts
+  1. Graph a lift (DONE)
+  2.  Supersets (DONE)
+  3. Friend system
   
   
  

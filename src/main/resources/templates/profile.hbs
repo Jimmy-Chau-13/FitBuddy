@@ -1,25 +1,19 @@
-{{#partial "title"}} YOUR PROFILE{{/partial}}
+{{#partial "title"}} fitbuddy {{/partial}}
 
 
 {{#partial "content"}}
     <body>
-    <div id="topMenu">
-        <h1> Welcome {{username}}! </h1>
 
-    </div>
+    {{> navbar.hbs}}
 
     <div id="optionDiv">
 
         <div class="btn-group">
             <button type="button" class="btn btn-primary" id="addBtn">Add Workout</button>
-            <button type="button" class="btn btn-primary" id="supersetAddBtn">Add Superset</button>
+            <!--<button type="button" class="btn btn-primary" id="supersetAddBtn">Add Superset</button> -->
             <button type="button" class="btn btn-primary" id="findBtn">Find Workout</button>
         </div>
-        <div id="logoutBtn">
-            <form action ="/logout" method = "post">
-                <input type="submit" value="Logout" id="logoutBtn2" class="indexButton" />
-             </form>
-        </div>
+
     </div>
 
     <div id="calendar"></div>
@@ -35,14 +29,12 @@
 
 <script type="text/javascript">
     $(document).ready(function (response) {
-
+        $("#profile_li").addClass("active");
 //////////////////////////////////// ALL FULL CALENDAR FUNCTIONALITY////////////////////////////////////////////////
         $("#calendar").fullCalendar({
 
-            events: [
-                {{{eventArray}}}
-                {{{eventArray2}}}
-            ],
+            events:
+                {{{eventArray}}},
 
             dayClick: function(date) {
                 date = date.format();  //yyyy-MM-dd

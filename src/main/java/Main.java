@@ -3,12 +3,14 @@
 import app.Profile.ProfileController;
 import app.auth.AuthController;
 import app.db.DataBaseHelper;
+import app.friends.FriendsController;
 import app.graph.GraphController;
 import app.index.IndexController;
 
 import app.superset.SupersetController;
 import app.workout.WorkOutController;
 import app.util.Path;
+import spark.Session;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
 import java.util.logging.Logger;
@@ -37,6 +39,17 @@ public class Main {
         get(Path.Web.GET_PROFILE_PAGE, (req,res) -> ProfileController.serveProfile(req,res)
                 ,new HandlebarsTemplateEngine());
 
+        get("/friends/:username", (req,res) -> FriendsController.getFriendsInfo(req,res),
+                new HandlebarsTemplateEngine());
+
+        get(Path.Web.GET_FRIENDS_PAGE, (req,res) -> FriendsController.serveFriends(req,res)
+                , new HandlebarsTemplateEngine());
+
+        get("/monthly_progress", (req,res) -> ProfileController.serveInfo(req,res),
+                new HandlebarsTemplateEngine());
+
+
+
 
         // Handle Authentication
         post(Path.Web.DO_SIGNIN, (req,res) -> AuthController.handleSignIn(req,res));
@@ -59,9 +72,14 @@ public class Main {
         post(Path.Web.GRAPH_WORKOUT, (req,res) -> GraphController.handleGraphWorkout(req,res));
 
         // CRUD operations for Supersets
-        post("/add_superset", (req,res) -> SupersetController.handleAddSuperset(req,res));
+        post(Path.Web.ADD_SUPERSET, (req,res) -> SupersetController.handleAddSuperset(req,res));
 
-        post("/delete_superset", (req,res) -> SupersetController.handleDeleteSuperset(req,res));
+        post(Path.Web.DELETE_SUPERSET, (req,res) -> SupersetController.handleDeleteSuperset(req,res));
+
+        // Friends Operations
+        post(Path.Web.FRIEND_OPTION, (req,res) -> FriendsController.handleFriendOption(req,res));
+
+
 
 
 

@@ -43,22 +43,23 @@
     $('#editDate').datepicker();
 
     $('#editConfirmBtn').on('click', function () {
-        if(checkEditModalBodyIsFilled() == -1)
+        if(checkEditModalBodyIsFilled() === -1)
             return;
 
-        var data = getEditedWorkout();
+        var workout = getEditedWorkout();
+        var data = {workout:workout, date:$("#editDate").val(), editId:$("#editId").val()};
         console.log("Submitting = \n" + JSON.stringify(data));
         $.ajax({
             type: "post",
             url: "/edit",
-            data: data,
+            data: JSON.stringify(data),
             success: function(response) {
                 if(response.old_date) {
                     addWorkoutEvent(response.date, response.num_workouts_new);
                     deleteWorkoutEvent(response.old_date, response.num_workouts_old);
                 }
                 $("#editModal").modal('hide');
-                openViewModal(response.date);
+                openViewModal(formatDate(response.date));
 
             },
             error: function() {

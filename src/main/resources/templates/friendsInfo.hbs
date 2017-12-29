@@ -1,15 +1,12 @@
-{{#block "header"}}
 <!doctype html>
 <html lang="en">
 <head>
-
     <title>{{#block "title"}}Welcome to FitBuddy!{{/block}}</title>
     <link rel="icon" href="/pictures/icon.png">
     <link rel="stylesheet" href="/css/main.css">
-    <link rel='stylesheet' href='fullcalendar/fullcalendar.css' />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel='stylesheet' type='text/css' href='https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css'/>
+
 
     <!-- Bootstrap and jQuery -->
     <script
@@ -22,28 +19,23 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
-
-
-    <!-- line graph -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
-
-    <!-- DatePicker -->
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-
-    <script src="/js/thinbus-srp6a-sha256-versioned.js"></script>
-    <script src="/js/util.js"></script>
-    <script src='lib/moment.min.js'></script>
-    <script src='fullcalendar/fullcalendar.js'></script>
-
-
 </head>
-{{/block}}
+    <body>
 
+    {{> navbar.hbs}}
 
-{{#block "content"}}{{/block}}
+    <h1 style="text-align: center">{{date}}</h1>
 
-{{#block "footer"}}
+    <div id="yourInfo" style="float: left; text-align: center; width: 50%;">
+        <h1>{{username}}</h1>
+        <p>Number of workouts: {{num_my_workouts}}</p>
+    </div>
 
-    </html>
-{{/block}}
+    <div id="friendsInfo" style="float: right;text-align: center; width: 50%;">
+        <h1> {{friends_username}}</h1>
+        <p> Number of workouts: {{num_friends_workouts}}</p>
+    </div>
+
+    </body>
+</html>
 

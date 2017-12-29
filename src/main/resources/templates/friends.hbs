@@ -1,0 +1,125 @@
+{{#partial "title"}} friends {{/partial}}
+
+
+{{#partial "content"}}
+    <body>
+    {{> navbar.hbs}}
+
+    <div>
+        <div class="row">
+            <div class="col-sm-6 offset-sm-3">
+                <div class="input-group">
+                    <label for="UsernameFriend" class="sr-only">Username</label>
+                    <input type="text" class="form-control" id="addFriendForm" placeholder="Username" required>
+                    <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button" id="addFriendBtn">Add</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <p id="friendsLogModal" style="color:red;"></p>
+    </div>
+
+
+    <div id="AllFriends">
+        <h4> ALL CURRENT FRIENDS </h4>
+        <ul id="list_current_friends"></ul>
+    </div>
+
+    <div id="PendingFriends">
+        <h4> ADDED YOU</h4>
+        <ul id="list_friends_added_you"></ul>
+        <h4> WAITING FOR RESPONSE</h4>
+        <ul id="list_friends_you_added"></ul>
+    </div>
+    </body>
+
+{{/partial}}
+
+{{> base.hbs}}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#friends_li").addClass("active");
+
+        $.each({{{friends}}}, function(i,item) {
+            $("#list_current_friends").append('<li><a href="/friends/'+item+'" ' +
+            'style="float: left;">'+item+'</a>' +
+                    '<button type="button" class="removeFriendBtn">Remove</button></li>');
+        });
+        $.each({{{added_me}}}, function(i,item) {
+            $("#list_friends_added_you").append('<li><p style="float: left;">'+item+'</p>' +
+                    '<button type="button" class="confirmFriendBtn">Confirm</button>' +
+                    '<button type="button" class="declineFriendBtn">Decline</button></li> ');
+        });
+        $.each( {{{pending}}} , function(i,item) {
+            $("#list_friends_you_added").append('<li>'+item+'</li>');
+        });
+    });
+
+
+    $("#addFriendBtn").on('click', function () {
+        var friend_username = $("#addFriendForm").val();
+        $.ajax({
+            type: "post",
+            url: "friend_option",
+            data: {friend_username: friend_username, option:"add_friend"},
+            success: function (response) {
+                console.log(response);
+                $("#list_friends_you_added").append('<li>'+response.friend_username+'</li>');
+                $("#friendsLogModal").html("ADDED");
+            },
+            error: function (response) {
+                $("#friendsLogModal").html(JSON.parse(response.responseText).error_message);
+            }
+        })
+    });
+
+    $("#list_friends_added_you").on('click', ".confirmFriendBtn",    function () {
+        var username = $(this).closest("li").children("p").text();
+        $.ajax({
+           type:"post",
+           url: "/friend_option",
+           data: {friend_username: username, option: "confirm_friend"},
+           success: function () {
+               location.reload();
+           },
+           error: function () {
+               $("#friendsLogModal").html("ERROR FOR FRIEND OPTION");
+           } 
+        });
+    });
+
+    $("#list_friends_added_you").on('click', ".declineFriendBtn", function () {
+        var username = $(this).closest("li").children("p").text();
+        $.ajax({
+            type:"post",
+            url: "/friend_option",
+            data: {friend_username: username, option: "decline_friend"},
+            success: function () {
+                location.reload();
+            },
+            error: function () {
+                $("#friendsLogModal").html("ERROR FOR FRIEND OPTION");
+            }
+        });
+    });
+
+    $("#list_current_friends").on('click', ".removeFriendBtn", function () {
+        var username = $(this).closest("li").children("p").text();
+        $.ajax({
+            type:"post",
+            url: "/friend_option",
+            data: {friend_username: username, option:"remove_friend"},
+            success: function () {
+                location.reload();
+            },
+            error: function () {
+                $("#friendsLogModal").html("COULD NOT REMOVE");
+            }
+        });
+    });
+
+</script>

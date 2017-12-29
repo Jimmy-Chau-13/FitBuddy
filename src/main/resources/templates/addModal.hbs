@@ -46,7 +46,7 @@
 </div>
 
 <script type="text/javascript">
-    ////////////////////////////////////// ALL ADD MODAL FUNCTIONS ////////////////////////////////////////////
+
     $("#date").datepicker();
     $("#date").datepicker('setDate', new Date());
 
@@ -62,20 +62,19 @@
         var sets = $("#sets").val();
         var exercise = $("#exercise").val();
 
-        if(exercise == "") {
-            $("#logModal").html("Exercise is required")
+        if(exercise === "" || sets === "") {
+            $("#logModal").html("Please fill in all values");
             return;
         }
 
-        if(sets == "") {
-            $("#logModal").html("Sets is required")
+        if(sets < 1) {
+            $("#logModal").html("Sets must be at least 1");
             return;
         }
 
         $("#addModalBody1").hide();
         $("#addModalBody2").show();
 
-        var sets = $("#sets").val();
         createAddModalBody2(sets);
     });
 
@@ -91,15 +90,16 @@
     });
 
     $("#confirmBtn").on("click", function(){
-        if(checkAddModalBody2IsFilled() == -1)
+        if(checkAddModalBody2IsFilled() === -1)
             return;
 
-        var data = getWorkout();
+        var workout = getWorkout();
+        var data = {workout:workout, date:$("#date").val()};
         console.log("Submitting = \n" + JSON.stringify(data));
         $.ajax({
             type: "post",
             url: "/add",
-            data: data,
+            data: JSON.stringify(data),
             success: function(response) {
                 $("#addModal").modal('hide');
                 addWorkoutEvent(response.date, response.numberOfWorkouts);
@@ -117,5 +117,4 @@
         clearAddModalBody2();
     });
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////
 </script>

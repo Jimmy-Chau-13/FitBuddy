@@ -1,6 +1,7 @@
 package app.auth;
 
 import app.db.DataBaseHelper;
+import app.friends.Friends;
 import com.mongodb.DuplicateKeyException;
 import org.mongodb.morphia.Datastore;
 
@@ -38,6 +39,13 @@ public class UserController {
             return userList.get(0);
         else
             return null;
+    }
+
+    public static User updateUserFields(User user) {
+        datastore = dbHelper.getDataStore();
+        user.setFriends(new Friends());
+        datastore.save(user);
+        return user;
     }
 
 

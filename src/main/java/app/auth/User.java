@@ -1,11 +1,14 @@
 package app.auth;
 
+import app.friends.Friends;
 import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexed;
 
-import java.math.BigInteger;
+
+
 
 public class User {
 
@@ -13,19 +16,22 @@ public class User {
     @Id
     private ObjectId id;
     @Indexed(options = @IndexOptions(unique = true))
-    private String username = "";
+    private String username;
     private String salt;
     private String verifier;
     private String token = "";
+    @Embedded
+    private Friends friends;
 
     public User() {
 
     }
 
-    public User(String username, String salt, String verifier) {
+    public User(String username, String salt, String verifier ) {
         this.username = username;
         this.salt = salt;
         this.verifier = verifier;
+        this.friends = new Friends();
     }
 
     public ObjectId getId() {
@@ -64,4 +70,11 @@ public class User {
         this.token = token;
     }
 
+    public Friends getFriends() {
+        return friends;
+    }
+
+    public void setFriends(Friends friends) {
+        this.friends = friends;
+    }
 }

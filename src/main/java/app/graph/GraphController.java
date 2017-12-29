@@ -1,11 +1,12 @@
 package app.graph;
 
-import app.db.DataBaseHelper;
+
+import app.util.DateHelper;
 import app.util.Path;
 import app.workout.WorkOut;
-import app.workout.WorkoutComparator;
+import app.workout.WorkOutController;
+
 import com.google.gson.Gson;
-import org.mongodb.morphia.Datastore;
 import spark.Request;
 import spark.Response;
 
@@ -14,8 +15,6 @@ import java.util.List;
 
 public class GraphController {
 
-    static DataBaseHelper dbHelper = new DataBaseHelper();
-    static Datastore datastore;
     static Gson gson = new Gson();
 
     // Get and graph the specific workout, returns an error if workout is not found
@@ -26,33 +25,22 @@ public class GraphController {
         String exercise = req.queryParams("exercise");
         int num_exercises = Integer.parseInt(req.queryParams("num_exercises"));
 
-        List<WorkOut> list = getAllExercisesToGraph(userId, exercise);
+        List<WorkOut> list = WorkOutController.getListOfAllSpecificExercise(userId, exercise);
 
         if(list.size() == 0) {
             res.status(500);
-            model.put("code", 500);
-            System.out.println("ERROR");
             String json = gson.toJson(model);
             return json;
         }
 
-        String[] workouts_dates = new String[Math.min(num_exercises, list.size())];
-        int[] workouts_score = new int[workouts_dates.length];
-        WorkOut[] workouts = new WorkOut[workouts_dates.length];
-        int i = workouts_dates.length-1;
-        int j = 0;
-        while(i >= 0) {
-            WorkOut workout = list.get(j);
-            workouts_dates[i] = workout.getDate();
-            workouts_score[i] = workout.getAverage();
-            workouts[i] = workout;
-            i--;
-            j++;
-        }
+        int num_workouts_to_return = Math.min(num_exercises, list.size());
+
+        WorkOut[] workouts = getMostRecentWorkouts(num_workouts_to_return, list);
+        String[] workouts_dates = getDates(workouts);
+        int[] workouts_score = getAverage(workouts);
 
         Datasets datasets = new Datasets(exercise, workouts_score);
         Graph graph = new Graph(workouts_dates, datasets);
-        model.put("code", 200);
         model.put("data", graph);
         model.put("list", workouts);
         String json = gson.toJson(model);
@@ -61,15 +49,33 @@ public class GraphController {
 
     }
 
-    // Return all of a specific workout owned by the user id that is sorted by the most recent
-    private static List<WorkOut> getAllExercisesToGraph(String userId, String exercise ) {
-        datastore = dbHelper.getDataStore();
-        List<WorkOut> list = datastore.createQuery(WorkOut.class)
-                .field("userId").equal(userId)
-                .field("exercise").equal(exercise)
-                .asList();
-
-        list.sort(new WorkoutComparator.SortByDate());
-        return list;
+    private static WorkOut[] getMostRecentWorkouts(int num_exercise, List<WorkOut> list) {
+        WorkOut[] workouts = new WorkOut[num_exercise];
+        int list_index = list.size()-1;
+        for(int i = workouts.length - 1; i >= 0; i--) {
+            workouts[i] = list.get(list_index);
+            list_index--;
+        }
+        return workouts;
     }
+
+    private static String[] getDates(WorkOut[] workouts) {
+        String[] workout_dates = new String[workouts.length];
+        for (int i = 0; i < workouts.length; i++) {
+            String date = DateHelper.dateToString(workouts[i].getDate());
+            workout_dates[i] = date;
+        }
+        return workout_dates;
+    }
+
+    private static int[] getAverage(WorkOut[] workouts) {
+        int[] workout_score = new int[workouts.length];
+        for (int i = 0; i < workouts.length; i++) {
+            int score = workouts[i].getAverage();
+            workout_score[i] = score;
+        }
+        return workout_score;
+    }
+
+
 }
