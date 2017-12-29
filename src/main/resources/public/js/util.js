@@ -186,7 +186,7 @@ function openViewModal(date) {
                 editBtnClicked(tr,dateToShow);
             });
 
-          /*  $(".deleteSupersetBtn").on('click', function () {
+            /*$(".deleteSupersetBtn").on('click', function () {
                 console.log("DELETE");
                 var tr = $(this).closest("tr");
                 deleteSupersetBtnClicked(tr);
@@ -400,6 +400,7 @@ function deleteWorkoutEvent(date, numberOfWorkouts) {
     }
 }
 
+/*
 function addSupersetEvent(date, numberOfSupersets) {
 
     if(numberOfSupersets == "1 supersets") {
@@ -425,7 +426,7 @@ function deleteSupersetEvent(date, numberOfSupersets) {
         event[0].title = numberOfSupersets;
         $("#calendar").fullCalendar('updateEvent', event[0]);
     }
-}
+} */
 
 // Construct a table for the graph
 function createGraphTable(list,dates) {

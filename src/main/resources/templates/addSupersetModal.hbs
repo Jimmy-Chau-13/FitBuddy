@@ -82,7 +82,7 @@
         }
         $("#superset_log").html("");
         $("#addSupersetModalBody1").hide();
-        createSupersetModalBody2(sets, num_exercise,curr_exercise);
+        //createSupersetModalBody2(sets, num_exercise,curr_exercise);
         $("#supersetModalBody2").show();
     });
 
@@ -92,12 +92,12 @@
         workouts[curr_exercise] = getSupersetExercise();
         curr_exercise++;
         $("#supersetBody2").empty();
-        createSupersetModalBody2(sets, num_exercise, curr_exercise);
+        //createSupersetModalBody2(sets, num_exercise, curr_exercise);
     });
 
     $(document).on('click', '#supersetConfirmBtn ', function(){
         console.log("CONFIRMING");
-        workouts[curr_exercise] = getSupersetExercise();
+        //workouts[curr_exercise] = getSupersetExercise();
         console.log(workouts);
         $("#supersetBody2").empty();
         var date =  $("#superset_date").val();
@@ -111,7 +111,7 @@
             data: JSON.stringify(data),
             success: function(response) {
                 $("#addSupersetModal").modal('hide');
-                addSupersetEvent(response.date, response.numberOfSupersets);
+                //addSupersetEvent(response.date, response.numberOfSupersets);
             },
             error: function() {
                 $("#superset_log").html("<strong>OOPS! UNABLE TO SUBMIT SUPERSET! PLEASE TRY AGAIN</strong>");
