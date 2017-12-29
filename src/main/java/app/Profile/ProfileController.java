@@ -66,11 +66,13 @@ public class ProfileController {
         String userId = req.session(false).attribute(Path.Attribute.USERID);
         List<WorkOut> list = WorkOutController.getListOfAllWorkoutsOfThisMonth(userId, date);
         if(list.isEmpty()) {
+            model.put("username", username);
             model.put("no_workouts", "You have not done any workouts this month");
             model.put("month", DateHelper.dateToMonthYear(date));
+            model.put("best_workout", "null");
             return new ModelAndView(model, "monthly_progress.hbs");
         }
-        for (WorkOut w : list) System.out.println(w.toString());
+        //for (WorkOut w : list) System.out.println(w.toString());
 
         String total_workout = "Total exercises done: " + list.size();
         String num_days = "Total number of days worked out: " + WorkOutController.getNumberOfDaysWorkoutInAMonth(list);
@@ -83,6 +85,7 @@ public class ProfileController {
         model.put("num_days", num_days);
         model.put("favorite_workout", favorite_workout);
         model.put("best_workout", gson.toJson(best_workout));
+        model.put("month", DateHelper.dateToMonthYear(date));
 
         System.out.println(gson.toJson(model));
         return new ModelAndView(model, "monthly_progress.hbs");

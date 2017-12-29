@@ -90,6 +90,7 @@ function clearAddModalBody2(){
 /////////////////////////////////////////////////////END OF ADD MODAL FUNCTIONS/////////////////////////////////////////////////////////////
 
 /////////////////////////////////////SUPERSET FUNCTIONS///////////////////////////////////////////////////////////////
+/*
 function createSupersetModalBody2(sets, num_exercises, curr_exercise) {
 
     var the_exercise_number = curr_exercise * 1 + 1;
@@ -127,7 +128,7 @@ function getSupersetReps() {
     var reps = [];
     for (var i = 0; i < sets*1 ; i++) {
         var repId = "#reps" + i;
-        reps[i*1] = $(repId).val();
+        reps[i] = $(repId).val();
     }
     return reps;
 }
@@ -151,7 +152,7 @@ function getSupersetExercise() {
     return workout;
 }
 
-
+*/
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,6 +211,7 @@ function createWorkoutTable(list, workouts_id) {
     $('#workoutTableDiv').append(trHTML);
 }
 
+/*
 function  createSupersetTable(list, supersets_id) {
     var html = '';
     $.each(list, function (i,item) {
@@ -246,7 +248,7 @@ function deleteSupersetBtnClicked(tr) {
             $("#viewModalLog").html("<strong>OOPS! UNABLE TO DELETE WORKOUT! PLEASE TRY AGAIN</strong>");
         }
     });
-}
+} */
 
 function deleteBtnClicked(tr) {
     var data = {};

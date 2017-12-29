@@ -39,14 +39,16 @@ public class Main {
         get(Path.Web.GET_PROFILE_PAGE, (req,res) -> ProfileController.serveProfile(req,res)
                 ,new HandlebarsTemplateEngine());
 
+        get("/friends/:username", (req,res) -> FriendsController.getFriendsInfo(req,res),
+                new HandlebarsTemplateEngine());
+
         get(Path.Web.GET_FRIENDS_PAGE, (req,res) -> FriendsController.serveFriends(req,res)
                 , new HandlebarsTemplateEngine());
 
         get("/monthly_progress", (req,res) -> ProfileController.serveInfo(req,res),
                 new HandlebarsTemplateEngine());
 
-        get("/friends/:username", (req,res) -> FriendsController.getFriendsInfo(req,res),
-                new HandlebarsTemplateEngine());
+
 
 
         // Handle Authentication

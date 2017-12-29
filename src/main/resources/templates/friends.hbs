@@ -45,7 +45,7 @@
         $("#friends_li").addClass("active");
 
         $.each({{{friends}}}, function(i,item) {
-            $("#list_current_friends").append('<li><a href="/friends/'+item+'/" ' +
+            $("#list_current_friends").append('<li><a href="/friends/'+item+'" ' +
             'style="float: left;">'+item+'</a>' +
                     '<button type="button" class="removeFriendBtn">Remove</button></li>');
         });

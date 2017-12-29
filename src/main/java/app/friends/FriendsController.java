@@ -53,7 +53,7 @@ public class FriendsController {
         String friends_username = req.params(":username");
 
         String your_username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
-        model.put("your_username", your_username);
+        model.put("username", your_username);
         model.put("friends_username", friends_username);
         model.put("date", DateHelper.dateToMonthYear(date));
         int num_my_workouts = WorkOutController.getListOfAllWorkoutsOfThisMonth(userId, date).size();
