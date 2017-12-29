@@ -4,6 +4,7 @@ import app.auth.AuthController;
 import app.auth.User;
 import app.auth.UserController;
 import app.db.DataBaseHelper;
+import app.util.DateHelper;
 import app.util.Path;
 import app.workout.WorkOutController;
 import com.google.gson.Gson;
@@ -12,6 +13,7 @@ import org.mongodb.morphia.Datastore;
 import spark.ModelAndView;
 import spark.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -39,18 +41,24 @@ public class FriendsController {
 
     public static  ModelAndView getFriendsInfo(Request req, Response res) {
         String userId = AuthController.checkSessionHasUser(req);
-        if(userId == null || userId.isEmpty()) res.redirect(Path.Web.GET_INDEX_PAGE);
+        String date_string = req.queryParams("date");
+        Date date;
+        if (date_string == null || date_string.isEmpty()){
+            date = new Date();
+        } else {
+            date = DateHelper.stringToDate(date_string);
+        }
 
         HashMap<String, Object> model = new HashMap<>();
         String friends_username = req.params(":username");
-        String[] date = req.params(":month").split("_");
+
         String your_username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
         model.put("your_username", your_username);
         model.put("friends_username", friends_username);
-        model.put("date", date[0] + "/" + date[1]);
-        int num_my_workouts = WorkOutController.getNumberOfWorkoutsForAMonth(userId,date[0],date[1]);
-        int num_friends_workouts = WorkOutController.getNumberOfWorkoutsForAMonth(
-                UserController.getUserByUsername(friends_username).getId().toString(), date[0], date[1]);
+        model.put("date", DateHelper.dateToMonthYear(date));
+        int num_my_workouts = WorkOutController.getListOfAllWorkoutsOfThisMonth(userId, date).size();
+        int num_friends_workouts = WorkOutController.getListOfAllWorkoutsOfThisMonth(
+                UserController.getUserByUsername(friends_username).getId().toString(), date).size();
         model.put("num_my_workouts", num_my_workouts);
         model.put("num_friends_workouts", num_friends_workouts);
         return new ModelAndView(model, "friendsInfo.hbs");

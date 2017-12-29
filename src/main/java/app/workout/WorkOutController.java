@@ -50,8 +50,7 @@ public class WorkOutController {
         res.status(200);
         model.put("numberOfWorkouts", getNumberOfWorkoutOnASingleDay(date,userId));
         model.put("date", DateHelper.dateToEventDateString(date));
-        String json = gson.toJson(model);
-        return json;
+        return gson.toJson(model);
     }
 
     public static String handleUpdateWorkout (Request req, Response res) {
@@ -132,19 +131,17 @@ public class WorkOutController {
             res.status(500);
         }
 
-        String json = gson.toJson(model);
-        return json;
-
+        return gson.toJson(model);
     }
 
     // Return a list of all workouts on a day to put on the view Modal
     public static List<WorkOut> getListOfWorkoutsOnADay(String userId, Date date) {
         datastore = dbHelper.getDataStore();
-        List<WorkOut> list = datastore.createQuery(WorkOut.class)
+        return datastore.createQuery(WorkOut.class)
                 .field("userId").equal(userId)
                 .field("date").equal(date)
                 .asList();
-        return list;
+
     }
 
 
@@ -167,8 +164,18 @@ public class WorkOutController {
 
     }
 
-    public static int getNumberOfWorkoutsForAMonth(String userId, String month, String year) {
-        return 0;
+    public static List<WorkOut> getListOfAllWorkoutsOfThisMonth(String userId, Date date) {
+        datastore = dbHelper.getDataStore();
+        Date first_day_of_month = DateHelper.getFirstDateOfMonth(date);
+        Date last_day_of_month = DateHelper.getLastDateOfMonth(date);
+        System.out.println(first_day_of_month);
+        System.out.println(last_day_of_month);
+        return datastore.createQuery(WorkOut.class)
+                .field("userId").equal(userId)
+                .field("date").greaterThanOrEq(first_day_of_month)
+                .field("date").lessThanOrEq(last_day_of_month)
+                .order("date")
+                .asList();
     }
 
     public static String[] getArrayOfWorkoutIdsFromList(List<WorkOut> workout_list) {
@@ -177,6 +184,57 @@ public class WorkOutController {
             ids[i] = workout_list.get(i).getId().toString();
         }
         return ids;
+    }
+
+    // Given a list ordered by date
+    public static int getNumberOfDaysWorkoutInAMonth(List<WorkOut> list) {
+        int count = 0;
+        if(list.size() == 0) return count;
+        Date currDate = list.get(0).getDate();
+        for(WorkOut workout: list) {
+            if(!currDate.equals(workout.getDate())) {
+                count++;
+            }
+        }
+        return count + 1;
+    }
+
+    public static ArrayList<WorkOut> getListOfFavoriteWorkoutOfMonth(List<WorkOut> list) {
+        HashMap<String,ArrayList<WorkOut>> map = new HashMap<>();
+        for (WorkOut w: list) {
+            String exercise = w.getExercise();
+            if(map.containsKey(exercise)) {
+                map.get(exercise).add(w);
+            } else {
+                ArrayList<WorkOut> arr_list = new ArrayList<>();
+                arr_list.add(w);
+                map.put(exercise,arr_list);
+            }
+        }
+        int max = 0;
+        ArrayList<WorkOut> result = new ArrayList<>();
+        for (Map.Entry<String, ArrayList<WorkOut>> entry : map.entrySet()) {
+            int size = entry.getValue().size();
+            if(size > max) {
+                max = size;
+                result = entry.getValue();
+            }
+        }
+        return result;
+    }
+
+    // Given a list of the same workouts, get the highest scoring one
+    public static WorkOut getBestWorkoutFromList(ArrayList<WorkOut> list) {
+        WorkOut best = list.get(0);
+        int score = 0;
+        for(WorkOut w: list) {
+            int curr_score = w.getAverage();
+            if(curr_score > score) {
+                score = curr_score;
+                best = w;
+            }
+        }
+        return best;
     }
 
     // Return total number of workouts on a single day
@@ -193,14 +251,12 @@ public class WorkOutController {
 
     private static WorkOut getWorkoutFromJsonObject(JsonObject obj) {
         JsonObject workout_obj = obj.getAsJsonObject("workout");
-        WorkOut workout = gson.fromJson(workout_obj, WorkOut.class);
-        return workout;
+        return gson.fromJson(workout_obj, WorkOut.class);
     }
 
     private static Date getDateFromJsonObject(JsonObject obj) {
         JsonPrimitive date_obj = obj.getAsJsonPrimitive("date");
-        Date date = DateHelper.jsonToDate(date_obj);
-        return date;
+        return DateHelper.jsonToDate(date_obj);
     }
 
 

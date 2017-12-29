@@ -32,17 +32,6 @@ public class Main {
 
         new DataBaseHelper();
 
-        // Ensure session has a user id
-        before("/*/", (req,res) -> {
-            Session session = req.session(true);
-            String userId = session.attribute(Path.Attribute.USERID);
-            if(userId == null || userId.isEmpty()) {
-                res.redirect(Path.Web.GET_INDEX_PAGE);
-                halt(401);
-            }
-        });
-
-
         // Serving Pages
         get(Path.Web.GET_INDEX_PAGE, (req,res) -> IndexController.serveIndexPage(req,res)
                 ,new HandlebarsTemplateEngine());
@@ -52,6 +41,12 @@ public class Main {
 
         get(Path.Web.GET_FRIENDS_PAGE, (req,res) -> FriendsController.serveFriends(req,res)
                 , new HandlebarsTemplateEngine());
+
+        get("/monthly_progress", (req,res) -> ProfileController.serveInfo(req,res),
+                new HandlebarsTemplateEngine());
+
+        get("/friends/:username", (req,res) -> FriendsController.getFriendsInfo(req,res),
+                new HandlebarsTemplateEngine());
 
 
         // Handle Authentication
@@ -82,8 +77,8 @@ public class Main {
         // Friends Operations
         post(Path.Web.FRIEND_OPTION, (req,res) -> FriendsController.handleFriendOption(req,res));
 
-        get("/friends/:username/:month", (req,res) -> FriendsController.getFriendsInfo(req,res),
-                new HandlebarsTemplateEngine());
+
+
 
 
     } //EOF MAIN
