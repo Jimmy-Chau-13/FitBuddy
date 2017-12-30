@@ -87,7 +87,6 @@ public class ProfileController {
         model.put("best_workout", gson.toJson(best_workout));
         model.put("month", DateHelper.dateToMonthYear(date));
 
-        System.out.println(gson.toJson(model));
         return new ModelAndView(model, "monthly_progress.hbs");
     }
 }
