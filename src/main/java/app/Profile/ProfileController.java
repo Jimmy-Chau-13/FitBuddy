@@ -2,6 +2,8 @@ package app.Profile;
 
 import app.auth.AuthController;
 import app.event.EventController;
+import app.graph.Datasets;
+import app.graph.Graph;
 import app.superset.SupersetController;
 import app.util.DateHelper;
 import app.util.Path;
@@ -72,17 +74,18 @@ public class ProfileController {
             model.put("best_workout", "null");
             return new ModelAndView(model, "monthly_progress.hbs");
         }
-        //for (WorkOut w : list) System.out.println(w.toString());
 
-        String total_workout = "Total exercises done: " + list.size();
-        String num_days = "Total number of days worked out: " + WorkOutController.getNumberOfDaysWorkoutInAMonth(list);
+        int num_days =  WorkOutController.getNumberOfDaysWorkoutInAMonth(list);
+        int total_days = DateHelper.getDayFromDate(date);
+        model.put("num_days", num_days);
+        model.put("total_days", total_days);
+
         ArrayList<WorkOut> fav_workout_list = WorkOutController.getListOfFavoriteWorkoutOfMonth(list);
         String favorite_workout = "Favorite workout: " + fav_workout_list.get(0).getExercise();
         WorkOut best_workout = WorkOutController.getBestWorkoutFromList(fav_workout_list);
 
         model.put("username", username);
-        model.put("total_workout", total_workout);
-        model.put("num_days", num_days);
+        model.put("total_workout", list.size());
         model.put("favorite_workout", favorite_workout);
         model.put("best_workout", gson.toJson(best_workout));
         model.put("month", DateHelper.dateToMonthYear(date));

@@ -69,4 +69,10 @@ public class DateHelper {
         return formatter.format(date);
     }
 
+    public static int getDayFromDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.DAY_OF_MONTH);
+    }
+
 }

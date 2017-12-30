@@ -4,38 +4,36 @@
 {{#partial "content"}}
 <body>
 {{> navbar.hbs}}
-<div style="background-color: whitesmoke; text-align: center; height: 200px;">
-    <h1>Hey {{username}}! Here are your stats for: </h1>
-    <h2>{{month}}</h2>
-</div>
 
+<div style="background-color: whitesmoke; text-align: center; height: 200px;">
+    <h1>{{username}} Report Card </h1>
+    <h1>{{month}}</h1>
+</div>
+{{#if no_workouts}}
 <div>
     {{no_workouts}}
 </div>
-
-<div style="text-align: center; height: 200px;">
-    <p>{{total_workout}}</p>
+{{else}}
+<div style=" text-align: center; height: 200px;">
+    <p style="color: #3a87ad; font-size: 4em;">{{total_workout}}</p>
+    <p style="font-size: 2em; ">total workouts done</p>
 </div>
 
-<div style="background-color: whitesmoke; text-align: center; height: 200px;">
-    <p>{{num_days}}</p>
+<div style="background-color: whitesmoke; height:200px; text-align: center;" >
+    <p style="color: #3a87ad; font-size: 4em;">{{num_days}} / {{total_days}}</p>
+    <p style="font-size: 2em; ">days worked out</p>
 </div>
 
 <div style="text-align: center; height: 200px;">
     <p>{{favorite_workout}}</p>
+    <p>Best workout</p>
     <p id="best_sets"></p>
     <p id="best_reps"></p>
     <p id="best_weight"></p>
 </div>
-
-</body>
-
-{{/partial}}
-
-{{> base.hbs}}
-
 <script type="text/javascript">
     $("#user_li").addClass("active");
+
     var best_workout = {{{best_workout}}};
     if(best_workout !== null) {
         $("#best_sets").html("sets: " + best_workout.sets);
@@ -43,3 +41,10 @@
         $("#best_weight").html("weight: " + JSON.stringify(best_workout.weight) );
     }
 </script>
+{{/if}}
+</body>
+
+{{/partial}}
+
+{{> base.hbs}}
+
