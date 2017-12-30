@@ -8,6 +8,7 @@ import app.graph.GraphController;
 import app.index.IndexController;
 
 import app.superset.SupersetController;
+import app.util.Filters;
 import app.workout.WorkOutController;
 import app.util.Path;
 import spark.ModelAndView;
@@ -22,7 +23,7 @@ import static spark.Spark.*;
 
 
 public class Main {
-    
+
     //private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
@@ -33,8 +34,11 @@ public class Main {
 
         new DataBaseHelper();
 
+        before("/*", Filters.addTrailingSlashes);
         //ensure user is logged in to have access to protected routes
         before("/*/", (req, res) -> {
+            if (req.pathInfo().equals(Path.Web.DO_AUTH)) return;
+
             Session session = req.session(true);
             boolean auth = session.attribute(Path.Attribute.AUTH_STATUS) != null  ?
                     session.attribute(Path.Attribute.AUTH_STATUS) : false;
@@ -88,12 +92,6 @@ public class Main {
 
         // Friends Operations
         post(Path.Web.FRIEND_OPTION, (req,res) -> FriendsController.handleFriendOption(req,res));
-
-
-
-
-
-
 
     } //EOF MAIN
 
