@@ -51,6 +51,7 @@ public class FriendsController {
 
         HashMap<String, Object> model = new HashMap<>();
         String friends_username = req.params(":username");
+        System.out.println("ITS ME UR FIREND: " + friends_username);
 
         String your_username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
         model.put("username", your_username);

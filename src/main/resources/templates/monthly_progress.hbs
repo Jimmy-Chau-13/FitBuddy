@@ -4,13 +4,24 @@
 {{#partial "content"}}
 <body>
 {{> navbar.hbs}}
+<script type="text/javascript">
+    $("#user_li").addClass("active");
+</script>
 
 <div style="background-color: whitesmoke; text-align: center; height: 200px;">
     <h1>{{username}} Report Card </h1>
-    <h1>{{month}}</h1>
+    <h1>
+        <a href="" id="previousMonth">
+            <span class="glyphicon glyphicon-menu-left"></span>
+        </a>
+        <span id="reportCardMonth">{{month}}</span>
+        <a href="" id="nextMonth">
+            <span class="glyphicon glyphicon-menu-right"></span>
+        </a>
+    </h1>
 </div>
 {{#if no_workouts}}
-<div>
+<div style="text-align: center">
     {{no_workouts}}
 </div>
 {{else}}
@@ -24,8 +35,9 @@
     <p style="font-size: 2em; ">days worked out</p>
 </div>
 
-<div style="text-align: center; height: 200px;">
-    <p>{{favorite_workout}}</p>
+<div style="text-align: center; height: 300px;">
+    <p >Favorite Workout: </p>
+    <span style="color: #3a87ad; font-size: 3em;">{{favorite_workout}}</span>
     <p>Best workout</p>
     <p id="best_sets"></p>
     <p id="best_reps"></p>
@@ -47,4 +59,12 @@
 {{/partial}}
 
 {{> base.hbs}}
+
+<script type="text/javascript">
+        var currMonth = new Date($("#reportCardMonth").text());
+        var prevMonth = getFormattedDate(new Date(currMonth.setMonth(currMonth.getMonth() - 1, 1)));
+        var nextMonth = getFormattedDate(new Date(currMonth.setMonth(currMonth.getMonth() + 2, 1)));
+        $('#previousMonth').attr('href','/monthly_progress/'+prevMonth+'/');
+        $('#nextMonth').attr('href','/monthly_progress/'+nextMonth+'/');
+</script>
 

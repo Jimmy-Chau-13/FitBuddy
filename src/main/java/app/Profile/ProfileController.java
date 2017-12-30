@@ -57,12 +57,18 @@ public class ProfileController {
     public static ModelAndView serveInfo(Request req, Response res) {
         HashMap<String, Object> model = new HashMap<>();
         String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
-        String date_string = req.queryParams("date");
+
+        String date_string = req.params(":date");
         Date date;
         if (date_string == null || date_string.isEmpty()){
             date = new Date();
         } else {
-            date = DateHelper.stringToDate(date_string);
+            date = DateHelper.stringToDate2(date_string);
+            Date now = new Date();
+            if(DateHelper.checkMonthYearIsCurrent(now, date)) date = now;
+            else {
+                date = DateHelper.getLastDateOfMonth(date);
+            }
         }
 
         String userId = req.session(false).attribute(Path.Attribute.USERID);
@@ -81,7 +87,7 @@ public class ProfileController {
         model.put("total_days", total_days);
 
         ArrayList<WorkOut> fav_workout_list = WorkOutController.getListOfFavoriteWorkoutOfMonth(list);
-        String favorite_workout = "Favorite workout: " + fav_workout_list.get(0).getExercise();
+        String favorite_workout = fav_workout_list.get(0).getExercise();
         WorkOut best_workout = WorkOutController.getBestWorkoutFromList(fav_workout_list);
 
         model.put("username", username);

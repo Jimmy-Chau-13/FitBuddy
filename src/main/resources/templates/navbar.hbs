@@ -16,7 +16,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li id="user_li"><a href="/monthly_progress/"> {{username}}</a></li>
+                <li id="user_li"><a href="/monthly_progress/" id="userProgress"> {{username}}</a></li>
                 <li id="profile_li"><a href="/profile/">Profile</a></li>
                 <li id="friends_li"><a href="/friends/">Friends</a></li>
             </ul>
@@ -28,3 +28,10 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var currMonth = getFormattedDate(new Date());
+        $('#userProgress').attr('href', '/monthly_progress/' + currMonth + '/');
+    })
+</script>

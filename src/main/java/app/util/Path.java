@@ -6,7 +6,7 @@ public class Path {
         public static final String GET_PROFILE_PAGE = "/profile/";
         public static final String GET_INDEX_PAGE = "/";
         public static final String GET_FRIENDS_PAGE = "/friends/";
-        public static final String GET_MONTHLY_PROGRESS = "/monthly_progress/";
+        public static final String GET_MONTHLY_PROGRESS = "/monthly_progress/:date/";
         public static final String GET_FRIENDS_INFO = "/friends/:username/";
 
         public static final String DO_SIGNUP = "/register/";
