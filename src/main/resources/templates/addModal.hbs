@@ -98,7 +98,7 @@
         console.log("Submitting = \n" + JSON.stringify(data));
         $.ajax({
             type: "post",
-            url: "/add",
+            url: "/add/",
             data: JSON.stringify(data),
             success: function(response) {
                 $("#addModal").modal('hide');

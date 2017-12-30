@@ -54,7 +54,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "/register",
+                    url: "/register/",
                     data: {"username": username, "salt":salt
                         , "verifier":verifier},
                     success: function(response) {

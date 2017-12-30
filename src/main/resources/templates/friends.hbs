@@ -64,7 +64,7 @@
         var friend_username = $("#addFriendForm").val();
         $.ajax({
             type: "post",
-            url: "friend_option",
+            url: "/friend_option/",
             data: {friend_username: friend_username, option:"add_friend"},
             success: function (response) {
                 console.log(response);
@@ -81,7 +81,7 @@
         var username = $(this).closest("li").children("p").text();
         $.ajax({
            type:"post",
-           url: "/friend_option",
+           url: "/friend_option/",
            data: {friend_username: username, option: "confirm_friend"},
            success: function () {
                location.reload();
@@ -96,7 +96,7 @@
         var username = $(this).closest("li").children("p").text();
         $.ajax({
             type:"post",
-            url: "/friend_option",
+            url: "/friend_option/",
             data: {friend_username: username, option: "decline_friend"},
             success: function () {
                 location.reload();
@@ -108,10 +108,11 @@
     });
 
     $("#list_current_friends").on('click', ".removeFriendBtn", function () {
-        var username = $(this).closest("li").children("p").text();
+        var username = $(this).closest("li").children("a").text();
+        console.log(username);
         $.ajax({
             type:"post",
-            url: "/friend_option",
+            url: "/friend_option/",
             data: {friend_username: username, option:"remove_friend"},
             success: function () {
                 location.reload();

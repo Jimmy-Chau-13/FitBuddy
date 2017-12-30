@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 public class AuthController {
 
     private static final Logger logger = Logger.getLogger(AuthController.class.getName());
-    static Gson gson = new Gson();
-    static SRP6JavascriptServerSessionSHA256 server;
+    private static Gson gson = new Gson();
+    private static SRP6JavascriptServerSessionSHA256 server;
 
     public static Object handleSignUp(Request req, Response res) {
         return doSignUp(req,res);

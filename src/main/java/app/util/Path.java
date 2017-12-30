@@ -9,22 +9,22 @@ public class Path {
         public static final String GET_MONTHLY_PROGRESS = "/monthly_progress/";
         public static final String GET_FRIENDS_INFO = "/friends/:username/";
 
-        public static final String DO_SIGNUP = "/register";
+        public static final String DO_SIGNUP = "/register/";
         public static final String DO_SIGNIN = "/";
-        public static final String DO_AUTH = "/auth";
-        public static final String DO_LOGOUT = "/logout";
+        public static final String DO_AUTH = "/auth/";
+        public static final String DO_LOGOUT = "/logout/";
 
-        public static final String ADD_WORKOUT = "/add";
-        public static final String EDIT_WORKOUT = "/edit";
-        public static final String DELETE_WORKOUT = "/delete";
-        public static final String VIEW_WORKOUT = "/view";
+        public static final String ADD_WORKOUT = "/add/";
+        public static final String EDIT_WORKOUT = "/edit/";
+        public static final String DELETE_WORKOUT = "/delete/";
+        public static final String VIEW_WORKOUT = "/view/";
 
         public static final String ADD_SUPERSET = "/add_superset";
         public static final String DELETE_SUPERSET = "/delete_superset";
 
-        public static final String FRIEND_OPTION = "/friend_option";
+        public static final String FRIEND_OPTION = "/friend_option/";
 
-        public static final String GRAPH_WORKOUT = "/graph";
+        public static final String GRAPH_WORKOUT = "/graph/";
     }
 
     public static class Attribute {

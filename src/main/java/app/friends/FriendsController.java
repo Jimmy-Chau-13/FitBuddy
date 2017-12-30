@@ -32,7 +32,7 @@ public class FriendsController {
             model.put("added_me", me.getFriends().getPending_friends_invitation());
             model.put("pending", me.getFriends().getPending_friends_added());
             model.put("username", username );
-            System.out.println("GET FRIENDS PAGE RESPONSE: " + gson.toJson(model));
+            //System.out.println("GET FRIENDS PAGE RESPONSE: " + gson.toJson(model));
             return new ModelAndView(model, Path.Template.FRIENDS);
         }
         res.redirect(Path.Web.GET_INDEX_PAGE);
@@ -79,7 +79,6 @@ public class FriendsController {
         String username = req.session(false).attribute(Path.Attribute.USERNAME).toString();
         User friend = UserController.getUserByUsername(friend_username);
         User me = UserController.getUserByUsername(username);
-
         if(option.equals("add_friend")) {
             return handleAddFriend(me,friend,friend_username,username,model,res);
         }
@@ -119,7 +118,7 @@ public class FriendsController {
         datastore.save(friend);
 
         res.status(200);
-        System.out.print("RESPONSE: " + gson.toJson(model));
+        //System.out.print("RESPONSE: " + gson.toJson(model));
         return gson.toJson(model);
     }
 
@@ -134,7 +133,7 @@ public class FriendsController {
         datastore.save(friend);
 
         res.status(200);
-        System.out.print("RESPONSE: " + gson.toJson(model));
+        //System.out.print("RESPONSE: " + gson.toJson(model));
         return gson.toJson(model);
     }
 
@@ -152,7 +151,7 @@ public class FriendsController {
         datastore.save(friend);
 
         res.status(200);
-        System.out.print("RESPONSE: " + gson.toJson(model));
+        //System.out.print("RESPONSE: " + gson.toJson(model));
         return gson.toJson(model);
     }
 
@@ -167,7 +166,7 @@ public class FriendsController {
         datastore.save(friend);
 
         res.status(200);
-        System.out.print("RESPONSE: " + gson.toJson(model));
+        //System.out.print("RESPONSE: " + gson.toJson(model));
         return gson.toJson(model);
     }
 

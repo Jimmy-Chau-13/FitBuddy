@@ -163,7 +163,7 @@ function getSupersetExercise() {
 function openViewModal(date) {
     $.ajax({
         type: "post",
-        url: "/view",
+        url: "/view/",
         data: {"date": date},
         success: function(response) {
             var workout = response.workouts;
@@ -256,7 +256,7 @@ function deleteBtnClicked(tr) {
     console.log("DELETING = " + data.workoutId );
     $.ajax({
         type: "post",
-        url: "/delete",
+        url: "/delete/",
         data: data,
         success: function(response) {
             $("#viewModalLog").html("<strong>DELETED</strong>");

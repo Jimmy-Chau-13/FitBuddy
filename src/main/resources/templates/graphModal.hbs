@@ -74,7 +74,7 @@
         var data = {exercise: exercise, num_exercises: num_exercises};
         $.ajax({
             type: "post",
-            url: "/graph",
+            url: "/graph/",
             data: data,
             success: function(response) {
                 $("#exerciseToGraphForm").hide();

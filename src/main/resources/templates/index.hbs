@@ -51,8 +51,8 @@
                         var M1 = credentials.M1;
                         var A = credentials.A;
                         $.ajax({
-                            type:"POST",
-                            url: "/auth",
+                            type:"post",
+                            url: "/auth/",
                             data: {"username":username, "M1":M1, "A":A},
                             success:function(res2) {
                                 if(res2.target) {
